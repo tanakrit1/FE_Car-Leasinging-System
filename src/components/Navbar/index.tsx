@@ -13,9 +13,9 @@ const Navbar = ({returnLogin}: Props) => {
 
   const navItemBegin = [
     { label: "หน้าแรก", path: "/" },
-    { label: "บันทึกข้อมูลรถ", path: "/" },
-    { label: "ข้อมูลลูกค้า", path: "/" },
-    { label: "ชำระค่างวด", path: "/" },
+    { label: "บันทึกข้อมูลรถ", path: "/car-information" },
+    { label: "ข้อมูลลูกค้า", path: "/customer-information" },
+    { label: "ชำระค่างวด", path: "/payment" },
     { label: "ทีมงาน", path: "/" },
   ];
 
