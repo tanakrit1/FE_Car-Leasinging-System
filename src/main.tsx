@@ -7,11 +7,11 @@ import App from "./app.tsx";
 // import Loading from "./components/Loading/index.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+//   <React.StrictMode>
     <BrowserRouter>
     {/* <Loading/> */}
       <App />
       
     </BrowserRouter>
-  </React.StrictMode>
+//   </React.StrictMode>
 );

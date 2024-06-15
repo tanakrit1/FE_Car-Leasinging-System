@@ -34,7 +34,7 @@ const Navbar = () => {
   return (
     <div className="h-20 px-6 flex items-center justify-between bg-slate-700 ">
       <div className="flex space-x-10 items-center">
-        <img src={logo} alt="logo" className="w-14 h-10" />
+        <img src={logo} alt="logo" className="w-14 h-10 cursor-pointer" />
         <div className="flex ">
           {navItem.map((item: any, key: number) => (
             <div key={"navItem" + key}>
