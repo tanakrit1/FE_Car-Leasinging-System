@@ -1,18 +1,51 @@
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 
-const Login = () => {
-  const location = useLocation();
-  const state = location.state; // รับค่า state
+interface Props {
+    returnLogin: (result: boolean) => void
+}
 
-  if (state && state.key) {
-    console.log(`ค่า key: ${state.key}`); // แสดงค่า key
+const Login = ({returnLogin}: Props) => {
+  //   const location = useLocation();
+  //   const state = location.state; // รับค่า state
+
+  //   if (state && state.key) {
+  //     console.log(`ค่า key: ${state.key}`); // แสดงค่า key
+  //   }
+
+  const onLogin = (event:any) => {
+    event.preventDefault();
+    returnLogin(true)
+    console.log("login");
   }
 
   return (
     <>
-      <p>Login</p>
-      {/* <p>{ location?.state }</p> */}
-      <button className="px-6 py-1 rounded-lg bg-yellow-500 text-white">Login Go</button>
+      <form onSubmit={onLogin}>
+        <div className="flex">
+          <div className="w-1/2 flex items-center justify-center">Logo</div>
+          <div className="w-1/2 flex flex-col items-center justify-center h-screen bg-white">
+            <p className="text-3xl text-black font-bold mb-6">Login เพื่อเข้าใช้งานนะบบ</p>
+            <input
+              type="text"
+              placeholder="Username"
+              className="w-3/4 h-12 border border-black bg-white rounded-lg px-3 text-black mb-3"
+              autoComplete="off"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-3/4 h-12 border border-black bg-white rounded-lg px-3 text-black mb-6"
+              autoComplete="off"
+            />
+            <button
+              type="submit"
+              className="w-3/4 h-12 bg-slate-700 text-white rounded-lg hover:bg-slate-600"
+            >
+                เข้าสู่ระบบ
+            </button>
+          </div>
+        </div>
+      </form>
     </>
   );
 };

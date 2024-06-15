@@ -1,4 +1,4 @@
-import TableList from "../../../components/TableList";
+import TableList from "../../components/TableList";
 
 const columns = [
   { label: "A", width: "10%", field: "a" },
