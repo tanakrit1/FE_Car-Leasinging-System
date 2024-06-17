@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import logo from "../../assets/images/bangchak.png";
+import logo from "../../assets/images/logo-navbar.png";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -42,12 +42,12 @@ const Navbar = ({ returnLogin }: Props) => {
     }
   }, []);
   return (
-    <div className="h-20 px-6 flex items-center justify-between bg-slate-700 ">
-      <div className="flex space-x-10 items-center">
+    <div className="h-20 px-6 pr-6 flex items-center justify-between bg-slate-700 ">
+      <div className="flex  items-center">
         <img
           src={logo}
           alt="logo"
-          className="w-14 h-10 cursor-pointer"
+          className="w-20 h-full cursor-pointer"
           onClick={() => onChangeMenu("/", 0)}
         />
         <div className="flex ">
@@ -153,7 +153,10 @@ const Navbar = ({ returnLogin }: Props) => {
       </div>
       <div>
         <p className="text-white">FirstName LastName</p>
-        <p className="cursor-pointer text-white hover:text-gray-300" onClick={onLogout}>
+        <p
+          className="cursor-pointer text-white hover:text-gray-300"
+          onClick={onLogout}
+        >
           ออกจากระบบ
         </p>
       </div>

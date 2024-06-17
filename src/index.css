@@ -1,7 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+body {
+    font-family: "Noto Sans Thai", sans-serif;
+    /* font-family: Bangchak, Arial, sans-serif; */
+  }
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormInputProps } from "./interface";
 
 const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
@@ -22,7 +22,8 @@ const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
       <form onSubmit={(event: any) => event.preventDefault()}>
         <div className="flex flex-row flex-wrap">
           {stateInputList.map((item: any, index: number) => (
-            <div key={"input" + index} className={`basis-${item.width} px-3`}>
+            <div key={item.label + index} className={`basis-${item.width} px-2`}>
+            {/* <div key={"input" + index} className={`basis-6/12 px-3`}> */}
               <p className="text-white font-semibold mb-1">
                 {item.label} :{" "}
                 {item?.requied ? (

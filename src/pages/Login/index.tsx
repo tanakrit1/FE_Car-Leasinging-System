@@ -1,5 +1,5 @@
 // import { useLocation } from "react-router-dom";
-
+import logo from '../../assets/images/logo.png'
 interface Props {
     returnLogin: (result: boolean) => void
 }
@@ -22,7 +22,9 @@ const Login = ({returnLogin}: Props) => {
     <>
       <form onSubmit={onLogin}>
         <div className="flex">
-          <div className="w-1/2 flex items-center justify-center">Logo</div>
+          <div className="w-1/2 flex items-center justify-center">
+            <img src={logo} className='h-full w-full' />
+          </div>
           <div className="w-1/2 flex flex-col items-center justify-center h-screen bg-white">
             <p className="text-3xl text-black font-bold mb-6">Login เพื่อเข้าใช้งานนะบบ</p>
             <input
