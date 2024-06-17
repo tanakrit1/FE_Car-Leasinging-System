@@ -3,13 +3,17 @@ import logo from "../../assets/images/bangchak.png";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
-    returnLogin: (result: boolean) => void
+  returnLogin: (result: boolean) => void;
 }
 
-const Navbar = ({returnLogin}: Props) => {
+const Navbar = ({ returnLogin }: Props) => {
   const navigate = useNavigate();
   const [navItem, setNavItem] = useState<any[]>([]);
-  const [menuIndexActive, setMenuIndexActive] = useState<number>(sessionStorage.getItem("menuIndex") ? parseInt(sessionStorage.getItem("menuIndex")!) : 0);
+  const [menuIndexActive, setMenuIndexActive] = useState<number>(
+    sessionStorage.getItem("menuIndex")
+      ? parseInt(sessionStorage.getItem("menuIndex")!)
+      : 0
+  );
 
   const navItemBegin = [
     { label: "หน้าแรก", path: "/" },
@@ -21,9 +25,9 @@ const Navbar = ({returnLogin}: Props) => {
 
   const onLogout = () => {
     sessionStorage.clear();
-    returnLogin(false)
+    returnLogin(false);
     navigate("/login");
-  }
+  };
 
   const onChangeMenu = (path: string, index: number) => {
     sessionStorage.setItem("menuIndex", index.toString());
@@ -40,7 +44,12 @@ const Navbar = ({returnLogin}: Props) => {
   return (
     <div className="h-20 px-6 flex items-center justify-between bg-slate-700 ">
       <div className="flex space-x-10 items-center">
-        <img src={logo} alt="logo" className="w-14 h-10 cursor-pointer" onClick={() => onChangeMenu("/", 0)}/>
+        <img
+          src={logo}
+          alt="logo"
+          className="w-14 h-10 cursor-pointer"
+          onClick={() => onChangeMenu("/", 0)}
+        />
         <div className="flex ">
           {navItem.map((item: any, key: number) => (
             <div key={"navItem" + key}>
@@ -52,10 +61,26 @@ const Navbar = ({returnLogin}: Props) => {
                 onClick={() => onChangeMenu(item.path, key)}
               >
                 <div className="flex justify-center">
-                  {item.label === "หน้าแรก" ? 
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512"><path fill="currentColor" d="M261.56 101.28a8 8 0 0 0-11.06 0L66.4 277.15a8 8 0 0 0-2.47 5.79L63.9 448a32 32 0 0 0 32 32H192a16 16 0 0 0 16-16V328a8 8 0 0 1 8-8h80a8 8 0 0 1 8 8v136a16 16 0 0 0 16 16h96.06a32 32 0 0 0 32-32V282.94a8 8 0 0 0-2.47-5.79Z"/><path fill="currentColor" d="m490.91 244.15l-74.8-71.56V64a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v32l-57.92-55.38C272.77 35.14 264.71 32 256 32c-8.68 0-16.72 3.14-22.14 8.63l-212.7 203.5c-6.22 6-7 15.87-1.34 22.37A16 16 0 0 0 43 267.56L250.5 69.28a8 8 0 0 1 11.06 0l207.52 198.28a16 16 0 0 0 22.59-.44c6.14-6.36 5.63-16.86-.76-22.97"/></svg>
-                  :item.label === "บันทึกข้อมูลรถ" ? (
+                  {item.label === "หน้าแรก" ? (
                     <svg
+                      className="text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 512 512"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M261.56 101.28a8 8 0 0 0-11.06 0L66.4 277.15a8 8 0 0 0-2.47 5.79L63.9 448a32 32 0 0 0 32 32H192a16 16 0 0 0 16-16V328a8 8 0 0 1 8-8h80a8 8 0 0 1 8 8v136a16 16 0 0 0 16 16h96.06a32 32 0 0 0 32-32V282.94a8 8 0 0 0-2.47-5.79Z"
+                      />
+                      <path
+                        fill="currentColor"
+                        d="m490.91 244.15l-74.8-71.56V64a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v32l-57.92-55.38C272.77 35.14 264.71 32 256 32c-8.68 0-16.72 3.14-22.14 8.63l-212.7 203.5c-6.22 6-7 15.87-1.34 22.37A16 16 0 0 0 43 267.56L250.5 69.28a8 8 0 0 1 11.06 0l207.52 198.28a16 16 0 0 0 22.59-.44c6.14-6.36 5.63-16.86-.76-22.97"
+                      />
+                    </svg>
+                  ) : item.label === "บันทึกข้อมูลรถ" ? (
+                    <svg
+                      className="text-white"
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -68,6 +93,7 @@ const Navbar = ({returnLogin}: Props) => {
                     </svg>
                   ) : item.label === "ข้อมูลลูกค้า" ? (
                     <svg
+                      className="text-white"
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -80,6 +106,7 @@ const Navbar = ({returnLogin}: Props) => {
                     </svg>
                   ) : item.label === "ชำระค่างวด" ? (
                     <svg
+                      className="text-white"
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -92,6 +119,7 @@ const Navbar = ({returnLogin}: Props) => {
                     </svg>
                   ) : item.label === "ทีมงาน" ? (
                     <svg
+                      className="text-white"
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -104,6 +132,7 @@ const Navbar = ({returnLogin}: Props) => {
                     </svg>
                   ) : (
                     <svg
+                      className="text-white"
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
                       height="32"
@@ -123,8 +152,10 @@ const Navbar = ({returnLogin}: Props) => {
         </div>
       </div>
       <div>
-        <p>FirstName LastName</p>
-        <p className="cursor-pointer" onClick={onLogout}>ออกจากระบบ</p>
+        <p className="text-white">FirstName LastName</p>
+        <p className="cursor-pointer text-white hover:text-gray-300" onClick={onLogout}>
+          ออกจากระบบ
+        </p>
       </div>
     </div>
   );

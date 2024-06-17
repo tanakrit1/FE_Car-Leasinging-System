@@ -24,7 +24,7 @@ const TableCustomer = () => {
     <>
       <div className="h-full  bg-slate-700 rounded-lg" >
         <div className="px-6 pt-3" style={{ height: "3%", zIndex: "1000000" }} >
-          <p className="font-bold text-xl">รายชื่อลูกค้าใกล้ครบกำหนดชำระ</p>
+          <p className="font-bold text-xl text-white">รายชื่อลูกค้าใกล้ครบกำหนดชำระ</p>
         </div>
         <div className="mt-8" style={{ overflowY: "auto", height: "85%" }}>
           <TableList columns={columns} rows={rows} height="100%" />

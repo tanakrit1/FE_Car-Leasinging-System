@@ -78,7 +78,7 @@ const ChartB = () => {
     <>
       <div className="h-full  bg-slate-700 rounded-lg">
         <div className="px-6 pt-3" style={{ height: "3%" }}>
-          <p className="font-bold text-xl">สรุปยอดขายรายเดือน</p>
+          <p className="font-bold text-xl text-white">สรุปยอดขายรายเดือน</p>
         </div>
         <div id="chartB" style={{ width: "100%", height: "97%" }}></div>
       </div>

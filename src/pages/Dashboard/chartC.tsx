@@ -31,7 +31,7 @@ const ChartC = () => {
     <>
       <div className="h-full  bg-slate-700 rounded-lg">
         <div className="px-6 pt-3" style={{ height: "3%" }}>
-            <p className="font-bold text-xl">สรุปสต็อก</p>
+            <p className="font-bold text-xl text-white">สรุปสต็อก</p>
         </div>
         <div id="chartC" style={{ width: "100%", height: "97%" }}></div>
       </div>
