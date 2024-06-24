@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormInputProps } from "./interface";
 
 const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
@@ -16,6 +16,10 @@ const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
       [event.target.name]: event.target.value,
     });
   };
+
+  useEffect( ()=> {
+    setStateInputList(inputList)
+  }, [inputList] )
 
   return (
     <>

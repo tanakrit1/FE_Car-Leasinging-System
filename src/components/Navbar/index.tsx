@@ -152,7 +152,7 @@ const Navbar = ({ returnLogin }: Props) => {
         </div>
       </div>
       <div>
-        <p className="text-white">FirstName LastName</p>
+        <p className="text-white font-bold">FirstName LastName</p>
         <p
           className="cursor-pointer text-white hover:text-gray-300"
           onClick={onLogout}
