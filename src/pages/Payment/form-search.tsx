@@ -54,7 +54,7 @@ const inputSearchInfo = [
   },
 ];
 
-const FormSearch = ({ returnInputChange, returnSearchData }: any) => {
+const FormSearch = ({ returnInputChange, returnSearchData, returnClearForm }: any) => {
   const [inputSearch, setInputSearch] = useState<any>(inputSearchInfo);
 
   const onClearForm = () => {
@@ -110,8 +110,8 @@ const FormSearch = ({ returnInputChange, returnSearchData }: any) => {
         requied: false,
       },
     ]);
-    console.log("inputSearchInfo--> ", inputSearchInfo);
-    returnInputChange({});
+    return returnClearForm()
+    // returnInputChange({});
   };
 
   const onSearchData = () => {

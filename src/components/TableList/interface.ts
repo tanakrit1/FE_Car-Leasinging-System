@@ -3,7 +3,11 @@ export interface Props {
     rows: any;
     height: string
     editAction?: boolean
-    clickEdit?: (row: any) => void
+    clickEdit?: any
+    printAction?: boolean
+    clickPrint?: any
+    viewAction?: boolean
+    clickView?: any
 }
 
 interface Column {
