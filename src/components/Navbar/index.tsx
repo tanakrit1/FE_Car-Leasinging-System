@@ -6,22 +6,24 @@ interface Props {
   returnLogin: (result: boolean) => void;
 }
 
+
+const navItemBegin = [
+    { label: "หน้าแรก", path: "/" },
+    { label: "บันทึกข้อมูลรถ", path: "/car-information" },
+    { label: "ข้อมูลลูกค้า", path: "/customer-information" },
+    { label: "ชำระค่างวด", path: "/payment" },
+    { label: "ทีมงาน", path: "/employee" },
+  ];
+
 const Navbar = ({ returnLogin }: Props) => {
   const navigate = useNavigate();
-  const [navItem, setNavItem] = useState<any[]>([]);
+  const [navItem, setNavItem] = useState<any[]>(navItemBegin);
   const [menuIndexActive, setMenuIndexActive] = useState<number>(
     sessionStorage.getItem("menuIndex")
       ? parseInt(sessionStorage.getItem("menuIndex")!)
       : 0
   );
 
-  const navItemBegin = [
-    { label: "หน้าแรก", path: "/" },
-    { label: "บันทึกข้อมูลรถ", path: "/car-information" },
-    { label: "ข้อมูลลูกค้า", path: "/customer-information" },
-    { label: "ชำระค่างวด", path: "/payment" },
-    { label: "ทีมงาน", path: "/" },
-  ];
 
   const onLogout = () => {
     sessionStorage.clear();
@@ -35,12 +37,12 @@ const Navbar = ({ returnLogin }: Props) => {
     navigate(path);
   };
 
-  useEffect(() => {
-    const permission = "Admin";
-    if (permission === "Admin") {
-      setNavItem([...navItemBegin, { label: "ผู้ใช้งาน", path: "/" }]);
-    }
-  }, []);
+//   useEffect(() => {
+//     const permission = "Admin";
+//     if (permission === "Admin") {
+//       setNavItem([...navItemBegin, { label: "ผู้ใช้งาน", path: "/" }]);
+//     }
+//   }, []);
   return (
     <div className="h-20 px-6 pr-6 flex items-center justify-between bg-slate-700 ">
       <div className="flex  items-center">

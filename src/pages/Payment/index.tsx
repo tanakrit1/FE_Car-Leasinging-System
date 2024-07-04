@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import FormSearch from "./form-search";
 import FormListData from "./form-list-data";
+import ModalDetail from "./modal-detail";
 
 const Payment = () => {
   const [payloadSearch, setPayloadSearch] = useState<any>({});
   const [rowsData, setRowsData] = useState<any>([]);
+  const [modalData, setModalData] = useState<any>({});
   const [pagination, setPagination] = useState<any>({
     page: 1,
     limit: 10,
@@ -215,6 +217,9 @@ const Payment = () => {
 
   const onViewData = (row: any) => {
     console.log(row);
+    (document.getElementById("modal-payment-detail") as HTMLFormElement).showModal()
+    setModalData(row)
+
   };
 
   useEffect( ()=> {
@@ -225,14 +230,6 @@ const Payment = () => {
     <>
       <div className="flex justify-between">
         <p className="font-bold text-2xl text-white">ชำระค่างวด</p>
-        {/* <div className="flex space-x-2">
-          <span className="text-white font-semibold">รหัส : xxxxxxxxx</span>
-          <span className="text-white font-semibold">|</span>
-          <span className="text-white font-semibold">
-            {" "}
-            วันที่ซื้อ : {dayjs().format("DD/MM/YYYY")}
-          </span>
-        </div> */}
       </div>
 
       <div className="pb-4">
@@ -253,12 +250,12 @@ const Payment = () => {
               pagination={pagination}
                 returnPageNo={(page)=> setPagination({...pagination, page: page})}
                 returnLimit={(page)=> setPagination({...pagination, limit: page})}
-            //   returnPageNo={(page) => console.log("page-->", page)}
-            //   returnLimit={(limit) => console.log("limit-->", limit)}
             />
           </div>
         )}
       </div>
+
+      <ModalDetail dataInfomation={modalData}/>
     </>
   );
 };

@@ -35,7 +35,17 @@ const TableList = ({
             <tr key={"row" + key} className="hover:bg-slate-500">
               {columns.map((column: any, index: number) => (
                 <td key={"columnB" + index} className="text-white text-lg">
-                  {row[column.field]}
+              {
+                    row[column.field] === true 
+                    ? ( <span className="text-green-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m10 17l-5-5l1.41-1.42L10 14.17l7.59-7.59L19 8m-7-6A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2"/></svg>
+                    </span> )
+                    : row[column.field] === false
+                    ?  ( <span className="text-red-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c5.53 0 10 4.47 10 10s-4.47 10-10 10S2 17.53 2 12S6.47 2 12 2m3.59 5L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41z"/></svg>
+                    </span> )
+                    : row[column.field]
+                }
                 </td>
               ))}
               {editAction && (
