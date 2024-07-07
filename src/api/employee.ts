@@ -1,4 +1,4 @@
-import { axiosPost } from "./axios-service"
+import { axiosPatch, axiosPost } from "./axios-service"
 
 const _EmployeeApi = () => {
     return {
@@ -8,6 +8,10 @@ const _EmployeeApi = () => {
 
         create: async(body: any) => {
             return await axiosPost("/user", body)
+        },
+
+        update: async(username:string, body: any) => {
+            return await axiosPatch(`/user/${username}`, body)
         }
     }
 }

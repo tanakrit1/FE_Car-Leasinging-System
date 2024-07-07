@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormList from "./form-list";
 import FormSearch from "./form-search";
 import ModalManage from "./modal-manage";
@@ -7,11 +7,12 @@ import _EmployeeApi from "../../api/employee";
 const Employee = () => {
   const [rows, setRows] = useState<any>([]);
   const [rowActive, setRowActive] = useState<any>({});
+  const [formSearchData, setFormSearchData] = useState<any>({});
   const [pagination, setPagination] = useState<any>({
     page: 1,
-    limit: 10,
+    limit: 5,
     totalPages: 5,
-    rowsPerPage: 10,
+    totalItems: 5,
   });
   const [modalData, setModalData] = useState<any>({
     show: false,
@@ -19,8 +20,22 @@ const Employee = () => {
     data: {},
   });
 
+  useEffect( ()=> {
+    returnSearch(formSearchData)
+  }, [pagination.page] )
+
+  useEffect( ()=> {
+    if( pagination.page === 1 ){
+        returnSearch(formSearchData)
+    }else{
+        setPagination({...pagination, page: 1})
+    }
+  }, [pagination.limit] )
+  
+
   const returnSearch = async(formSearch: any) => {
     console.log("formSearch--> ", formSearch);
+    setFormSearchData(formSearch)
     // const resultData = await _EmployeeApi().search({})
     // console.log("resultData--> ", resultData)
 
@@ -49,6 +64,12 @@ const Employee = () => {
     const resultEmployee = await _EmployeeApi().search(json)
     if( resultEmployee.statusCode === 200 ){
         setRows(resultEmployee.data)
+        setPagination({
+            page: pagination.page > 1 ? pagination.page : 1,
+            limit: pagination.limit,
+            totalPages: resultEmployee.metadata.totalPage,
+            totalItems: pagination.totalItems,
+        })
     }else{
 
     }
@@ -243,30 +264,42 @@ const Employee = () => {
   };
 
   const returnPageNo = (page: number) => {
-    console.log("page--> ", page);
     setPagination({ ...pagination, page: page });
   };
 
   const returnLimit = (limit: number) => {
-    console.log("limit--> ", limit);
     setPagination({ ...pagination, limit: limit });
   };
 
   const returnViewData = (data: any) => {
-    console.log("dat--> ", data);
     setRowActive(data);
-    onOpenModal("edit");
+    onOpenModal("edit", data);
   };
 
-  const onOpenModal = (status: string) => {
-    console.log("status--> ", status);
-    setModalData({ ...modalData, statusForm: status, show: true });
+  const onOpenModal = (status: string, row?: any) => {
+    setModalData({ ...modalData, statusForm: status, show: true, data: row });
   };
+
+  const returnSubmitModal = async( formData: any, statusModal: string ) => {
+    if( statusModal === "add" ){  // เพิ่ม Employee
+        const resultCreate = await _EmployeeApi().create(formData)
+        if( resultCreate.statusCode === 200 ){
+            setModalData({ ...modalData, show: false });
+            returnSearch({})
+        }
+    }else{ // แก้ไข Employee
+        const resultUpdate = await _EmployeeApi().update(rowActive.username, formData)
+        if( resultUpdate.statusCode === 200 ){
+            setModalData({ ...modalData, show: false });
+            returnSearch({})
+        }
+    }
+  }
 
   return (
     <>
       <div className="flex justify-between">
-        <p className="font-bold text-2xl text-white">ทีมงาน {import.meta.env.VITE_APP_URL_API}</p>
+        <p className="font-bold text-2xl text-white">ทีมงาน</p>
         <button
           type="button"
           className="rounded-lg bg-green-600 hover:bg-green-500 px-3 py-1 text-white"
@@ -298,7 +331,7 @@ const Employee = () => {
         </div>
       </div>
 
-      {rows.length > 0 && (
+      {rows?.length > 0 && (
         <div className="flex space-x-2 mt-2" style={{ height: "100vh" }}>
           <FormList
             rows={rows}
@@ -317,6 +350,7 @@ const Employee = () => {
         returnShowModal={(result: boolean) =>
           setModalData({ ...modalData, show: result })
         }
+        returnSubmitModal={returnSubmitModal}
       />
     </>
   );

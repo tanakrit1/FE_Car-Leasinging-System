@@ -26,7 +26,7 @@ const inputList = [
     {
       name: "c",
       label: "สี",
-      type: "number",
+      type: "text",
       placeholder: "b",
       width: "4/12",
       value: "",
@@ -42,7 +42,7 @@ const inputList = [
       disabled: false,
     },
     {
-        name: "d",
+        name: "e",
         label: "ทะเบียนรถ",
         type: "text",
         placeholder: "b",
@@ -51,7 +51,7 @@ const inputList = [
         disabled: false,
       },
       {
-        name: "d",
+        name: "f",
         label: "ชื่อผู้ขาย",
         type: "text",
         placeholder: "b",
@@ -60,7 +60,7 @@ const inputList = [
         disabled: false,
       },
       {
-        name: "d",
+        name: "g",
         label: "เลขตัวถัง",
         type: "text",
         placeholder: "b",
@@ -69,7 +69,7 @@ const inputList = [
         disabled: false,
       },
       {
-        name: "d",
+        name: "h",
         label: "เลขเครื่องยนต์",
         type: "text",
         placeholder: "b",
@@ -78,7 +78,7 @@ const inputList = [
         disabled: false,
       },
       {
-        name: "d",
+        name: "i",
         label: "ราคารับซื้อ",
         type: "text",
         placeholder: "b",
@@ -87,7 +87,7 @@ const inputList = [
         disabled: false,
       },
       {
-        name: "d",
+        name: "j",
         label: "ค่าซ่อมบำรุง",
         type: "text",
         placeholder: "b",
@@ -96,7 +96,7 @@ const inputList = [
         disabled: false,
       },
       {
-        name: "d",
+        name: "k",
         label: "ต้นทุน",
         type: "text",
         placeholder: "b",
@@ -105,7 +105,7 @@ const inputList = [
         disabled: false,
       },
       {
-        name: "d",
+        name: "l",
         label: "กำไรที่ต้องการ",
         type: "text",
         placeholder: "b",
@@ -114,7 +114,7 @@ const inputList = [
         disabled: false,
       },
       {
-        name: "d",
+        name: "m",
         label: "ราคาขาย",
         type: "text",
         placeholder: "b",
@@ -123,7 +123,7 @@ const inputList = [
         disabled: false,
       },
       {
-        name: "d",
+        name: "n",
         label: "นายหน้า",
         type: "text",
         placeholder: "b",

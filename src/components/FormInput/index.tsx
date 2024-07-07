@@ -10,7 +10,9 @@ const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
     cloneStateInputList[index].value = event.target.value;
     setStateInputList(cloneStateInputList);
 
+
     setValueInput({ ...valueInput, [event.target.name]: event.target.value });
+
     returnInputChange({
       ...valueInput,
       [event.target.name]: event.target.value,
@@ -19,6 +21,12 @@ const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
 
   useEffect( ()=> {
     setStateInputList(inputList)
+    let objPayload: any = {};
+    for (let i = 0; i < inputList.length; i++) {
+      objPayload = { ...objPayload, [inputList[i].name]: inputList[i].value };
+    }
+    setValueInput(objPayload)
+    returnInputChange(objPayload)
   }, [inputList] )
 
   return (
