@@ -20,7 +20,10 @@ const axiosPost = async (path: string, body: any) => {
             if (error.response.status === 401) {
                 window.location.href = "/login"
             }
-            alert(error?.response?.data.message)
+            const mapValidation = error?.response?.data.message.map((item: any) => {
+                return `<li>${item}</li>`;
+            });
+            alert(mapValidation)
             return error?.response
         });
 }

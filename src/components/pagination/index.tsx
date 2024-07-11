@@ -5,6 +5,7 @@ interface PaginationProps {
   totalPages: number;
   limit: number;
   totalItems: number;
+  customRows?: boolean;
   returnPageNo: (page: number) => void;
   returnLimit: (limit: number) => void;
 }
@@ -16,6 +17,7 @@ const Pagination: React.FC<PaginationProps> = ({
   totalItems,
   returnPageNo,
   returnLimit,
+  customRows,
 }) => {
   const [localCurrentPage, setLocalCurrentPage] = useState<number>(currentPage);
   const [localLimit, setLocalLimit] = useState<number>(limit);
@@ -86,19 +88,23 @@ const Pagination: React.FC<PaginationProps> = ({
     <>
       <div className="flex items-center justify-between w-full">
         <div className="flex space-x-3 items-center">
-            <span>ข้อมูลทั้งหมด {totalItems} แถว ที่แสดง</span>
-          <select
-            className="rounded-lg w-24 py-3 px-2 bg-white text-black"
-            value={localLimit}
-            onChange={onChangeLimit}
-          >
-            <option>5</option>
-            <option>10</option>
-            <option>25</option>
-            <option>50</option>
-            <option>100</option>
-          </select>
-          <span>แถว</span>
+          {customRows && (
+            <>
+              <span>ข้อมูลทั้งหมด {totalItems} แถว ที่แสดง</span>
+              <select
+                className="rounded-lg w-24 py-3 px-2 bg-white text-black"
+                value={localLimit}
+                onChange={onChangeLimit}
+              >
+                <option>5</option>
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>100</option>
+              </select>
+              <span>แถว</span>
+            </>
+          )}
         </div>
         <div aria-label="" className="flex items-center">
           <a

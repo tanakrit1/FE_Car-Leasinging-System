@@ -11,7 +11,7 @@ const columns = [
   { label: "ชื่อผู้ขาย", width: "20%", field: "sellerName" },
 ];
 
-const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
+const ModalExport = ({ showModal, returnShowModal }: any) => {
   const [rows, setRows] = useState<any>([]);
   const [formSearch, setFormSearch] = useState<any>({
     licensePlate: "",
@@ -46,13 +46,11 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
     console.log("json--> ", json)
     const resultRows = await _CarInformationApi().search(json);
     if (resultRows.statusCode === 200) {
-        if( resultRows.data.length === 0 ){
-            alert("ไม่พบข้อมูล")
-        }
-        setRows(resultRows.data);
         setPagination({...pagination, page: resultRows.metadata.page, totalPages: resultRows.metadata.totalPage})
-        
+      setRows(resultRows.data);
     }
+
+    console.log("resultRows--> ", resultRows);
     // console.log("json--> ", json)
   };
 
@@ -64,15 +62,15 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
     setRows([]);
     setPagination({
       page: 1,
-      limit: 10,
+      limit: 2,
       totalItems: 0,
       totalPages: 1,
     });
   };
 
-//   const returnViewData = (row: any) => {
-//     console.log("row--> ", row);
-//   };
+  const returnViewData = (row: any) => {
+    console.log("row--> ", row);
+  };
 
   useEffect( ()=> {
     onSubmitSearch(pagination.page)
@@ -220,4 +218,4 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
   );
 };
 
-export default ModalSearch;
+export default ModalExport;

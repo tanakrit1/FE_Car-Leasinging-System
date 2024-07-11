@@ -2,13 +2,21 @@ import FormInput from "../../components/FormInput";
 import inputListFile from "./input-form";
 import { useEffect, useState } from "react";
 import ModalSearch from "./modal-search";
+import {
+  base64toBlob,
+  getBase64,
+  isBase64,
+  validateInputRequired,
+} from "../../helpers/function-service";
+import _CarInformationApi from "../../api/car-information";
 
 const CarInformation = () => {
-  
   const [inputList, setInputList] = useState<any>(inputListFile);
   const [payload, setPayload] = useState<any>({});
   const [statusForm, setStatusForm] = useState<string>("add");
   const [showModalSearch, setShowModalSearch] = useState<boolean>(false);
+  const [imageData, setImageData] = useState<any>(null);
+  const [rowActive, setRowActive] = useState<any>(null);
 
   const onChangeInputForm = (result: any) => {
     console.log("result--> ", result);
@@ -16,19 +24,57 @@ const CarInformation = () => {
   };
 
   const onClearForm = () => {
-    setStatusForm("add")
-    const mapTest = inputList.map((item: any) => {
-        return { ...item, value: "" };
-      });
-      setInputList(mapTest);
+    setStatusForm("add");
+    const inputListClear = inputList.map((item: any) => {
+      return { ...item, value: "" };
+    });
+    setInputList(inputListClear);
+
+    let objPayload: any = {};
+    for (let i = 0; i < inputListClear.length; i++) {
+      objPayload = {
+        ...objPayload,
+        [inputListClear[i].name]: inputListClear[i].value,
+      };
+    }
+    objPayload = { ...objPayload, carImage: "" };
+    setPayload({ ...objPayload, carImage: "" });
+    setImageData(null);
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     console.log("payload--> ", payload);
+    if (validateInputRequired(payload)) {
+      const json = {
+        ...payload,
+        sellingPrice: Number(payload.sellingPrice),
+        buyingPrice: Number(payload.buyingPrice),
+        maintenanceCost: Number(payload.maintenanceCost),
+        cost: Number(payload.cost),
+        desiredProfit: Number(payload.desiredProfit),
+      };
+      if (statusForm === "add") {
+        // เพิ่มข้อมูลใหม่
+        const result = await _CarInformationApi().create(json);
+        if (result.statusCode === 200) {
+          alert("บันทึกข้อมูลสำเร็จ");
+          onClearForm();
+        }
+      } else {
+        // แก้ไขข้อมูล
+        const result = await _CarInformationApi().update(rowActive.id, json);
+        if (result.statusCode === 200) {
+            alert("แก้ไขข้อมูลสำเร็จ");
+            onClearForm();
+          }
+      }
+    } else {
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+    }
   };
 
   const onOpenModalSearch = () => {
-    setShowModalSearch(true)
+    setShowModalSearch(true);
     // setStatusForm('edit')
     // const mapTest = inputList.map((item: any) => {
     //   return { ...item, value: "test" };
@@ -36,23 +82,105 @@ const CarInformation = () => {
     // setInputList(mapTest);
   };
 
+  const onclickUploadImage = () => {
+    (document.getElementById("carImage") as HTMLFormElement).click();
+  };
+
+  const onChangeFile = async (event: any) => {
+    if (event.target.files[0]) {
+      setImageData(event.target.files[0]);
+      const imageBase64 = await getBase64(event.target.files[0]);
+      setPayload({ ...payload, carImage: imageBase64 });
+    } else {
+      onClearImage();
+    }
+  };
+
+  const onClearImage = () => {
+    setImageData(null);
+    (document.getElementById("carImage") as HTMLFormElement).value = null;
+    setPayload({ ...payload, carImage: "" });
+  };
+
+  const onViewData = (row: any) => {
+    console.log("row--> ", row);
+    setStatusForm("edit");
+    setRowActive(row);
+    let newPayload: any = {};
+    let cloneInputList = [...inputList];
+    for (let field in row) {
+      const index = cloneInputList.findIndex(
+        (item: any) => item.name === field
+      );
+      if (index !== -1) {
+        cloneInputList[index].value = row[field];
+        newPayload = { ...newPayload, [field]: row[field] };
+      }
+    }
+    console.log("newPayload--> ", newPayload);
+    setInputList(cloneInputList);
+    setPayload(newPayload);
+    setShowModalSearch(false);
+    setImageData(row?.carImage);
+  };
+
+  const onDownloadFile = () => {
+    if (typeof imageData === "string") {
+      // base64 => ข้อมูลที่เปิดเพื่อแก้ไข
+      // base64toBlob(imageData)
+      const base64String = imageData.split(",")[1]; // ตัด 'data:image/png;base64,' ออก
+      if (isBase64(base64String)) {
+        const blob = base64toBlob(base64String);
+        const blobUrl = URL.createObjectURL(blob);
+        let downloadLink = document.createElement("a");
+        downloadLink.href = blobUrl;
+        downloadLink.download = "รูปภาพ.png";
+        downloadLink.click();
+      }
+    } else {
+      // ข้อมูลที่เพิ่มใหม่
+      const blobUrl = URL.createObjectURL(imageData);
+      let downloadLink = document.createElement("a");
+      downloadLink.href = blobUrl;
+      downloadLink.download = imageData.name;
+      downloadLink.click();
+    }
+  };
+
+  const onRemoveData = async() => {
+    if (window.confirm("คุณต้องการลบข้อมูลใช่หรือไม่") === true) {
+      const result = await _CarInformationApi().remove(rowActive.id);
+      if (result.statusCode === 200) {
+        alert("บันทึกข้อมูลสำเร็จ");
+        onClearForm();
+      }
+    }
+  };
+
   useEffect(() => {
     let objPayload: any = {};
     for (let i = 0; i < inputList.length; i++) {
       objPayload = { ...objPayload, [inputList[i].name]: inputList[i].value };
     }
+    objPayload = { ...objPayload, carImage: "" };
     setPayload(objPayload);
   }, []);
 
   return (
     <>
-        <ModalSearch showModal={showModalSearch} returnShowModal={(result: boolean)=> setShowModalSearch(result)}/>
+      <ModalSearch
+        showModal={showModalSearch}
+        returnShowModal={(result: boolean) => setShowModalSearch(result)}
+        returnViewData={onViewData}
+      />
       <p className="font-bold text-2xl text-white">บันทึกข้อมูลรถ</p>
       <div className="flex space-x-2 mt-5">
         <div className="w-full">
           <div className="w-full rounded-lg bg-slate-700 ">
             <div className="flex justify-between items-center bg-slate-600 px-3 h-16 rounded-t-lg">
-              <p className="text-white text-xl font-bold">{ statusForm==="add" ? 'บันทึกข้อมูล' : 'แก้ไขข้อมูลรถ'}</p>
+              <p className="text-white text-xl font-bold">
+                {statusForm === "add" ? "บันทึกข้อมูล" : "แก้ไขข้อมูลรถ"}
+              </p>
               <div className="flex space-x-3 items-center">
                 <button
                   onClick={() => onClearForm()}
@@ -125,7 +253,7 @@ const CarInformation = () => {
               <div className="mt-6 px-3 h-96 flex justify-between space-x-6">
                 <div
                   className="border-2 border-dashed w-1/2 rounded-lg flex items-center justify-center cursor-pointer hover:bg-slate-600"
-                  onClick={() => {}}
+                  onClick={onclickUploadImage}
                 >
                   <div>
                     <div className="flex items-center space-x-3 text-white">
@@ -144,82 +272,124 @@ const CarInformation = () => {
                           d="M12.71 11.29a1 1 0 0 0-1.4 0l-3 2.9a1 1 0 1 0 1.38 1.44L11 14.36V20a1 1 0 0 0 2 0v-5.59l1.29 1.3a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.42Z"
                         />
                       </svg>
-                      <span>อัพโหลดไฟล์รูปภาพ</span>
+                      <span>คลิกเพื่ออัพโหลดไฟล์รูปภาพ</span>
                     </div>
                   </div>
+                  <input
+                    type="file"
+                    onChange={onChangeFile}
+                    id="carImage"
+                    name="carImage"
+                    style={{ display: "none" }}
+                    accept="image/*"
+                  ></input>
                 </div>
+
                 <div className="w-1/2">
-                  <div className="w-2/3 h-24 border-2 border-white rounded-lg flex justify-between items-center px-3 text-white">
-                    <div>
-                      <p className="font-bold">รูปรถ0001.png</p>
-                      <p>51212 Mb</p>
-                    </div>
-                    <div className="flex space-x-3 items-center">
-                      <button className="px-2 py-2 bg-slate-500 hover:bg-slate-400 rounded-full">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="32"
-                          height="32"
-                          viewBox="0 0 24 24"
+                  {imageData && (
+                    <div className="w-2/3 h-24 border-2 border-white rounded-lg flex justify-between items-center px-3 text-white">
+                      <div>
+                        <p className="font-bold">
+                          {imageData?.name ? imageData?.name : "ไฟล์ภาพ"}
+                        </p>
+                        <p>{imageData?.size ? `${imageData?.size} MB` : ""} </p>
+                      </div>
+                      <div className="flex space-x-3 items-center">
+                        <button
+                          className="px-2 py-2 bg-slate-500 hover:bg-slate-400 rounded-full"
+                          onClick={onDownloadFile}
                         >
-                          <rect
-                            width="16"
-                            height="2"
-                            x="4"
-                            y="18"
-                            fill="currentColor"
-                            rx="1"
-                            ry="1"
-                          />
-                          <rect
-                            width="4"
-                            height="2"
-                            x="3"
-                            y="17"
-                            fill="currentColor"
-                            rx="1"
-                            ry="1"
-                            transform="rotate(-90 5 18)"
-                          />
-                          <rect
-                            width="4"
-                            height="2"
-                            x="17"
-                            y="17"
-                            fill="currentColor"
-                            rx="1"
-                            ry="1"
-                            transform="rotate(-90 19 18)"
-                          />
-                          <path
-                            fill="currentColor"
-                            d="M12 15a1 1 0 0 1-.58-.18l-4-2.82a1 1 0 0 1-.24-1.39a1 1 0 0 1 1.4-.24L12 12.76l3.4-2.56a1 1 0 0 1 1.2 1.6l-4 3a1 1 0 0 1-.6.2"
-                          />
-                          <path
-                            fill="currentColor"
-                            d="M12 13a1 1 0 0 1-1-1V4a1 1 0 0 1 2 0v8a1 1 0 0 1-1 1"
-                          />
-                        </svg>
-                      </button>
-                      <button className="px-2 py-2 bg-slate-500 hover:bg-slate-400 rounded-full">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="32"
-                          height="32"
-                          viewBox="0 0 24 24"
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="32"
+                            height="32"
+                            viewBox="0 0 24 24"
+                          >
+                            <rect
+                              width="16"
+                              height="2"
+                              x="4"
+                              y="18"
+                              fill="currentColor"
+                              rx="1"
+                              ry="1"
+                            />
+                            <rect
+                              width="4"
+                              height="2"
+                              x="3"
+                              y="17"
+                              fill="currentColor"
+                              rx="1"
+                              ry="1"
+                              transform="rotate(-90 5 18)"
+                            />
+                            <rect
+                              width="4"
+                              height="2"
+                              x="17"
+                              y="17"
+                              fill="currentColor"
+                              rx="1"
+                              ry="1"
+                              transform="rotate(-90 19 18)"
+                            />
+                            <path
+                              fill="currentColor"
+                              d="M12 15a1 1 0 0 1-.58-.18l-4-2.82a1 1 0 0 1-.24-1.39a1 1 0 0 1 1.4-.24L12 12.76l3.4-2.56a1 1 0 0 1 1.2 1.6l-4 3a1 1 0 0 1-.6.2"
+                            />
+                            <path
+                              fill="currentColor"
+                              d="M12 13a1 1 0 0 1-1-1V4a1 1 0 0 1 2 0v8a1 1 0 0 1-1 1"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          className="px-2 py-2 bg-slate-500 hover:bg-slate-400 rounded-full"
+                          onClick={onClearImage}
                         >
-                          <path
-                            fill="currentColor"
-                            d="m13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29l-4.3 4.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l4.29-4.3l4.29 4.3a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.42Z"
-                          />
-                        </svg>
-                      </button>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="32"
+                            height="32"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              fill="currentColor"
+                              d="m13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29l-4.3 4.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l4.29-4.3l4.29 4.3a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.42Z"
+                            />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
-              <div className="flex justify-end px-3 mt-6">
+              <div className="flex justify-end px-3 mt-6 space-x-4">
+                {statusForm === "edit" && (
+                  <button
+                    onClick={onRemoveData}
+                    type="button"
+                    className="rounded-lg bg-gray-500 hover:bg-gray-400 px-3 py-1 text-white"
+                  >
+                    <div className="flex space-x-3 items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="m8.4 17l3.6-3.6l3.6 3.6l1.4-1.4l-3.6-3.6L17 8.4L15.6 7L12 10.6L8.4 7L7 8.4l3.6 3.6L7 15.6zm3.6 5q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22"
+                        />
+                      </svg>
+                      <span>ลบข้อมูล</span>
+                    </div>
+                  </button>
+                )}
+
                 <button
                   onClick={onSubmit}
                   type="button"
