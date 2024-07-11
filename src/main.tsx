@@ -4,14 +4,16 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 
 import App from "./app.tsx";
+import { LoadingProvider } from "./context/loading-context.tsx";
 // import Loading from "./components/Loading/index.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-//   <React.StrictMode>
+  //   <React.StrictMode>
+  <LoadingProvider>
     <BrowserRouter>
-    {/* <Loading/> */}
+      {/* <Loading/> */}
       <App />
-      
     </BrowserRouter>
-//   </React.StrictMode>
+  </LoadingProvider>
+  //   </React.StrictMode>
 );

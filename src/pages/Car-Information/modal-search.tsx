@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import TableList from "../../components/TableList";
 import Pagination from "../../components/pagination";
 import _CarInformationApi from "../../api/car-information";
+import { LoadContext } from "../../context/loading-context";
 
 const columns = [
   { label: "ทะเบียนรถ", width: "20%", field: "licensePlate" },
@@ -12,6 +13,7 @@ const columns = [
 ];
 
 const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
+  const context = useContext(LoadContext);
   const [rows, setRows] = useState<any>([]);
   const [formSearch, setFormSearch] = useState<any>({
     licensePlate: "",
@@ -25,6 +27,7 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
   });
 
   const onSubmitSearch = async (page?: number) => {
+    context?.setLoadingContext(true);
     let mapJson: any = [];
     for (let field in formSearch) {
       if (formSearch[field] !== "") {
@@ -43,17 +46,19 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
         items: mapJson,
       },
     };
-    console.log("json--> ", json)
     const resultRows = await _CarInformationApi().search(json);
     if (resultRows.statusCode === 200) {
-        if( resultRows.data.length === 0 ){
-            alert("ไม่พบข้อมูล")
-        }
-        setRows(resultRows.data);
-        setPagination({...pagination, page: resultRows.metadata.page, totalPages: resultRows.metadata.totalPage})
-        
+      if (resultRows.data.length === 0) {
+        alert("ไม่พบข้อมูล");
+      }
+      setRows(resultRows.data);
+      setPagination({
+        ...pagination,
+        page: resultRows.metadata.page,
+        totalPages: resultRows.metadata.totalPage,
+      });
     }
-    // console.log("json--> ", json)
+    context?.setLoadingContext(false);
   };
 
   const onClearData = () => {
@@ -70,13 +75,9 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
     });
   };
 
-//   const returnViewData = (row: any) => {
-//     console.log("row--> ", row);
-//   };
-
-  useEffect( ()=> {
-    onSubmitSearch(pagination.page)
-  }, [pagination.page] )
+  useEffect(() => {
+    onSubmitSearch(pagination.page);
+  }, [pagination.page]);
 
   useEffect(() => {
     if (showModal === true) {

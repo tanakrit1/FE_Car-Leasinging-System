@@ -1,6 +1,6 @@
 import FormInput from "../../components/FormInput";
 import inputListFile from "./input-form";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ModalSearch from "./modal-search";
 import {
   base64toBlob,
@@ -9,8 +9,10 @@ import {
   validateInputRequired,
 } from "../../helpers/function-service";
 import _CarInformationApi from "../../api/car-information";
+import { LoadContext } from "../../context/loading-context";
 
 const CarInformation = () => {
+  const context = useContext(LoadContext);
   const [inputList, setInputList] = useState<any>(inputListFile);
   const [payload, setPayload] = useState<any>({});
   const [statusForm, setStatusForm] = useState<string>("add");
@@ -19,7 +21,6 @@ const CarInformation = () => {
   const [rowActive, setRowActive] = useState<any>(null);
 
   const onChangeInputForm = (result: any) => {
-    console.log("result--> ", result);
     setPayload(result);
   };
 
@@ -43,7 +44,7 @@ const CarInformation = () => {
   };
 
   const onSubmit = async () => {
-    console.log("payload--> ", payload);
+    context?.setLoadingContext(true);
     if (validateInputRequired(payload)) {
       const json = {
         ...payload,
@@ -60,13 +61,15 @@ const CarInformation = () => {
           alert("บันทึกข้อมูลสำเร็จ");
           onClearForm();
         }
+        context?.setLoadingContext(false);
       } else {
         // แก้ไขข้อมูล
         const result = await _CarInformationApi().update(rowActive.id, json);
         if (result.statusCode === 200) {
-            alert("แก้ไขข้อมูลสำเร็จ");
-            onClearForm();
-          }
+          alert("แก้ไขข้อมูลสำเร็จ");
+          onClearForm();
+        }
+        context?.setLoadingContext(false);
       }
     } else {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน");
@@ -103,7 +106,6 @@ const CarInformation = () => {
   };
 
   const onViewData = (row: any) => {
-    console.log("row--> ", row);
     setStatusForm("edit");
     setRowActive(row);
     let newPayload: any = {};
@@ -117,7 +119,6 @@ const CarInformation = () => {
         newPayload = { ...newPayload, [field]: row[field] };
       }
     }
-    console.log("newPayload--> ", newPayload);
     setInputList(cloneInputList);
     setPayload(newPayload);
     setShowModalSearch(false);
@@ -125,11 +126,14 @@ const CarInformation = () => {
   };
 
   const onDownloadFile = () => {
+    console.log("**")
     if (typeof imageData === "string") {
+        console.log("1")
       // base64 => ข้อมูลที่เปิดเพื่อแก้ไข
       // base64toBlob(imageData)
       const base64String = imageData.split(",")[1]; // ตัด 'data:image/png;base64,' ออก
       if (isBase64(base64String)) {
+        console.log("2")
         const blob = base64toBlob(base64String);
         const blobUrl = URL.createObjectURL(blob);
         let downloadLink = document.createElement("a");
@@ -138,6 +142,7 @@ const CarInformation = () => {
         downloadLink.click();
       }
     } else {
+        console.log("3")
       // ข้อมูลที่เพิ่มใหม่
       const blobUrl = URL.createObjectURL(imageData);
       let downloadLink = document.createElement("a");
@@ -147,13 +152,15 @@ const CarInformation = () => {
     }
   };
 
-  const onRemoveData = async() => {
+  const onRemoveData = async () => {
+    context?.setLoadingContext(true);
     if (window.confirm("คุณต้องการลบข้อมูลใช่หรือไม่") === true) {
       const result = await _CarInformationApi().remove(rowActive.id);
       if (result.statusCode === 200) {
         alert("บันทึกข้อมูลสำเร็จ");
         onClearForm();
       }
+      context?.setLoadingContext(false);
     }
   };
 
@@ -164,6 +171,7 @@ const CarInformation = () => {
     }
     objPayload = { ...objPayload, carImage: "" };
     setPayload(objPayload);
+    onClearForm();
   }, []);
 
   return (
