@@ -6,6 +6,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "b",
@@ -14,6 +15,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "6/12",
         value: "",
+        requied: true,
     },
     {
         name: "c",
@@ -22,6 +24,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "d",
@@ -30,6 +33,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "e",
@@ -38,6 +42,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "f",
@@ -46,6 +51,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "g",
@@ -54,6 +60,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "g",
@@ -62,6 +69,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "i",
@@ -70,6 +78,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "j",
@@ -78,6 +87,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "k",
@@ -86,6 +96,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "l",
@@ -94,6 +105,7 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     {
         name: "j",
@@ -102,11 +114,12 @@ export const inputCustomer = [
         placeholder: "a",
         width: "3/12",
         value: "",
+        requied: true,
     },
     
 ]
 
-export const inputGuarantee = [
+export const inputCar = [
     {
         name: "a",
         label: "ยี่ห้อ",

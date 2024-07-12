@@ -21,7 +21,6 @@ const routesData = [
 
 const App = () => {
   const context = useContext(LoadContext);
-  console.log("context--> ", context);
   const navigate = useNavigate();
   const [loginMode, setLoginMode] = useState<boolean>(
     sessionStorage.getItem("loginMode") === "true" ? true : false
