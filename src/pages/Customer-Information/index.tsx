@@ -7,8 +7,19 @@ import { validateInputRequired } from "../../helpers/function-service";
 
 const CustomerInformation = () => {
   const [payloadCustomer, setPayloadCustomer] = useState<any>();
-  const [payloadGuarantor, setPayloadGuarantor] = useState<any>([]);
-  const [payloadCar, setPayloadCar] = useState<any>();
+  const [payloadGuarantor, setPayloadGuarantor] = useState<any>([{guarantorName: "", guarantorAddress: "", guarantorIdCard: "", guarantorPhone: ""}]);
+  const [payloadCar, setPayloadCar] = useState<any>({
+    carBrand: "",
+    model: "",
+    carColor: "",
+    carDate: "",
+    licensePlate: "",
+    engineNumber: "",
+    vin: "",
+    sellingPrice: "",
+    id: "",
+    carType: "",
+  });
   const [validationForm, setValidationForm] = useState<any>({
     customer: false,
     guarantor: false,
@@ -17,29 +28,24 @@ const CustomerInformation = () => {
   const [tabActive, setTabActive] = useState<number>(1);
 
   const returnInputCustomerChange = (result: any) => {
-    console.log("inputCustomer---> ", result);
+    console.log("result--> ", result)
     setPayloadCustomer(result);
+
+    const validateCustomer = payloadCustomer
+      ? validateInputRequired(result)
+      : false;
+    setValidationForm({
+      ...validationForm,
+      customer: validateCustomer ? true : false,
+    });
   };
 
   const returnInputGuarantorChange = (result: any) => {
-    console.log("inputGuarantor---> ", result);
     setPayloadGuarantor(result);
-  };
 
-  const returnInputCarChange = (result: any) => {
-    console.log("inputGuarantee---> ", result);
-    setPayloadCar(result);
-  };
-
-  const onChangeTab = (newTab: number) => {
-    setTabActive(newTab);
-    const validateCustomer = payloadCustomer
-      ? validateInputRequired(payloadCustomer)
-      : false;
-    const validateCar = payloadCar ? validateInputRequired(payloadCar) : false;
     let validateGuarantor = false;
-    for (let i = 0; i < payloadGuarantor?.length; i++) {
-      const valid = validateInputRequired(payloadGuarantor[i]);
+    for (let i = 0; i < result?.length; i++) {
+      const valid = validateInputRequired(result[i]);
       if (valid === false) {
         validateGuarantor = false;
         break;
@@ -49,10 +55,38 @@ const CustomerInformation = () => {
 
     setValidationForm({
       ...validationForm,
-      customer: validateCustomer ? true : false,
       guarantor: validateGuarantor ? true : false,
-      car: validateCar ? true : false,
     });
+  };
+
+  const returnInputCarChange = (result: any) => {
+    setPayloadCar(result);
+
+    let newPayloadCar = {};
+    for (let field in result) {
+      if (field !== "id") {
+        newPayloadCar = { ...newPayloadCar, [field]: result[field] };
+      }
+    }
+    const validateCar = payloadCar
+      ? validateInputRequired(newPayloadCar)
+      : false;
+    setValidationForm({ ...validationForm, car: validateCar ? true : false });
+  };
+
+  const onChangeTab = (newTab: number) => {
+    setTabActive(newTab);
+  };
+
+  const fnCheckValidation = () => {
+    if (
+      validationForm.customer &&
+      validationForm.guarantor &&
+      validationForm.car
+    ) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -155,7 +189,7 @@ const CustomerInformation = () => {
               </div>
             </button>
             <button
-              onClick={() => {}}
+              //   onClick={onShowModalSearch}
               type="button"
               className="bg-orange-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-orange-400"
             >
@@ -184,31 +218,36 @@ const CustomerInformation = () => {
             </div>
           ) : tabActive === 2 ? (
             <div>
-              <FormGuarantor returnInputChange={returnInputGuarantorChange} />
+              <FormGuarantor payloadGuarantor={payloadGuarantor} returnInputChange={returnInputGuarantorChange} />
             </div>
           ) : (
-            <FormCar returnInputChange={returnInputCarChange} />
+            <FormCar
+              returnPayload={returnInputCarChange}
+              payloadData={payloadCar}
+            />
           )}
         </div>
 
-        <div className="mt-8 flex justify-end">
-          <button className="bg-orange-600 hover:bg-orange-500 rounded-lg text-white px-16 py-3 font-bold">
-            <div className="flex items-center space-x-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 512 512"
-              >
-                <path
-                  d="M362.7 64h-256C83 64 64 83.2 64 106.7v298.7c0 23.5 19 42.7 42.7 42.7h298.7c23.5 0 42.7-19.2 42.7-42.7v-256L362.7 64zM256 405.3c-35.4 0-64-28.6-64-64s28.6-64 64-64 64 28.6 64 64-28.6 64-64 64zM320 192H106.7v-85.3H320V192z"
-                  fill="currentColor"
-                />
-              </svg>
-              <span>บันทึก</span>
-            </div>
-          </button>
-        </div>
+        {fnCheckValidation() && (
+          <div className="mt-8 flex justify-end">
+            <button className="bg-orange-600 hover:bg-orange-500 rounded-lg text-white px-16 py-3 font-bold">
+              <div className="flex items-center space-x-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 512 512"
+                >
+                  <path
+                    d="M362.7 64h-256C83 64 64 83.2 64 106.7v298.7c0 23.5 19 42.7 42.7 42.7h298.7c23.5 0 42.7-19.2 42.7-42.7v-256L362.7 64zM256 405.3c-35.4 0-64-28.6-64-64s28.6-64 64-64 64 28.6 64 64-28.6 64-64 64zM320 192H106.7v-85.3H320V192z"
+                    fill="currentColor"
+                  />
+                </svg>
+                <span>บันทึก</span>
+              </div>
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

@@ -1,6 +1,6 @@
 export const inputCustomer = [
     {
-        name: "a",
+        name: "customerName",
         label: "ชื่อ",
         type: "text",
         placeholder: "a",
@@ -9,7 +9,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "b",
+        name: "address",
         label: "ที่อยู่",
         type: "text",
         placeholder: "a",
@@ -18,7 +18,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "c",
+        name: "idCardNumber",
         label: "เลขประจำตัวประชาชน",
         type: "text",
         placeholder: "a",
@@ -27,7 +27,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "d",
+        name: "phoneNumber",
         label: "เบอร์ติดต่อ",
         type: "text",
         placeholder: "a",
@@ -36,7 +36,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "e",
+        name: "downPayment",
         label: "เงินดาวน์",
         type: "text",
         placeholder: "a",
@@ -45,7 +45,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "f",
+        name: "totalOrder",
         label: "ยอดจัด",
         type: "text",
         placeholder: "a",
@@ -54,7 +54,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "g",
+        name: "saleType",
         label: "การซื้อ",
         type: "text",
         placeholder: "a",
@@ -63,7 +63,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "g",
+        name: "numInstallments",
         label: "จำนวนงวด",
         type: "text",
         placeholder: "a",
@@ -72,7 +72,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "i",
+        name: "interestRate",
         label: "อัตราดอกเบี้ย",
         type: "text",
         placeholder: "a",
@@ -80,8 +80,19 @@ export const inputCustomer = [
         value: "",
         requied: true,
     },
+    // ------------------------------------------------------- //
+    // {
+    //     name: "f",
+    //     label: "ราคาที่ต้องการ",
+    //     type: "text",
+    //     placeholder: "a",
+    //     width: "3/12",
+    //     value: "",
+    //     requied: true,
+    // },
+    // ------------------------------------------------------- //
     {
-        name: "j",
+        name: "interestType",
         label: "การชำระดอกเบี้ย",
         type: "text",
         placeholder: "a",
@@ -90,7 +101,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "k",
+        name: "interestMonth",
         label: "ดอกเบี้ย/เดือน",
         type: "text",
         placeholder: "a",
@@ -99,7 +110,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "l",
+        name: "discount",
         label: "ส่วนลด",
         type: "text",
         placeholder: "a",
@@ -108,7 +119,7 @@ export const inputCustomer = [
         requied: true,
     },
     {
-        name: "j",
+        name: "gps",
         label: "GPS",
         type: "text",
         placeholder: "a",
@@ -116,80 +127,5 @@ export const inputCustomer = [
         value: "",
         requied: true,
     },
-    
-]
 
-export const inputCar = [
-    {
-        name: "a",
-        label: "ยี่ห้อ",
-        type: "text",
-        placeholder: "a",
-        width: "6/12",
-        value: "",
-    },
-    {
-        name: "a",
-        label: "รุ่น",
-        type: "text",
-        placeholder: "a",
-        width: "6/12",
-        value: "",
-    },
-    {
-        name: "a",
-        label: "สี",
-        type: "text",
-        placeholder: "a",
-        width: "6/12",
-        value: "",
-    },
-    {
-        name: "a",
-        label: "ปี คศ.",
-        type: "text",
-        placeholder: "a",
-        width: "6/12",
-        value: "",
-    },
-    {
-        name: "a",
-        label: "ทะเบียนรถ",
-        type: "text",
-        placeholder: "a",
-        width: "6/12",
-        value: "",
-    },
-    {
-        name: "a",
-        label: "เลขเครื่องยนต์",
-        type: "text",
-        placeholder: "a",
-        width: "6/12",
-        value: "",
-    },
-    {
-        name: "a",
-        label: "เลขตัวถัง",
-        type: "text",
-        placeholder: "a",
-        width: "6/12",
-        value: "",
-    },
-    {
-        name: "a",
-        label: "ราคาขาย",
-        type: "text",
-        placeholder: "a",
-        width: "6/12",
-        value: "",
-    },
-    {
-        name: "z",
-        label: "เพิ่มเติม",
-        type: "text",
-        placeholder: "a",
-        width: "full",
-        value: "",
-    },
 ]

@@ -7,6 +7,7 @@ interface propsFormCustomer {
 }
 
 const FormCustomer = ({ returnInputChange }: propsFormCustomer) => {
+    const [inputList, setInputList] = useState<any>(inputCustomer)
   return (
     <>
       <div className="w-full rounded-lg bg-slate-700 ">
@@ -16,7 +17,7 @@ const FormCustomer = ({ returnInputChange }: propsFormCustomer) => {
 
         <div className="mt-5 px-3 pb-6">
           <FormInput
-            inputList={inputCustomer}
+            inputList={inputList}
             returnInputChange={returnInputChange}
           />
         </div>

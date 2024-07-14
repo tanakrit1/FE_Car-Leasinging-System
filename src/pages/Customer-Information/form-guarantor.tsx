@@ -1,28 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface propsFormGuarantor {
     returnInputChange: (result: any) => void;
+    payloadGuarantor: any
 }
 
-const FormGuarantor = ({returnInputChange}: propsFormGuarantor) => {
-  const [payload, setPayload] = useState<any>([{name: "", address: "", idCard: "", phone: ""}]);
+const FormGuarantor = ({returnInputChange, payloadGuarantor}: propsFormGuarantor) => {
+  const [payload, setPayload] = useState<any>(payloadGuarantor);
 
   const onAddGuarantor = () => {
-    setPayload([...payload, {name: "", address: "", idCard: "", phone: ""}]);
+    setPayload([...payload, {guarantorName: "", guarantorAddress: "", guarantorIdCard: "", guarantorPhone: ""}]);
   }
+
+  useEffect( () => {
+    returnInputChange(payload)
+  }, [payload] )
 
   const onRemoveGuarantor = (index: number) => {
     const clonePayload = [...payload];
     clonePayload.splice(index, 1);
-    returnInputChange(clonePayload);
     setPayload(clonePayload);
   }
 
   const onChangeInput = (event: any, index: number) => {
     const clonePayload = [...payload];
     clonePayload[index][event.target.name] = event.target.value;
-    console.log("text---> ", clonePayload)
-    returnInputChange(clonePayload);
     setPayload(clonePayload);
   }
 
@@ -58,9 +60,9 @@ const FormGuarantor = ({returnInputChange}: propsFormGuarantor) => {
                 required
                 autoComplete="off"
                 type="text"
-                name="name"
+                name="guarantorName"
                 onChange={(event)=> onChangeInput(event, index)}
-                value={item?.name}
+                value={item?.guarantorName}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50`}
               />
             </div>
@@ -71,9 +73,9 @@ const FormGuarantor = ({returnInputChange}: propsFormGuarantor) => {
                 required
                 autoComplete="off"
                 type="text"
-                name="address"
+                name="guarantorAddress"
                 onChange={(event)=> onChangeInput(event, index)}
-                value={item?.address}
+                value={item?.guarantorAddress}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50`}
               />
             </div>
@@ -84,9 +86,9 @@ const FormGuarantor = ({returnInputChange}: propsFormGuarantor) => {
                 required
                 autoComplete="off"
                 type="number"
-                name="idCard"
+                name="guarantorIdCard"
                 onChange={(event)=> onChangeInput(event, index)}
-                value={item?.idCard}
+                value={item?.guarantorIdCard}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50`}
               />
             </div>
@@ -97,9 +99,9 @@ const FormGuarantor = ({returnInputChange}: propsFormGuarantor) => {
                 required
                 autoComplete="off"
                 type="number"
-                name="phone"
+                name="guarantorPhone"
                 onChange={(event)=> onChangeInput(event, index)}
-                value={item?.phone}
+                value={item?.guarantorPhone}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50`}
               />
             </div>

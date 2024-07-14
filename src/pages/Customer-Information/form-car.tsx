@@ -1,46 +1,62 @@
 import { useEffect, useState } from "react";
-import FormInput from "../../components/FormInput";
-import { inputCar } from "./input-form";
+// import FormInput from "../../components/FormInput";
+import ModalSearchStock from "./modal-search-stock";
 
 interface propsFormCar {
-  returnInputChange: (result: any) => void;
+  returnPayload: (result: any) => void;
+  payloadData: any
 }
 
-const FormCar = ({ returnInputChange }: propsFormCar) => {
-  const [inputList, setInputList] = useState<any>(inputCar);
-  const [payload, setPayload] = useState<any>({});
-  const [carType, setCarType] = useState<string>("buy");
+const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
+  const [payload, setPayload] = useState<any>(payloadData);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [disableForm, setDisableForm] = useState<boolean>(false);
 
   useEffect(() => {
-    let objPayload: any = {};
-    for (let i = 0; i < inputList.length; i++) {
-      objPayload = { ...objPayload, [inputList[i].name]: inputList[i].value };
-    }
-    objPayload = { ...objPayload, carType: "buy" };
-    setPayload(objPayload);
+      setDisableForm(payload?.carType === "buy"? true : false)
   }, []);
 
-  useEffect(() => {
-    const mapNew = inputList.map((item: any) => {
-      return { ...item, disabled: carType === "buy" ? true : false, value: "" };
-    });
-    let objPayload: any = {};
-    for (let i = 0; i < mapNew.length; i++) {
-      objPayload = { ...objPayload, [mapNew[i].name]: mapNew[i].value };
+  useEffect(()=> {
+    returnPayload(payload)
+  }, [payload])
+
+  const onChangeCarType = (newCarType: string) => {
+    console.log("newCarType--> ", newCarType);
+    setDisableForm( newCarType==="buy"? true: false )
+
+    let clonePayload = { ...payload };
+    for (let field in clonePayload) {
+      clonePayload[field] = "";
     }
-    objPayload = { ...objPayload, carType: carType };
-    setPayload(objPayload);
-    setInputList(mapNew);
-    console.log("objPayload--> ", objPayload);
-  }, [carType]);
+    setPayload({ ...clonePayload, carType: newCarType });
+  };
+
+  const onViewData = (row: any) => {
+    let clonePayload = { ...payload };
+    for (let field in clonePayload) {
+      clonePayload[field] = row[field];
+    }
+    setPayload(clonePayload);
+    setShowModal(false);
+  };
+
+  const onShowModalSearch = () => {
+    setShowModal(true);
+  };
+
+
+  const onChangeInput = (event: any) => {
+    setPayload({ ...payload, [event.target.name]: event.target.value });
+  };
+
   return (
     <>
       <div className="w-full rounded-lg bg-slate-700 ">
         <div className="flex items-center bg-slate-600 px-3 h-16 rounded-t-lg justify-between">
           <p className="text-white text-xl font-bold">ข้อมูลรถ</p>
-          {carType === "buy" && (
+          {payload.carType === "buy" && (
             <button
-              onClick={() => {}}
+              onClick={onShowModalSearch}
               type="button"
               className="bg-yellow-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-yellow-400"
             >
@@ -69,8 +85,8 @@ const FormCar = ({ returnInputChange }: propsFormCar) => {
                 type="radio"
                 name="typeCar"
                 value="buy"
-                checked={carType === "buy"}
-                onChange={() => setCarType("buy")}
+                checked={payload.carType === "buy"}
+                onChange={() => onChangeCarType("buy")}
                 className="radio radio-warning"
                 defaultChecked
               />
@@ -81,19 +97,169 @@ const FormCar = ({ returnInputChange }: propsFormCar) => {
                 type="radio"
                 name="typeCar"
                 value="pledge"
-                checked={carType === "pledge"}
-                onChange={() => setCarType("pledge")}
+                checked={payload.carType === "pledge"}
+                onChange={() => onChangeCarType("pledge")}
                 className="radio radio-warning"
               />
               <p className="text-white font-semibold">รับจำนำรถ</p>
             </div>
           </div>
-          <FormInput
-            inputList={inputList}
-            returnInputChange={returnInputChange}
-          />
+
+          <div className="flex flex-row flex-wrap">
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                ชื่อ :<span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <select
+                onChange={onChangeInput}
+                disabled={disableForm}
+                name="carBrand"
+                value={payload.carBrand}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              >
+                <option value="">------ เลือก ------</option>
+                {["Toyota", "Honda", "Suzuki", "Isuzu"].map(
+                  (item: any, indexList: number) => (
+                    <option key={"list" + indexList} value={item}>
+                      {item}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                รุ่น :<span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="text"
+                name="model"
+                value={payload.model}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                สี :<span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="text"
+                name="carColor"
+                value={payload.carColor}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                ปี :<span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="number"
+                name="carDate"
+                value={payload.carDate}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                ทะเบียนรถ :<span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="text"
+                name="licensePlate"
+                value={payload.licensePlate}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                เลขเครื่องยนต์ :<span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="text"
+                name="engineNumber"
+                value={payload.engineNumber}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                เลขตัวถัง :<span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="text"
+                name="vin"
+                value={payload.vin}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                ราคาขาย :<span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="number"
+                name="sellingPrice"
+                value={payload.sellingPrice}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
+           
+
+          </div>
+
         </div>
       </div>
+      <ModalSearchStock
+        showModal={showModal}
+        returnShowModal={() => setShowModal(false)}
+        returnViewData={onViewData}
+      />
     </>
   );
 };

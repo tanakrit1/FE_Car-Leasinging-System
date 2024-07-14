@@ -28,9 +28,11 @@ const isBase64 = (string: string) => {
 }
 
 const validateInputRequired = (form: any) => {
+    console.log("form--> ", form)
     for (let key in form) {
         // console.log("validateInputRequired--> ",form[] )
-        if (form[key] == "") {
+        if (form[key] == "" ) {
+            // console.log("---> ", form[key])
             return false
         }
     }

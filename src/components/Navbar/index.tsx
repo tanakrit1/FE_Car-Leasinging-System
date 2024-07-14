@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import logo from "../../assets/images/logo-navbar.png";
 import { useNavigate } from "react-router-dom";
+import { getLoginStorage } from "../../helpers/set-storage";
 
 interface Props {
   returnLogin: (result: boolean) => void;
@@ -8,16 +9,16 @@ interface Props {
 
 
 const navItemBegin = [
-    { label: "หน้าแรก", path: "/" },
-    { label: "บันทึกข้อมูลรถ", path: "/car-information" },
-    { label: "ข้อมูลลูกค้า", path: "/customer-information" },
-    { label: "ชำระค่างวด", path: "/payment" },
-    { label: "ทีมงาน", path: "/employee" },
+    { label: "หน้าแรก", path: "/", field: "isDashboard" },
+    { label: "บันทึกข้อมูลรถ", path: "/car-information", field: "isCardata" },
+    { label: "ข้อมูลลูกค้า", path: "/customer-information", field: "isCustomerData" },
+    { label: "ชำระค่างวด", path: "/payment", field: "isPayment" },
+    { label: "ทีมงาน", path: "/employee", field: "isEmployee" },
   ];
 
 const Navbar = ({ returnLogin }: Props) => {
   const navigate = useNavigate();
-  const [navItem, setNavItem] = useState<any[]>(navItemBegin);
+  const [navItem, setNavItem] = useState<any[]>([]);
   const [menuIndexActive, setMenuIndexActive] = useState<number>(
     sessionStorage.getItem("menuIndex")
       ? parseInt(sessionStorage.getItem("menuIndex")!)
@@ -37,12 +38,13 @@ const Navbar = ({ returnLogin }: Props) => {
     navigate(path);
   };
 
-//   useEffect(() => {
-//     const permission = "Admin";
-//     if (permission === "Admin") {
-//       setNavItem([...navItemBegin, { label: "ผู้ใช้งาน", path: "/" }]);
-//     }
-//   }, []);
+  useEffect(() => {
+    const profile = getLoginStorage()?.profile
+    if( profile ){  
+        const filterNavItem = navItemBegin.filter( (item: any) => profile[item.field] === true )
+        setNavItem([...filterNavItem]);
+    }
+  }, []);
   return (
     <div className="h-20 px-6 pr-6 flex items-center justify-between bg-slate-700 ">
       <div className="flex  items-center">
