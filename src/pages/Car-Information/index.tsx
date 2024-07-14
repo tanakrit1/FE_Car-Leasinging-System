@@ -53,6 +53,8 @@ const CarInformation = () => {
         maintenanceCost: Number(payload.maintenanceCost),
         cost: Number(payload.cost),
         desiredProfit: Number(payload.desiredProfit),
+        carStatus: statusForm==='add' ? "stock" : rowActive?.carStatus,
+        carType: statusForm==='add' ? "buy" : rowActive?.carType
       };
       if (statusForm === "add") {
         // เพิ่มข้อมูลใหม่

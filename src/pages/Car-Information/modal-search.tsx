@@ -76,7 +76,8 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
   };
 
   useEffect(() => {
-    onSubmitSearch(pagination.page);
+    console.log("---> ", pagination);
+    // onSubmitSearch(pagination.page);
   }, [pagination.page]);
 
   useEffect(() => {
@@ -110,6 +111,8 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
             <div className="w-1/2 px-3 ">
               <p className="text-white mb-1">เลขทะเบียน</p>
               <input
+                disabled={context?.loadingContext}
+                placeholder="เลขทะเบียน"
                 type="text"
                 onChange={(event: any) =>
                   setFormSearch({
@@ -125,6 +128,7 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
             <div className="w-1/2 px-3 ">
               <p className="text-white mb-1">ชื่อผู้ขาย</p>
               <input
+                disabled={context?.loadingContext}
                 type="text"
                 onChange={(event: any) =>
                   setFormSearch({
@@ -141,28 +145,34 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
 
           <div className="flex justify-center mt-5 space-x-4">
             <button
+              disabled={context?.loadingContext}
               onClick={() => onSubmitSearch()}
               type="button"
               className="rounded-lg bg-orange-600 hover:bg-orange-500 px-3 py-1 text-white"
             >
               <div className="flex space-x-3 items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill="currentColor"
-                    fillRule="evenodd"
-                    d="m16.325 14.899l5.38 5.38a1.008 1.008 0 0 1-1.427 1.426l-5.38-5.38a8 8 0 1 1 1.426-1.426M10 16a6 6 0 1 0 0-12a6 6 0 0 0 0 12"
-                  />
-                </svg>
+                {context?.loadingContext ? (
+                  <span className="loading loading-spinner"></span>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      fill="currentColor"
+                      fillRule="evenodd"
+                      d="m16.325 14.899l5.38 5.38a1.008 1.008 0 0 1-1.427 1.426l-5.38-5.38a8 8 0 1 1 1.426-1.426M10 16a6 6 0 1 0 0-12a6 6 0 0 0 0 12"
+                    />
+                  </svg>
+                )}
                 <span>ค้นหา</span>
               </div>
             </button>
 
             <button
+              disabled={context?.loadingContext}
               onClick={onClearData}
               type="button"
               className="rounded-lg bg-gray-500 hover:bg-gray-400 px-3 py-1 text-white"
