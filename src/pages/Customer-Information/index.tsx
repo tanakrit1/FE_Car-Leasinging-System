@@ -1,12 +1,33 @@
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormCustomer from "./form-customer";
 import FormGuarantor from "./form-guarantor";
 import FormCar from "./form-car";
 import { validateInputRequired } from "../../helpers/function-service";
+import _SaleItemApi from "../../api/saleItem";
+import ModalSearchSaleItem from "./modal-search-salleitem";
 
 const CustomerInformation = () => {
-  const [payloadCustomer, setPayloadCustomer] = useState<any>();
+    const [showModalSearchSale, setShowModalSearchSale] = useState<boolean>(false);
+    const [disableForm, setDisableForm] = useState<any>({
+        customer: false,
+        guarantor: false,
+        car: false
+    });
+  const [payloadCustomer, setPayloadCustomer] = useState<any>({
+    customerName: "",
+    address: "",
+    idCardNumber: "",
+    phoneNumber: "",
+    downPayment: "",
+    totalOrder: "",
+    numInstallments: "",
+    interestRate: "",
+    interestType: "",
+    interestMonth: "",
+    discount: "",
+    gps: "",
+  });
   const [payloadGuarantor, setPayloadGuarantor] = useState<any>([{guarantorName: "", guarantorAddress: "", guarantorIdCard: "", guarantorPhone: ""}]);
   const [payloadCar, setPayloadCar] = useState<any>({
     carBrand: "",
@@ -26,6 +47,7 @@ const CustomerInformation = () => {
     car: false,
   });
   const [tabActive, setTabActive] = useState<number>(1);
+  const [stateForm, setStateForm] = useState<string>('add')
 
   const returnInputCustomerChange = (result: any) => {
     console.log("result--> ", result)
@@ -89,8 +111,87 @@ const CustomerInformation = () => {
     return false;
   };
 
+  const onClearForm = () => {
+    setStateForm('add')
+    setValidationForm({
+        customer: false,
+        guarantor: false,
+        car: false,
+    })
+    setPayloadCustomer({
+        customerName: "",
+        address: "",
+        idCardNumber: "",
+        phoneNumber: "",
+        downPayment: "",
+        totalOrder: "",
+        numInstallments: "",
+        interestRate: "",
+        interestType: "",
+        interestMonth: "",
+        discount: "",
+        gps: "",
+      })
+      setPayloadGuarantor([{guarantorName: "", guarantorAddress: "", guarantorIdCard: "", guarantorPhone: ""}])
+      setPayloadCar({
+        carBrand: "",
+        model: "",
+        carColor: "",
+        carDate: "",
+        licensePlate: "",
+        engineNumber: "",
+        vin: "",
+        sellingPrice: "",
+        id: "",
+        carType: "",
+      })
+  }
+
+  const onSubmitForm = async() => {
+    if( stateForm === 'add' ){
+        console.log("payloadCustomer--> ", payloadCustomer)
+        console.log("payloadGuarantor--> ", payloadGuarantor)
+        console.log("payloadCar--> ", payloadCar)
+        let newPayloadCar = {};
+        for (let field in payloadCar) {
+          if (field !== "id") {
+            newPayloadCar = { ...newPayloadCar, [field]: payloadCar[field] };
+          }
+        }
+        let json = {
+            ...payloadCustomer,
+            ...newPayloadCar,
+            discount: Number(payloadCustomer.discount),
+            interestMonth: Number(payloadCustomer.interestMonth),
+            interestRate: Number(payloadCustomer.interestRate),
+            totalOrder: Number(payloadCustomer.totalOrder),
+            downPayment: Number(payloadCustomer.downPayment),
+            sellingPrice: Number(payloadCar.sellingPrice),
+            saleType: payloadCar.carType,
+            guarantors: payloadGuarantor,
+            
+        }
+        if( payloadCar?.id && payloadCar?.id !== '' ){
+            json = {...json, carInformation_id: payloadCar.id}
+        }
+        console.log("json--> ", json)
+        const result = await _SaleItemApi().create(json)
+        console.log("result--> ", result)
+    }
+  }
+
+  const onViewData = (row: any) => {
+    console.log("row--> ", row)
+  }
+
+  useEffect( ()=> {
+    console.log("***Effect***")
+    // onClearForm()
+  }, [] )
+
   return (
     <>
+        <ModalSearchSaleItem showModal={showModalSearchSale} returnViewData={onViewData} returnShowModal={()=> setShowModalSearchSale(false)} />
       <div className="flex justify-between">
         <p className="font-bold text-2xl text-white">ข้อมูลลูกค้า</p>
         <div className="flex space-x-2">
@@ -169,7 +270,7 @@ const CustomerInformation = () => {
           </div>
           <div className="flex space-x-3">
             <button
-              onClick={() => {}}
+              onClick={onClearForm}
               type="button"
               className="bg-green-700 bg-green-700 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-600"
             >
@@ -189,7 +290,7 @@ const CustomerInformation = () => {
               </div>
             </button>
             <button
-              //   onClick={onShowModalSearch}
+                onClick={()=> setShowModalSearchSale(true)}
               type="button"
               className="bg-orange-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-orange-400"
             >
@@ -214,7 +315,7 @@ const CustomerInformation = () => {
         <div className="w-full mt-5">
           {tabActive === 1 ? (
             <div>
-              <FormCustomer returnInputChange={returnInputCustomerChange} />
+              <FormCustomer returnInputChange={returnInputCustomerChange} payloadCustomer={payloadCustomer} disableForm={disableForm.Customer} />
             </div>
           ) : tabActive === 2 ? (
             <div>
@@ -230,7 +331,7 @@ const CustomerInformation = () => {
 
         {fnCheckValidation() && (
           <div className="mt-8 flex justify-end">
-            <button className="bg-orange-600 hover:bg-orange-500 rounded-lg text-white px-16 py-3 font-bold">
+            <button onClick={onSubmitForm} className="bg-orange-600 hover:bg-orange-500 rounded-lg text-white px-16 py-3 font-bold">
               <div className="flex items-center space-x-3">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

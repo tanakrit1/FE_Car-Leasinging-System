@@ -4,27 +4,27 @@ import ModalSearchStock from "./modal-search-stock";
 
 interface propsFormCar {
   returnPayload: (result: any) => void;
-  payloadData: any
+  payloadData: any;
 }
 
-const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
+const FormCar = ({ returnPayload, payloadData }: propsFormCar) => {
   const [payload, setPayload] = useState<any>(payloadData);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
 
   useEffect(() => {
-      setDisableForm(payload?.carType === "buy"? true : false)
+    setDisableForm(payload?.carType === "buy" ? true : false);
   }, []);
 
-  useEffect(()=> {
-    returnPayload(payload)
-  }, [payload])
+  useEffect(() => {
+    returnPayload(payload);
+  }, [payload]);
 
   const onChangeCarType = (newCarType: string) => {
     console.log("newCarType--> ", newCarType);
-    setDisableForm( newCarType==="buy"? true: false )
+    setDisableForm(newCarType === "buy" ? true : false);
 
-    let clonePayload = { ...payload };
+    let clonePayload = { ...payloadData };
     for (let field in clonePayload) {
       clonePayload[field] = "";
     }
@@ -32,7 +32,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
   };
 
   const onViewData = (row: any) => {
-    let clonePayload = { ...payload };
+    let clonePayload = { ...payloadData };
     for (let field in clonePayload) {
       clonePayload[field] = row[field];
     }
@@ -44,9 +44,12 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
     setShowModal(true);
   };
 
+  useEffect(() => {
+    setDisableForm(payloadData.carType === "buy" ? true : false);
+  }, [payloadData.carType]);
 
   const onChangeInput = (event: any) => {
-    setPayload({ ...payload, [event.target.name]: event.target.value });
+    setPayload({ ...payloadData, [event.target.name]: event.target.value });
   };
 
   return (
@@ -54,7 +57,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
       <div className="w-full rounded-lg bg-slate-700 ">
         <div className="flex items-center bg-slate-600 px-3 h-16 rounded-t-lg justify-between">
           <p className="text-white text-xl font-bold">ข้อมูลรถ</p>
-          {payload.carType === "buy" && (
+          {payloadData.carType === "buy" && (
             <button
               onClick={onShowModalSearch}
               type="button"
@@ -85,7 +88,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
                 type="radio"
                 name="typeCar"
                 value="buy"
-                checked={payload.carType === "buy"}
+                checked={payloadData.carType === "buy"}
                 onChange={() => onChangeCarType("buy")}
                 className="radio radio-warning"
                 defaultChecked
@@ -97,7 +100,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
                 type="radio"
                 name="typeCar"
                 value="pledge"
-                checked={payload.carType === "pledge"}
+                checked={payloadData.carType === "pledge"}
                 onChange={() => onChangeCarType("pledge")}
                 className="radio radio-warning"
               />
@@ -114,7 +117,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
                 onChange={onChangeInput}
                 disabled={disableForm}
                 name="carBrand"
-                value={payload.carBrand}
+                value={payloadData.carBrand}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
@@ -140,7 +143,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
                 autoComplete="off"
                 type="text"
                 name="model"
-                value={payload.model}
+                value={payloadData.model}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
@@ -157,7 +160,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
                 autoComplete="off"
                 type="text"
                 name="carColor"
-                value={payload.carColor}
+                value={payloadData.carColor}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
@@ -174,7 +177,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
                 autoComplete="off"
                 type="number"
                 name="carDate"
-                value={payload.carDate}
+                value={payloadData.carDate}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
@@ -183,7 +186,8 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
 
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                ทะเบียนรถ :<span className="text-red-500 font-semibold text">*</span>
+                ทะเบียนรถ :
+                <span className="text-red-500 font-semibold text">*</span>
               </p>
               <input
                 onChange={onChangeInput}
@@ -191,7 +195,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
                 autoComplete="off"
                 type="text"
                 name="licensePlate"
-                value={payload.licensePlate}
+                value={payloadData.licensePlate}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
@@ -200,7 +204,8 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
 
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                เลขเครื่องยนต์ :<span className="text-red-500 font-semibold text">*</span>
+                เลขเครื่องยนต์ :
+                <span className="text-red-500 font-semibold text">*</span>
               </p>
               <input
                 onChange={onChangeInput}
@@ -208,7 +213,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
                 autoComplete="off"
                 type="text"
                 name="engineNumber"
-                value={payload.engineNumber}
+                value={payloadData.engineNumber}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
@@ -217,7 +222,8 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
 
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                เลขตัวถัง :<span className="text-red-500 font-semibold text">*</span>
+                เลขตัวถัง :
+                <span className="text-red-500 font-semibold text">*</span>
               </p>
               <input
                 onChange={onChangeInput}
@@ -225,7 +231,7 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
                 autoComplete="off"
                 type="text"
                 name="vin"
-                value={payload.vin}
+                value={payloadData.vin}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
@@ -234,7 +240,8 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
 
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                ราคาขาย :<span className="text-red-500 font-semibold text">*</span>
+                ราคาขาย :
+                <span className="text-red-500 font-semibold text">*</span>
               </p>
               <input
                 onChange={onChangeInput}
@@ -242,17 +249,13 @@ const FormCar = ({returnPayload, payloadData}: propsFormCar) => {
                 autoComplete="off"
                 type="number"
                 name="sellingPrice"
-                value={payload.sellingPrice}
+                value={payloadData.sellingPrice}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
               />
             </div>
-
-           
-
           </div>
-
         </div>
       </div>
       <ModalSearchStock

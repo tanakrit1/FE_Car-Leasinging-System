@@ -94,11 +94,15 @@ export const inputCustomer = [
     {
         name: "interestType",
         label: "การชำระดอกเบี้ย",
-        type: "text",
+        type: "select",
         placeholder: "a",
         width: "3/12",
         value: "",
         requied: true,
+        list: [
+            { label: "คงที่", value: "คงที่" },
+            { label: "ลดต้น/ลดดอก", value: "ลดต้น/ลดดอก" },
+          ],
     },
     {
         name: "interestMonth",
@@ -123,7 +127,7 @@ export const inputCustomer = [
         label: "GPS",
         type: "text",
         placeholder: "a",
-        width: "3/12",
+        width: "6/12",
         value: "",
         requied: true,
     },

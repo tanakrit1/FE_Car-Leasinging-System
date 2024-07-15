@@ -17,13 +17,13 @@ const FormGuarantor = ({returnInputChange, payloadGuarantor}: propsFormGuarantor
   }, [payload] )
 
   const onRemoveGuarantor = (index: number) => {
-    const clonePayload = [...payload];
+    const clonePayload = [...payloadGuarantor];
     clonePayload.splice(index, 1);
     setPayload(clonePayload);
   }
 
   const onChangeInput = (event: any, index: number) => {
-    const clonePayload = [...payload];
+    const clonePayload = [...payloadGuarantor];
     clonePayload[index][event.target.name] = event.target.value;
     setPayload(clonePayload);
   }
@@ -49,7 +49,7 @@ const FormGuarantor = ({returnInputChange, payloadGuarantor}: propsFormGuarantor
         </div>
 
         <div className="mt-5 px-3 pb-6">
-        {payload.map((item: any, index: number) => (
+        {payloadGuarantor.map((item: any, index: number) => (
           <div
             key={"guarantor" + index}
             className="flex flex-wrap border border-rounded-lg border-slate-300 border-slate-600 mb-3 pt-3 "
