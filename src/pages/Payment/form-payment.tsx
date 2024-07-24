@@ -1,17 +1,17 @@
 import dayjs from "dayjs";
 import { useContext, useEffect, useState } from "react";
-// import TableList from "../../components/TableList";
 import _PaymentApi from "../../api/payment";
 import { LoadContext } from "../../context/loading-context";
 import { getLoginStorage } from "../../helpers/set-storage";
 
 const columns = [
-  { label: "วันที่ชำระ", width: "20%", field: "datePay" },
-  { label: "เงินต้น", width: "15%", field: "amountPay" },
-  { label: "ดอกเบี้ย", width: "15%", field: "InterestPay" },
-  { label: "ค่าปรับ", width: "15%", field: "fee" },
-  { label: "วิธีชำระ", width: "15%", field: "methodPay" },
-  { label: "ผู้รับชำระ", width: "20%", field: "receiver" },
+  { label: "วันที่ชำระ", width: "10%", field: "datePay" },
+  { label: "เงินต้น", width: "10%", field: "amountPay" },
+  { label: "ดอกเบี้ย", width: "10%", field: "InterestPay" },
+  { label: "ค่าปรับ", width: "10%", field: "fee" },
+  { label: "วิธีชำระ", width: "10%", field: "methodPay" },
+  { label: "ผู้รับชำระ", width: "10%", field: "receiver" },
+  { label: "Note", width: "30%", field: "note" },
 ];
 
 const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
@@ -26,6 +26,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     InterestPay: "", //ดอกเบี้ย
     fee: "", //ค่าปรับ
     datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
+    note: "",
   });
   const [rowsHistory, setRowsHistory] = useState<any>([]);
 
@@ -91,7 +92,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       console.log("payloadCustomer--> ", payloadCustomer);
     }
     context?.setLoadingContext(false);
-  }, [payloadCustomer.id, payloadCustomer.remainingBalance]);
+  }, [payloadCustomer.id, payloadCustomer.totalInterest]);
 
   const onChangeMethodPay = (result: string) => {
     setPayload({ ...payload, methodPay: result });
@@ -165,18 +166,21 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
   };
 
   useEffect( ()=> {
-    console.log("***",  Number(payload.amountPay))
     if( payload.methodPay &&
         payload.InterestPay &&
         payload.fee &&
-        Number(payload.amountPay) >= 0
+        Number(payload.amountPay) >= 0 && 
+        rowsHistory.length < payloadCustomer.numInstallments
     ){
-        console.log("OK")
-           return setShowSubmit(true)
+        return setShowSubmit(true)
     }
 
     setShowSubmit(false)
   }, [payload] )
+
+  const onCloseOrder = () => {
+    
+  }
 
   return (
     <>
@@ -185,34 +189,36 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
           <p className="font-bold text-2xl text-white">ข้อมูลการชำระเงิน</p>
           <div className="flex space-x-3 items-center">
             <span className="text-white">ชำระครั้งที่</span>
-            <div className="px-3 py-1 rounded-full bg-orange-500 text-white font-bold">{rowsHistory.length + 1}</div>
+            <div className="px-3 py-1 rounded-full bg-orange-500 text-white font-bold">{rowsHistory.length + 1} / {payloadCustomer.numInstallments}</div>
           </div>
         </div>
 
         <div className="mt-5 px-3 pb-6 ">
-          <div className="flex space-x-10 mb-5 px-3">
-            <div className="flex space-x-2">
-              <input
-                type="radio"
-                name="methodPay"
-                value="เงินสด"
-                checked={payload.methodPay === "เงินสด"}
-                onChange={() => onChangeMethodPay("เงินสด")}
-                className="radio radio-warning"
-                defaultChecked
-              />
-              <p className="text-white font-semibold">เงินสด</p>
-            </div>
-            <div className="flex space-x-2">
-              <input
-                type="radio"
-                name="methodPay"
-                value="เงินโอน"
-                checked={payload.methodPay === "เงินโอน"}
-                onChange={() => onChangeMethodPay("เงินโอน")}
-                className="radio radio-warning"
-              />
-              <p className="text-white font-semibold">เงินโอน</p>
+          <div className="flex mb-5 px-3 justify-between">
+            <div className="flex space-x-10 ">
+                <div className="flex space-x-2">
+                <input
+                    type="radio"
+                    name="methodPay"
+                    value="เงินสด"
+                    checked={payload.methodPay === "เงินสด"}
+                    onChange={() => onChangeMethodPay("เงินสด")}
+                    className="radio radio-warning"
+                    defaultChecked
+                />
+                <p className="text-white font-semibold">เงินสด</p>
+                </div>
+                <div className="flex space-x-2">
+                <input
+                    type="radio"
+                    name="methodPay"
+                    value="เงินโอน"
+                    checked={payload.methodPay === "เงินโอน"}
+                    onChange={() => onChangeMethodPay("เงินโอน")}
+                    className="radio radio-warning"
+                />
+                <p className="text-white font-semibold">เงินโอน</p>
+                </div>
             </div>
           </div>
 
@@ -283,10 +289,23 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>
+
+            <div className="basis-full px-2">
+              <p className="text-white font-semibold mb-1">Note :</p>
+              <textarea name="note" onChange={onChangeInput} maxLength={512} rows={3} className="bg-slate-50 text-black mb-3 py-3 w-full rounded-lg  px-3 focus:outline-primary focus:outline focus:outline-2">
+                {payload?.note}
+              </textarea>
+            </div>
+
           </div>
           {/* amountPay InterestPay fee */}
-          {showSubmit&& (
-              <div className="basis-4/12 px-2 justify-end flex">
+          <div className="basis-4/12 px-2 justify-end flex space-x-3">
+                <button type="button" className="bg-green-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-500" onClick={onCloseOrder}>
+                    <div className="flex py-2 px-4 items-center">
+                        ปิดยอด
+                    </div>
+                </button>
+            {showSubmit&& (
                 <button
                   onClick={onSubmit}
                   type="button"
@@ -296,8 +315,8 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                     <span>บันทึก</span>
                   </div>
                 </button>
-              </div>
             )}
+            </div>
 
           <div className="w-full divider text-white">ประวัติการชำระเงิน</div>
 
@@ -306,7 +325,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
               <thead>
                 <tr className="bg-slate-400">
                   {columns.map((item: any, index: number) => (
-                    <th key={index} className="text-white text-lg">
+                    <th key={index} style={{ width: item.width }} className={`text-white text-lg ${item.field==='note' && 'text-center'}`}>
                       {item.label}
                     </th>
                   ))}

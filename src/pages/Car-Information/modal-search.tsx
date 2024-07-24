@@ -14,7 +14,7 @@ const columns = [
 
 const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
   const context = useContext(LoadContext);
-  const [contextLoad] = useState<any>(context?.loadingContext);
+  const [contextLoad, setContextLoad] = useState<any>(context?.loadingContext);
   const [rows, setRows] = useState<any>([]);
   const [formSearch, setFormSearch] = useState<any>({
     licensePlate: "",
@@ -26,6 +26,10 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
     totalItems: 0,
     totalPages: 1,
   });
+
+  useEffect(()=> {
+    setContextLoad(context?.loadingContext)
+  }, [context?.loadingContext])
 
   const onSubmitSearch = async (page?: number) => {
     context?.setLoadingContext(true);

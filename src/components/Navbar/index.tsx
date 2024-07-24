@@ -18,13 +18,14 @@ const navItemBegin = [
 
 const Navbar = ({ returnLogin }: Props) => {
   const navigate = useNavigate();
+  const loginStorage = getLoginStorage()?.profile;
   const [navItem, setNavItem] = useState<any[]>([]);
   const [menuIndexActive, setMenuIndexActive] = useState<number>(
     sessionStorage.getItem("menuIndex")
       ? parseInt(sessionStorage.getItem("menuIndex")!)
       : 0
   );
-
+  
 
   const onLogout = () => {
     sessionStorage.clear();
@@ -156,7 +157,7 @@ const Navbar = ({ returnLogin }: Props) => {
         </div>
       </div>
       <div>
-        <p className="text-white font-bold">FirstName LastName</p>
+        <p className="text-white font-bold">{ loginStorage?.firstName + "  " + loginStorage?.lastName }</p>
         <p
           className="cursor-pointer text-white hover:text-gray-300"
           onClick={onLogout}

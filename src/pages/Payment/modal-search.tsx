@@ -4,7 +4,6 @@ import Pagination from "../../components/pagination";
 import { LoadContext } from "../../context/loading-context";
 import _SaleItemApi from "../../api/saleItem";
 // import { useNavigate } from "react-router-dom";
-import { getLoginStorage } from "../../helpers/set-storage";
 
 const columns = [
   { label: "ชื่อลูกค้า", width: "30%", field: "customerName" },
@@ -16,7 +15,7 @@ const columns = [
 const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
     // const navigate = useNavigate();
   const context = useContext(LoadContext);
-  const [contextLoad] = useState<any>(context?.loadingContext);
+  const [contextLoad, setContextLoad] = useState<any>(context?.loadingContext);
   const [rows, setRows] = useState<any>([]);
   const [formSearch, setFormSearch] = useState<any>({
     idCardNumber: "",
@@ -28,8 +27,10 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
     totalItems: 0,
     totalPages: 1,
   });
-  const profile = getLoginStorage()?.profile
-  console.log("profile--> ", profile)
+
+  useEffect(()=> {
+    setContextLoad(context?.loadingContext)
+  }, [context?.loadingContext])
 
   const onSubmitSearch = async (page?: number) => {
     context?.setLoadingContext(true);
@@ -62,7 +63,7 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
         alert("ไม่พบข้อมูล");
       }
       const newRows = resultRows.data.map( (item: any) => {
-        return {...item, licensePlate: item.carInformation.licensePlate}
+        return {...item, licensePlate: item.carInformation?.licensePlate}
       } )
       setRows(newRows);
       setPagination({

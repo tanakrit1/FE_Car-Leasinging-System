@@ -104,19 +104,6 @@ const FormDetail = ({ dataInput }: any) => {
             </div>
           {/* )} */}
 
-          {dataInput?.interestType === "คงที่" && (
-            <div className="basis-4/12 px-2">
-              <p className="text-white font-semibold mb-1">ดอกเบี้ย/เดือน :</p>
-              <input
-                disabled
-                type="text"
-                name="interestMonth"
-                value={dataInput?.interestMonth}
-                className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
-              />
-            </div>
-          )}
-
           <div className="basis-4/12 px-2">
             <p className="text-white font-semibold mb-1">
               เงินต้นคงเหลือ :
@@ -142,6 +129,33 @@ const FormDetail = ({ dataInput }: any) => {
               className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
             />
           </div>
+
+          {dataInput?.interestType === "คงที่" && (
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">จำนวนเงินที่ต้องชำระ/เดือน :</p>
+              <input
+                disabled
+                type="text"
+                name="interestMonth"
+                value={(Number(dataInput.totalOrder) / Number(dataInput.numInstallments) + Number(dataInput.downPayment)).toFixed(2)}
+                className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+              />
+            </div>
+          )}
+
+        {dataInput?.interestType === "คงที่" && (
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">ดอกเบี้ย/เดือน :</p>
+              <input
+                disabled
+                type="text"
+                name="interestMonth"
+                value={dataInput?.interestMonth}
+                className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+              />
+            </div>
+          )}
+
 
           {dataInput.guarantors.length > 0 && (
             <div className="w-full divider text-white">ผู้ค้ำประกัน</div>
@@ -175,6 +189,7 @@ const FormDetail = ({ dataInput }: any) => {
               </div>
             </div>
           ))}
+          
         </div>
       </div>
     </>

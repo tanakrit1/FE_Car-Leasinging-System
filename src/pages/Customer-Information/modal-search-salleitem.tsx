@@ -3,8 +3,7 @@ import TableList from "../../components/TableList";
 import Pagination from "../../components/pagination";
 import { LoadContext } from "../../context/loading-context";
 import _SaleItemApi from "../../api/saleItem";
-// import { useNavigate } from "react-router-dom";
-import { getLoginStorage } from "../../helpers/set-storage";
+
 
 const columns = [
   { label: "ชื่อลูกค้า", width: "30%", field: "customerName" },
@@ -16,7 +15,7 @@ const columns = [
 const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any) => {
     // const navigate = useNavigate();
   const context = useContext(LoadContext);
-  const [contextLoad] = useState<any>(context?.loadingContext);
+  const [contextLoad, setContextLoad] = useState<any>(context?.loadingContext);
   const [rows, setRows] = useState<any>([]);
   const [formSearch, setFormSearch] = useState<any>({
     carInformation_licensePlate: "",
@@ -28,9 +27,11 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
     totalItems: 0,
     totalPages: 1,
   });
-  const profile = getLoginStorage()?.profile
-  console.log("profile--> ", profile)
 
+  useEffect(()=> {
+    setContextLoad(context?.loadingContext)
+  }, [context?.loadingContext])
+  
   const onSubmitSearch = async (page?: number) => {
     context?.setLoadingContext(true);
     let mapJson: any = [];
