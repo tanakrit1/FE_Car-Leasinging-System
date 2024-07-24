@@ -19,6 +19,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
   const loginStorage = getLoginStorage()?.profile;
   const [amount, setAmount] = useState<any>("");
   const [showSubmit, setShowSubmit] = useState<boolean>(false);
+//   const [showModalCloseOrder, setShowModalCloseOrder] = useState<boolean>(false);
   const [payload, setPayload] = useState<any>({
     methodPay: "เงินสด",
     receiver: loginStorage?.firstName + "  " + loginStorage?.lastName,
@@ -38,8 +39,10 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       InterestPay: "", //ดอกเบี้ย
       fee: "", //ค่าปรับ
       datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
+      note: ""
     });
     setAmount("");
+    (document.getElementById("note") as HTMLFormElement).value = ''
   };
 
   const onLoadHistory = async (saleID: number) => {
@@ -98,23 +101,6 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     setPayload({ ...payload, methodPay: result });
   };
 
-  //   const onChangeInput = (event: any) => {
-  //     if (event.target.name === "amount") {
-  //       setAmount(event.target.value);
-  //       if( payloadCustomer.interestType === "คงที่" ){
-  //         const resultProcess = (Number(payloadCustomer.totalOrder) / Number(payloadCustomer.numInstallments)) * (Number(payloadCustomer.interestRate) / 100);
-
-  //       }else{   // ลดต้นลดดอก
-
-  //       }
-  //       console.log("da---> ", payloadCustomer);
-  //       const amount = event.target.value;
-  //       setPayload({ ...payload, amountPay: amount });
-  //     } else {
-  //       // fee
-  //       setPayload({ ...payload, [event.target.name]: event.target.value });
-  //     }
-  //   };
 
   const onChangeInput = (event: any) => {
     if (event.target.name === "amount") {
@@ -147,7 +133,6 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       onRefetchDetail(payloadCustomer.id);
     }
     context?.setLoadingContext(false);
-    console.log("resultSubmit--> ", result);
   };
 
   const onDeletePayment = async (row: any) => {
@@ -178,9 +163,9 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     setShowSubmit(false)
   }, [payload] )
 
-  const onCloseOrder = () => {
-    
-  }
+//   const onCloseOrder = () => {
+//     setShowModalCloseOrder(true)
+//   }
 
   return (
     <>
@@ -291,20 +276,20 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
             </div>
 
             <div className="basis-full px-2">
-              <p className="text-white font-semibold mb-1">Note :</p>
-              <textarea name="note" onChange={onChangeInput} maxLength={512} rows={3} className="bg-slate-50 text-black mb-3 py-3 w-full rounded-lg  px-3 focus:outline-primary focus:outline focus:outline-2">
-                {payload?.note}
+              <p className="text-white font-semibold mb-1">Note : {payload?.note}</p>
+              <textarea name="note" id='note' onChange={onChangeInput} maxLength={512} rows={3} className="bg-slate-50 text-black mb-3 py-3 w-full rounded-lg  px-3 focus:outline-primary focus:outline focus:outline-2">
+                {payload?.note || ""}
               </textarea>
             </div>
 
           </div>
           {/* amountPay InterestPay fee */}
           <div className="basis-4/12 px-2 justify-end flex space-x-3">
-                <button type="button" className="bg-green-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-500" onClick={onCloseOrder}>
+                {/* <button type="button" className="bg-green-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-500" onClick={onCloseOrder}>
                     <div className="flex py-2 px-4 items-center">
                         ปิดยอด
                     </div>
-                </button>
+                </button> */}
             {showSubmit&& (
                 <button
                   onClick={onSubmit}
@@ -377,6 +362,15 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
           </div>
         </div>
       </div>
+
+      {/* ---------------------------------------------------------------------------------------------------------- */}
+
+      <dialog id="modal-close-order" className="modal">
+        <div className="modal-box w-11/12 max-w-5xl">
+                
+        </div>
+      </dialog>
+
     </>
   );
 };
