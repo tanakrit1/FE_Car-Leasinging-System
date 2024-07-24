@@ -14,6 +14,7 @@ const columns = [
 
 const ModalSearchStock = ({ showModal, returnShowModal, returnViewData }: any) => {
   const context = useContext(LoadContext);
+  const [contextLoad] = useState<any>(context?.loadingContext);
   const [rows, setRows] = useState<any>([]);
   const [formSearch, setFormSearch] = useState<any>({
     licensePlate: "",
@@ -121,7 +122,7 @@ const ModalSearchStock = ({ showModal, returnShowModal, returnViewData }: any) =
             <div className="w-1/2 px-3 ">
               <p className="text-white mb-1">เลขทะเบียน</p>
               <input
-                disabled={context?.loadingContext}
+                disabled={contextLoad}
                 placeholder="เลขทะเบียน"
                 type="text"
                 onChange={(event: any) =>
@@ -138,7 +139,7 @@ const ModalSearchStock = ({ showModal, returnShowModal, returnViewData }: any) =
             <div className="w-1/2 px-3 ">
               <p className="text-white mb-1">ชื่อผู้ขาย</p>
               <input
-                disabled={context?.loadingContext}
+                disabled={contextLoad}
                 type="text"
                 onChange={(event: any) =>
                   setFormSearch({
@@ -155,7 +156,7 @@ const ModalSearchStock = ({ showModal, returnShowModal, returnViewData }: any) =
 
           <div className="flex justify-center mt-5 space-x-4">
             <button
-              disabled={context?.loadingContext}
+              disabled={contextLoad}
               onClick={() => onSubmitSearch()}
               type="button"
               className="rounded-lg bg-orange-600 hover:bg-orange-500 px-3 py-1 text-white"
@@ -182,7 +183,7 @@ const ModalSearchStock = ({ showModal, returnShowModal, returnViewData }: any) =
             </button>
 
             <button
-              disabled={context?.loadingContext}
+              disabled={contextLoad}
               onClick={onClearData}
               type="button"
               className="rounded-lg bg-gray-500 hover:bg-gray-400 px-3 py-1 text-white"

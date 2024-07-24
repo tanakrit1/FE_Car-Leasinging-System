@@ -21,7 +21,19 @@ const CarInformation = () => {
   const [rowActive, setRowActive] = useState<any>(null);
 
   const onChangeInputForm = (result: any) => {
-    setPayload(result);
+    console.log("result--> ", result)
+    let cloneInputList = [...inputList];
+    const cost = Number(result.buyingPrice || '0') + Number(result.maintenanceCost || '0')
+    const sellingPrice = cost + Number(result.desiredProfit || '0')
+    
+    const findIndexCost = cloneInputList.findIndex( (row: any) => row.name === "cost" )
+    const findIndexsellingPrice = cloneInputList.findIndex( (row: any) => row.name === "sellingPrice" )
+   
+    cloneInputList[findIndexCost].value = cost
+    cloneInputList[findIndexsellingPrice].value = sellingPrice
+
+    setInputList(cloneInputList);
+    setPayload({...result, cost: cost, sellingPrice: sellingPrice});
   };
 
   const onClearForm = () => {

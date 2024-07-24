@@ -26,7 +26,7 @@ const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
       objPayload = { ...objPayload, [inputList[i].name]: inputList[i].value };
     }
     setValueInput(objPayload)
-    returnInputChange(objPayload)
+    // returnInputChange(objPayload)
   }, [inputList] )
 
   return (

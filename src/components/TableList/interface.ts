@@ -8,6 +8,10 @@ export interface Props {
     clickPrint?: any
     viewAction?: boolean
     clickView?: any
+    paymentAction?: boolean
+    clickPayment?: any
+    removeAction?: boolean
+    clickRemove?: any
 }
 
 interface Column {

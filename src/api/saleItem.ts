@@ -1,4 +1,4 @@
-import { axiosPatch, axiosPost } from "./axios-service"
+import { axiosPost } from "./axios-service"
 
 const _SaleItemApi = () => {
     return {
@@ -10,9 +10,9 @@ const _SaleItemApi = () => {
             return await axiosPost("/saleitem/createAdvance", body)
         },
 
-        update: async(id:string, body: any) => {
-            return await axiosPatch(`/carInformation/${id}`, body)
-        },
+        // update: async(id:string, body: any) => {
+        //     return await axiosPatch(`/carInformation/${id}`, body)
+        // },
     }
 }
 

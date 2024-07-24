@@ -2,7 +2,7 @@ import { createContext, ReactNode, useState } from "react";
 
 interface LoadContextType {
     loadingContext: string;
-    setLoadingContext: (data: boolean) => void;
+    setLoadingContext: any
 }
 
 const LoadContext = createContext<LoadContextType | undefined>(undefined)

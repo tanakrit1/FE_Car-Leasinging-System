@@ -5,12 +5,23 @@ import ModalSearchStock from "./modal-search-stock";
 interface propsFormCar {
   returnPayload: (result: any) => void;
   payloadData: any;
+  stateForm: string;
 }
 
-const FormCar = ({ returnPayload, payloadData }: propsFormCar) => {
+const FormCar = ({
+  returnPayload,
+  payloadData,
+  stateForm,
+}: propsFormCar) => {
   const [payload, setPayload] = useState<any>(payloadData);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [disableForm, setDisableForm] = useState<boolean>(false);
+  const [disableRadio, setDisableRadio] = useState<boolean>(false);
+
+    useEffect(()=> {
+        setDisableRadio(stateForm=="view" ? true : false)
+        setDisableForm(stateForm=="view" ? true : false)
+    }, [stateForm])
 
   useEffect(() => {
     setDisableForm(payload?.carType === "buy" ? true : false);
@@ -57,7 +68,7 @@ const FormCar = ({ returnPayload, payloadData }: propsFormCar) => {
       <div className="w-full rounded-lg bg-slate-700 ">
         <div className="flex items-center bg-slate-600 px-3 h-16 rounded-t-lg justify-between">
           <p className="text-white text-xl font-bold">ข้อมูลรถ</p>
-          {payloadData.carType === "buy" && (
+          {payloadData.carType === "buy" && stateForm !== "view" && (
             <button
               onClick={onShowModalSearch}
               type="button"
@@ -85,6 +96,7 @@ const FormCar = ({ returnPayload, payloadData }: propsFormCar) => {
           <div className="flex space-x-10 mb-5 px-3">
             <div className="flex space-x-2">
               <input
+                disabled={disableRadio}
                 type="radio"
                 name="typeCar"
                 value="buy"
@@ -97,6 +109,7 @@ const FormCar = ({ returnPayload, payloadData }: propsFormCar) => {
             </div>
             <div className="flex space-x-2">
               <input
+                disabled={disableRadio}
                 type="radio"
                 name="typeCar"
                 value="pledge"

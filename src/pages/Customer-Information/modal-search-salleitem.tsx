@@ -3,6 +3,8 @@ import TableList from "../../components/TableList";
 import Pagination from "../../components/pagination";
 import { LoadContext } from "../../context/loading-context";
 import _SaleItemApi from "../../api/saleItem";
+// import { useNavigate } from "react-router-dom";
+import { getLoginStorage } from "../../helpers/set-storage";
 
 const columns = [
   { label: "ชื่อลูกค้า", width: "30%", field: "customerName" },
@@ -12,7 +14,9 @@ const columns = [
 ];
 
 const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any) => {
+    // const navigate = useNavigate();
   const context = useContext(LoadContext);
+  const [contextLoad] = useState<any>(context?.loadingContext);
   const [rows, setRows] = useState<any>([]);
   const [formSearch, setFormSearch] = useState<any>({
     carInformation_licensePlate: "",
@@ -24,6 +28,8 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
     totalItems: 0,
     totalPages: 1,
   });
+  const profile = getLoginStorage()?.profile
+  console.log("profile--> ", profile)
 
   const onSubmitSearch = async (page?: number) => {
     context?.setLoadingContext(true);
@@ -77,6 +83,11 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
     });
   };
 
+//   const onToPayment = (row: any) => {
+//     console.log("row--> ", row)
+//     navigate("/payment", { state: { data: row } });
+//   }
+
   useEffect(() => {
     console.log("---> ", pagination);
     // onSubmitSearch(pagination.page);
@@ -117,7 +128,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
             <div className="w-1/2 px-3 ">
               <p className="text-white mb-1">เลขทะเบียน</p>
               <input
-                disabled={context?.loadingContext}
+                disabled={contextLoad}
                 placeholder="เลขทะเบียน"
                 type="text"
                 onChange={(event: any) =>
@@ -135,7 +146,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
               <p className="text-white mb-1">ชื่อลูกค้า</p>
               <input
                 placeholder="ชื่อลูกค้า"
-                disabled={context?.loadingContext}
+                disabled={contextLoad}
                 type="text"
                 onChange={(event: any) =>
                   setFormSearch({
@@ -152,7 +163,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
 
           <div className="flex justify-center mt-5 space-x-4">
             <button
-              disabled={context?.loadingContext}
+              disabled={contextLoad}
               onClick={() => onSubmitSearch()}
               type="button"
               className="rounded-lg bg-orange-600 hover:bg-orange-500 px-3 py-1 text-white"
@@ -179,7 +190,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
             </button>
 
             <button
-              disabled={context?.loadingContext}
+              disabled={contextLoad}
               onClick={onClearData}
               type="button"
               className="rounded-lg bg-gray-500 hover:bg-gray-400 px-3 py-1 text-white"
@@ -212,6 +223,8 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
                 height="100%"
                 viewAction
                 clickView={returnViewData}
+                // paymentAction={profile.isPayment}
+                // clickPayment={onToPayment}
               />
 
               <div className="mt-6">

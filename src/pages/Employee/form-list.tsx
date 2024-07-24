@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Pagination from "../../components/pagination";
 import TableList from "../../components/TableList";
 

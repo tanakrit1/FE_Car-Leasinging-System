@@ -110,8 +110,8 @@ const inputList = [
         type: "number",
         placeholder: "b",
         width: "4/12",
-        value: "",
-        disabled: false,
+        value: "0",
+        disabled: true,
         requied: true,
       },
       {
@@ -130,8 +130,8 @@ const inputList = [
         type: "number",
         placeholder: "b",
         width: "4/12",
-        value: "",
-        disabled: false,
+        value: "0",
+        disabled: true,
         requied: true,
       },
       {

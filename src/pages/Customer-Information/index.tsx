@@ -1,19 +1,26 @@
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import FormCustomer from "./form-customer";
 import FormGuarantor from "./form-guarantor";
 import FormCar from "./form-car";
 import { validateInputRequired } from "../../helpers/function-service";
 import _SaleItemApi from "../../api/saleItem";
 import ModalSearchSaleItem from "./modal-search-salleitem";
+import { LoadContext } from "../../context/loading-context";
 
 const CustomerInformation = () => {
+    const context = useContext(LoadContext)
     const [showModalSearchSale, setShowModalSearchSale] = useState<boolean>(false);
-    const [disableForm, setDisableForm] = useState<any>({
-        customer: false,
-        guarantor: false,
-        car: false
-    });
+    // const [idUpdate, setIDUpdate] = useState<any>({
+    //     saleItemID: null,
+    //     carID: null,
+    //     guarantorID: null
+    // })
+    // const [disableForm, setDisableForm] = useState<any>({
+    //     customer: false,
+    //     guarantor: false,
+    //     car: false
+    // });
   const [payloadCustomer, setPayloadCustomer] = useState<any>({
     customerName: "",
     address: "",
@@ -49,20 +56,29 @@ const CustomerInformation = () => {
   const [tabActive, setTabActive] = useState<number>(1);
   const [stateForm, setStateForm] = useState<string>('add')
 
-  const returnInputCustomerChange = (result: any) => {
-    console.log("result--> ", result)
+  const returnInputCustomerChange = async(result: any) => {
+    let newObj: any = {}
+    // if( result.interestType === "ลดต้น/ลดดอก" ){
+    //     for( let field in result ){
+    //         if( field !== "interestMonth" && field !== "numInstallments" ){
+    //             newObj = {...newObj, [field]: result[field]}
+    //         }
+    //     }
+    // }else{
+        newObj = result
+    // }
     setPayloadCustomer(result);
-
     const validateCustomer = payloadCustomer
-      ? validateInputRequired(result)
+      ? validateInputRequired(newObj)
       : false;
     setValidationForm({
       ...validationForm,
       customer: validateCustomer ? true : false,
     });
+    return validateCustomer
   };
 
-  const returnInputGuarantorChange = (result: any) => {
+  const returnInputGuarantorChange = async(result: any) => {
     setPayloadGuarantor(result);
 
     let validateGuarantor = false;
@@ -79,9 +95,10 @@ const CustomerInformation = () => {
       ...validationForm,
       guarantor: validateGuarantor ? true : false,
     });
+    return validateGuarantor
   };
 
-  const returnInputCarChange = (result: any) => {
+  const returnInputCarChange = async(result: any) => {
     setPayloadCar(result);
 
     let newPayloadCar = {};
@@ -94,6 +111,7 @@ const CustomerInformation = () => {
       ? validateInputRequired(newPayloadCar)
       : false;
     setValidationForm({ ...validationForm, car: validateCar ? true : false });
+    return validateCar
   };
 
   const onChangeTab = (newTab: number) => {
@@ -148,10 +166,11 @@ const CustomerInformation = () => {
   }
 
   const onSubmitForm = async() => {
+    context?.setLoadingContext(true)
     if( stateForm === 'add' ){
-        console.log("payloadCustomer--> ", payloadCustomer)
-        console.log("payloadGuarantor--> ", payloadGuarantor)
-        console.log("payloadCar--> ", payloadCar)
+        // console.log("payloadCustomer--> ", payloadCustomer)
+        // console.log("payloadGuarantor--> ", payloadGuarantor)
+        // console.log("payloadCar--> ", payloadCar)
         let newPayloadCar = {};
         for (let field in payloadCar) {
           if (field !== "id") {
@@ -169,25 +188,92 @@ const CustomerInformation = () => {
             sellingPrice: Number(payloadCar.sellingPrice),
             saleType: payloadCar.carType,
             guarantors: payloadGuarantor,
-            
         }
         if( payloadCar?.id && payloadCar?.id !== '' ){
             json = {...json, carInformation_id: payloadCar.id}
         }
-        console.log("json--> ", json)
+        // console.log("json--> ", json)
         const result = await _SaleItemApi().create(json)
-        console.log("result--> ", result)
+        if( result.statusCode === 200 ){
+            alert("บันทึกข้อมูลสำเร็จ")
+            onClearForm()
+        }
+        context?.setLoadingContext(false)
+        // console.log("result--> ", result)
     }
   }
 
-  const onViewData = (row: any) => {
+  const onViewData = async(row: any) => {
     console.log("row--> ", row)
+    // setIDUpdate({
+    //     saleItemID: row.id,
+    //     carID: row.carInformation.id,
+    //     guarantorID: row.guarantors.map((item: any)=> item.id).filter((item:any)=> item!== null&&item !== undefined),
+    // })
+    const newPayloadCustomer = {
+        customerName: row.customerName,
+        address: row.address,
+        idCardNumber: row.idCardNumber,
+        phoneNumber: row.phoneNumber,
+        downPayment: row.downPayment,
+        totalOrder: row.totalOrder,
+        numInstallments: row.numInstallments,
+        interestRate: row.interestRate,
+        interestType: row.interestType,
+        interestMonth: row.interestMonth,
+        discount: row.discount,
+        gps: row.gps,
+      }
+
+      const newPayloadGuarantor = row.guarantors.map((item: any)=> {
+        return {
+            guarantorName: item.guarantorName,
+            guarantorAddress: item.guarantorAddress,
+            guarantorIdCard: item.guarantorIdCard,
+            guarantorPhone: item.guarantorPhone,
+            id: item.id
+        }
+    })
+
+    const newPayloadCar = {
+        carBrand: row.carInformation.carBrand,
+        model: row.carInformation.model,
+        carColor: row.carInformation.carColor,
+        carDate: row.carInformation.carDate,
+        licensePlate: row.carInformation.licensePlate,
+        engineNumber: row.carInformation.engineNumber,
+        vin: row.carInformation.vin,
+        sellingPrice: row.carInformation.sellingPrice,
+        id: row.carInformation.id,
+        carType: row.carInformation.carType,
+      }
+
+    setPayloadCustomer(newPayloadCustomer)
+    setPayloadGuarantor(newPayloadGuarantor)
+    setPayloadCar(newPayloadCar)
+
+    const validCar = await returnInputCarChange(newPayloadCar)
+    const validGuarantor = await returnInputGuarantorChange(newPayloadGuarantor)
+    const validCustomer = await returnInputCustomerChange(newPayloadCustomer)
+
+    setValidationForm({
+        car: validCar,
+        guarantor: validGuarantor,
+        customer: validCustomer
+    })
+    setStateForm("view")
+    // setDisableForm({
+    //     customer: true,
+    //     guarantor: true,
+    //     car: true
+    // })
+    setShowModalSearchSale(false)
   }
 
-  useEffect( ()=> {
-    console.log("***Effect***")
-    // onClearForm()
-  }, [] )
+//   useEffect( ()=> {
+//     console.log("***Effect***")
+//     // onClearForm()
+//   }, [] )
 
   return (
     <>
@@ -315,21 +401,22 @@ const CustomerInformation = () => {
         <div className="w-full mt-5">
           {tabActive === 1 ? (
             <div>
-              <FormCustomer returnInputChange={returnInputCustomerChange} payloadCustomer={payloadCustomer} disableForm={disableForm.Customer} />
+              <FormCustomer returnInputChange={returnInputCustomerChange} payloadCustomer={payloadCustomer} stateForm={stateForm} />
             </div>
           ) : tabActive === 2 ? (
             <div>
-              <FormGuarantor payloadGuarantor={payloadGuarantor} returnInputChange={returnInputGuarantorChange} />
+              <FormGuarantor payloadGuarantor={payloadGuarantor} returnInputChange={returnInputGuarantorChange} stateForm={stateForm} />
             </div>
           ) : (
             <FormCar
               returnPayload={returnInputCarChange}
               payloadData={payloadCar}
+              stateForm={stateForm}
             />
           )}
         </div>
 
-        {fnCheckValidation() && (
+        {(fnCheckValidation() && stateForm !== "view") && (
           <div className="mt-8 flex justify-end">
             <button onClick={onSubmitForm} className="bg-orange-600 hover:bg-orange-500 rounded-lg text-white px-16 py-3 font-bold">
               <div className="flex items-center space-x-3">
