@@ -1,3 +1,4 @@
+import CarBand from "../../assets/car-brand.json"
 const inputList = [
     {
       name: "carBrand",
@@ -6,12 +7,7 @@ const inputList = [
       placeholder: "a",
       width: "4/12",
       value: "",
-      list: [
-        { label: "Toyota", value: "Toyota" },
-        { label: "Honda", value: "Honda" },
-        { label: "Suzuki", value: "Suzuki" },
-        { label: "Isuzu", value: "Isuzu" },
-      ],
+      list: CarBand,
       requied: true,
     },
     {

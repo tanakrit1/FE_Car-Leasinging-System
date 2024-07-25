@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 // import FormInput from "../../components/FormInput";
 import ModalSearchStock from "./modal-search-stock";
+import CarBand from "../../assets/car-brand.json"
 
 interface propsFormCar {
   returnPayload: (result: any) => void;
@@ -32,7 +33,6 @@ const FormCar = ({
   }, [payload]);
 
   const onChangeCarType = (newCarType: string) => {
-    console.log("newCarType--> ", newCarType);
     setDisableForm(newCarType === "buy" ? true : false);
 
     let clonePayload = { ...payloadData };
@@ -124,7 +124,7 @@ const FormCar = ({
           <div className="flex flex-row flex-wrap">
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                ชื่อ :<span className="text-red-500 font-semibold text">*</span>
+                ยี่ห้อ :<span className="text-red-500 font-semibold text">*</span>
               </p>
               <select
                 onChange={onChangeInput}
@@ -136,10 +136,10 @@ const FormCar = ({
                 }`}
               >
                 <option value="">------ เลือก ------</option>
-                {["Toyota", "Honda", "Suzuki", "Isuzu"].map(
+                {CarBand.map(
                   (item: any, indexList: number) => (
-                    <option key={"list" + indexList} value={item}>
-                      {item}
+                    <option key={"list" + indexList} value={item.value}>
+                      {item.label}
                     </option>
                   )
                 )}

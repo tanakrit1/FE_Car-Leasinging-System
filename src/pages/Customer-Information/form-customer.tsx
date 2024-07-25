@@ -264,7 +264,7 @@ const FormCustomer = ({
               </div>
             {/* )} */}
 
-            <div className="basis-4/12 px-2">
+            {/* <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
                 ส่วนลด :
                 <span className="text-red-500 font-semibold text">*</span>
@@ -280,7 +280,7 @@ const FormCustomer = ({
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
               />
-            </div>
+            </div> */}
 
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
@@ -298,6 +298,24 @@ const FormCustomer = ({
                 }`}
               />
             </div>
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                วันที่ทำสัญญา :
+                <span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="date"
+                name="contractDate"
+                value={payloadCustomer.contractDate}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
           </div>
         </div>
       </div>

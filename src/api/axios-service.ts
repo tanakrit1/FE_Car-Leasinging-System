@@ -11,6 +11,19 @@ const configAuthen = () => {
     };
 }
 
+const axiosGet = async (path: string) => {
+    return await axios.get(path, configAuthen())
+        .then((response) => {
+            return response.data
+        })
+        .catch((error) => {
+            if (error.response.status === 401) {
+                window.location.href = "/login"
+            }
+            return error
+        });
+}
+
 const axiosPost = async (path: string, body: any) => {
     return await axios.post(path, body, configAuthen())
         .then((response) => {
@@ -55,4 +68,4 @@ const axiosDelete = async (path: string) => {
 }
 
 
-export { axiosPost, axiosPatch, axiosDelete }
+export { axiosGet, axiosPost, axiosPatch, axiosDelete }

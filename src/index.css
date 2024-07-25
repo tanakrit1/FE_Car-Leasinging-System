@@ -20,7 +20,7 @@ input[type="number"] {
 
 
 ::-webkit-scrollbar {
-  width: 20px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -29,10 +29,10 @@ input[type="number"] {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: red;
+  background: #f3bb03;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b30000;
+  background: #f3bb03;
 }

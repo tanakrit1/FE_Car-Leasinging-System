@@ -18,7 +18,7 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
   const [contextLoad, setContextLoad] = useState<any>(context?.loadingContext);
   const [rows, setRows] = useState<any>([]);
   const [formSearch, setFormSearch] = useState<any>({
-    idCardNumber: "",
+    id: "",
     customerName: "",
   });
   const [pagination, setPagination] = useState<any>({
@@ -77,7 +77,7 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
 
   const onClearData = () => {
     setFormSearch({
-        idCardNumber: "",
+        id: "",
         customerName: "",
     });
     setRows([]);
@@ -88,14 +88,8 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
       totalPages: 1,
     });
   };
-
-//   const onToPayment = (row: any) => {
-//     console.log("row--> ", row)
-//     navigate("/payment", { state: { data: row } });
-//   }
-
+  
   useEffect(() => {
-    console.log("---> ", pagination);
     // onSubmitSearch(pagination.page);
   }, [pagination.page]);
 
@@ -111,7 +105,7 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
       ).close();
     }
     setFormSearch({
-        idCardNumber: "",
+        id: "",
         customerName: "",
       })
   }, [showModal]);
@@ -151,10 +145,10 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
             </div>
 
             <div className="w-1/2 px-3 ">
-              <p className="text-white mb-1">เลขบัตรประจำตัวประชาชน</p>
+              <p className="text-white mb-1">รหัสสัญญา</p>
               <input
                 disabled={contextLoad}
-                placeholder="เลขบัตรประจำตัวประชาชน"
+                placeholder="รหัสสัญญา"
                 type="text"
                 onChange={(event: any) =>
                   setFormSearch({
@@ -162,8 +156,8 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
                     [event.target.name]: event.target.value,
                   })
                 }
-                value={formSearch.idCardNumber}
-                name="idCardNumber"
+                value={formSearch.id}
+                name="id"
                 className="bg-slate-50 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>

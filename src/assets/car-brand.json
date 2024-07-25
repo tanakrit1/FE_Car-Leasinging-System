@@ -1,0 +1,18 @@
+[
+    { "label": "Toyota", "value": "Toyota" },
+    { "label": "Honda", "value": "Honda" },
+    { "label": "Isuzu", "value": "Isuzu" },
+    { "label": "Mazda", "value": "Mazda" },
+    { "label": "Mitsubishi", "value": "Mitsubishi" },
+    { "label": "Ford", "value": "Ford" },
+    { "label": "Suzuki", "value": "Suzuki" },
+    { "label": "Nissan", "value": "Nissan" },
+    { "label": "MG", "value": "MG" },
+    { "label": "HINO", "value": "HINO" },
+    { "label": "KOBELCO", "value": "KOBELCO" },
+    { "label": "BMW", "value": "BMW" },
+    { "label": "MERCEDES-BENZ", "value": "MERCEDES-BENZ" },
+    { "label": "Lexus", "value": "Lexus" },
+    { "label": "VOLVO", "value": "VOLVO" },
+    { "label": "Audi", "value": "Audi" }
+]

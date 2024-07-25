@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import FormCustomer from "./form-customer";
 import FormGuarantor from "./form-guarantor";
 import FormCar from "./form-car";
@@ -9,18 +9,26 @@ import ModalSearchSaleItem from "./modal-search-salleitem";
 import { LoadContext } from "../../context/loading-context";
 
 const CustomerInformation = () => {
-    const context = useContext(LoadContext)
-    const [showModalSearchSale, setShowModalSearchSale] = useState<boolean>(false);
-    // const [idUpdate, setIDUpdate] = useState<any>({
-    //     saleItemID: null,
-    //     carID: null,
-    //     guarantorID: null
-    // })
-    // const [disableForm, setDisableForm] = useState<any>({
-    //     customer: false,
-    //     guarantor: false,
-    //     car: false
-    // });
+  const context = useContext(LoadContext);
+  const [idSaleItem, setIdSaleItem] = useState<any>(null);
+  const [dateCreate, setDateCreate] = useState<any>(dayjs().format("DD/MM/YYYY"));
+  const [showModalSearchSale, setShowModalSearchSale] =
+    useState<boolean>(false);
+  // const [idUpdate, setIDUpdate] = useState<any>({
+  //     saleItemID: null,
+  //     carID: null,
+  //     guarantorID: null
+  // })
+  // const [disableForm, setDisableForm] = useState<any>({
+  //     customer: false,
+  //     guarantor: false,
+  //     car: false
+  // });
+
+  useEffect(() => {
+    onClearForm()
+  }, []);
+
   const [payloadCustomer, setPayloadCustomer] = useState<any>({
     customerName: "",
     address: "",
@@ -32,10 +40,18 @@ const CustomerInformation = () => {
     interestRate: "",
     interestType: "",
     interestMonth: "",
-    discount: "",
+    // discount: "",
+    contractDate: "",
     gps: "",
   });
-  const [payloadGuarantor, setPayloadGuarantor] = useState<any>([{guarantorName: "", guarantorAddress: "", guarantorIdCard: "", guarantorPhone: ""}]);
+  const [payloadGuarantor, setPayloadGuarantor] = useState<any>([
+    {
+      guarantorName: "",
+      guarantorAddress: "",
+      guarantorIdCard: "",
+      guarantorPhone: "",
+    },
+  ]);
   const [payloadCar, setPayloadCar] = useState<any>({
     carBrand: "",
     model: "",
@@ -54,10 +70,10 @@ const CustomerInformation = () => {
     car: false,
   });
   const [tabActive, setTabActive] = useState<number>(1);
-  const [stateForm, setStateForm] = useState<string>('add')
+  const [stateForm, setStateForm] = useState<string>("add");
 
-  const returnInputCustomerChange = async(result: any) => {
-    let newObj: any = {}
+  const returnInputCustomerChange = async (result: any) => {
+    let newObj: any = {};
     // if( result.interestType === "ลดต้น/ลดดอก" ){
     //     for( let field in result ){
     //         if( field !== "interestMonth" && field !== "numInstallments" ){
@@ -65,7 +81,7 @@ const CustomerInformation = () => {
     //         }
     //     }
     // }else{
-        newObj = result
+    newObj = result;
     // }
     setPayloadCustomer(result);
     const validateCustomer = payloadCustomer
@@ -75,10 +91,10 @@ const CustomerInformation = () => {
       ...validationForm,
       customer: validateCustomer ? true : false,
     });
-    return validateCustomer
+    return validateCustomer;
   };
 
-  const returnInputGuarantorChange = async(result: any) => {
+  const returnInputGuarantorChange = async (result: any) => {
     setPayloadGuarantor(result);
 
     let validateGuarantor = false;
@@ -95,10 +111,10 @@ const CustomerInformation = () => {
       ...validationForm,
       guarantor: validateGuarantor ? true : false,
     });
-    return validateGuarantor
+    return validateGuarantor;
   };
 
-  const returnInputCarChange = async(result: any) => {
+  const returnInputCarChange = async (result: any) => {
     setPayloadCar(result);
 
     let newPayloadCar = {};
@@ -111,7 +127,7 @@ const CustomerInformation = () => {
       ? validateInputRequired(newPayloadCar)
       : false;
     setValidationForm({ ...validationForm, car: validateCar ? true : false });
-    return validateCar
+    return validateCar;
   };
 
   const onChangeTab = (newTab: number) => {
@@ -129,163 +145,176 @@ const CustomerInformation = () => {
     return false;
   };
 
-  const onClearForm = () => {
-    setStateForm('add')
+  const onClearForm = async () => {
+    setStateForm("add");
     setValidationForm({
-        customer: false,
-        guarantor: false,
-        car: false,
-    })
+      customer: false,
+      guarantor: false,
+      car: false,
+    });
     setPayloadCustomer({
-        customerName: "",
-        address: "",
-        idCardNumber: "",
-        phoneNumber: "",
-        downPayment: "",
-        totalOrder: "",
-        numInstallments: "",
-        interestRate: "",
-        interestType: "",
-        interestMonth: "",
-        discount: "",
-        gps: "",
-      })
-      setPayloadGuarantor([{guarantorName: "", guarantorAddress: "", guarantorIdCard: "", guarantorPhone: ""}])
-      setPayloadCar({
-        carBrand: "",
-        model: "",
-        carColor: "",
-        carDate: "",
-        licensePlate: "",
-        engineNumber: "",
-        vin: "",
-        sellingPrice: "",
-        id: "",
-        carType: "",
-      })
-  }
+      customerName: "",
+      address: "",
+      idCardNumber: "",
+      phoneNumber: "",
+      downPayment: "",
+      totalOrder: "",
+      numInstallments: "",
+      interestRate: "",
+      interestType: "",
+      interestMonth: "",
+      // discount: "",
+      contractDate: "",
+      gps: "",
+    });
+    setPayloadGuarantor([
+      {
+        guarantorName: "",
+        guarantorAddress: "",
+        guarantorIdCard: "",
+        guarantorPhone: "",
+      },
+    ]);
+    setPayloadCar({
+      carBrand: "",
+      model: "",
+      carColor: "",
+      carDate: "",
+      licensePlate: "",
+      engineNumber: "",
+      vin: "",
+      sellingPrice: "",
+      id: "",
+      carType: "",
+    });
 
-  const onSubmitForm = async() => {
-    context?.setLoadingContext(true)
-    if( stateForm === 'add' ){
-        // console.log("payloadCustomer--> ", payloadCustomer)
-        // console.log("payloadGuarantor--> ", payloadGuarantor)
-        // console.log("payloadCar--> ", payloadCar)
-        let newPayloadCar = {};
-        for (let field in payloadCar) {
-          if (field !== "id") {
-            newPayloadCar = { ...newPayloadCar, [field]: payloadCar[field] };
-          }
-        }
-        let json = {
-            ...payloadCustomer,
-            ...newPayloadCar,
-            discount: Number(payloadCustomer.discount),
-            interestMonth: Number(payloadCustomer.interestMonth),
-            interestRate: Number(payloadCustomer.interestRate),
-            totalOrder: Number(payloadCustomer.totalOrder),
-            downPayment: Number(payloadCustomer.downPayment),
-            sellingPrice: Number(payloadCar.sellingPrice),
-            saleType: payloadCar.carType,
-            guarantors: payloadGuarantor,
-        }
-        if( payloadCar?.id && payloadCar?.id !== '' ){
-            json = {...json, carInformation_id: payloadCar.id}
-        }
-        // console.log("json--> ", json)
-        const result = await _SaleItemApi().create(json)
-        if( result.statusCode === 200 ){
-            alert("บันทึกข้อมูลสำเร็จ")
-            onClearForm()
-        }
-        context?.setLoadingContext(false)
-        // console.log("result--> ", result)
+    const result = await _SaleItemApi().getMaxID();
+    if (result?.data.length > 0) {
+      setIdSaleItem(Number(result.data[0].id) + 1);
     }
-  }
+    setDateCreate(dayjs().format("DD/MM/YYYY"))
+  };
 
-  const onViewData = async(row: any) => {
-    console.log("row--> ", row)
+  const onSubmitForm = async () => {
+    context?.setLoadingContext(true);
+    if (stateForm === "add") {
+      let newPayloadCar = {};
+      for (let field in payloadCar) {
+        if (field !== "id") {
+          newPayloadCar = { ...newPayloadCar, [field]: payloadCar[field] };
+        }
+      }
+      let json = {
+        ...payloadCustomer,
+        ...newPayloadCar,
+        // discount: Number(payloadCustomer.discount),
+        interestMonth: Number(payloadCustomer.interestMonth),
+        interestRate: Number(payloadCustomer.interestRate),
+        totalOrder: Number(payloadCustomer.totalOrder),
+        downPayment: Number(payloadCustomer.downPayment),
+        sellingPrice: Number(payloadCar.sellingPrice),
+        saleType: payloadCar.carType,
+        guarantors: payloadGuarantor,
+      };
+      if (payloadCar?.id && payloadCar?.id !== "") {
+        json = { ...json, carInformation_id: payloadCar.id };
+      }
+      const result = await _SaleItemApi().create(json);
+      if (result.statusCode === 200) {
+        alert("บันทึกข้อมูลสำเร็จ");
+        onClearForm();
+      }
+      context?.setLoadingContext(false);
+    }
+  };
+
+  const onViewData = async (row: any) => {
     // setIDUpdate({
     //     saleItemID: row.id,
     //     carID: row.carInformation.id,
     //     guarantorID: row.guarantors.map((item: any)=> item.id).filter((item:any)=> item!== null&&item !== undefined),
     // })
+    setIdSaleItem(row.id)
+    setDateCreate(dayjs(row.createdAt).format("DD/MM/YYYY"))
     const newPayloadCustomer = {
-        customerName: row.customerName,
-        address: row.address,
-        idCardNumber: row.idCardNumber,
-        phoneNumber: row.phoneNumber,
-        downPayment: row.downPayment,
-        totalOrder: row.totalOrder,
-        numInstallments: row.numInstallments,
-        interestRate: row.interestRate,
-        interestType: row.interestType,
-        interestMonth: row.interestMonth,
-        discount: row.discount,
-        gps: row.gps,
-      }
+      customerName: row.customerName,
+      address: row.address,
+      idCardNumber: row.idCardNumber,
+      phoneNumber: row.phoneNumber,
+      downPayment: row.downPayment,
+      totalOrder: row.totalOrder,
+      numInstallments: row.numInstallments,
+      interestRate: row.interestRate,
+      interestType: row.interestType,
+      interestMonth: row.interestMonth,
+      // discount: row.discount,
+      contractDate: row.contractDate,
+      gps: row.gps,
+    };
 
-      const newPayloadGuarantor = row.guarantors.map((item: any)=> {
-        return {
-            guarantorName: item.guarantorName,
-            guarantorAddress: item.guarantorAddress,
-            guarantorIdCard: item.guarantorIdCard,
-            guarantorPhone: item.guarantorPhone,
-            id: item.id
-        }
-    })
+    const newPayloadGuarantor = row.guarantors.map((item: any) => {
+      return {
+        guarantorName: item.guarantorName,
+        guarantorAddress: item.guarantorAddress,
+        guarantorIdCard: item.guarantorIdCard,
+        guarantorPhone: item.guarantorPhone,
+        id: item.id,
+      };
+    });
 
     const newPayloadCar = {
-        carBrand: row.carInformation.carBrand,
-        model: row.carInformation.model,
-        carColor: row.carInformation.carColor,
-        carDate: row.carInformation.carDate,
-        licensePlate: row.carInformation.licensePlate,
-        engineNumber: row.carInformation.engineNumber,
-        vin: row.carInformation.vin,
-        sellingPrice: row.carInformation.sellingPrice,
-        id: row.carInformation.id,
-        carType: row.carInformation.carType,
-      }
+      carBrand: row.carInformation.carBrand,
+      model: row.carInformation.model,
+      carColor: row.carInformation.carColor,
+      carDate: row.carInformation.carDate,
+      licensePlate: row.carInformation.licensePlate,
+      engineNumber: row.carInformation.engineNumber,
+      vin: row.carInformation.vin,
+      sellingPrice: row.carInformation.sellingPrice,
+      id: row.carInformation.id,
+      carType: row.carInformation.carType,
+    };
 
-    setPayloadCustomer(newPayloadCustomer)
-    setPayloadGuarantor(newPayloadGuarantor)
-    setPayloadCar(newPayloadCar)
+    setPayloadCustomer(newPayloadCustomer);
+    setPayloadGuarantor(newPayloadGuarantor);
+    setPayloadCar(newPayloadCar);
 
-    const validCar = await returnInputCarChange(newPayloadCar)
-    const validGuarantor = await returnInputGuarantorChange(newPayloadGuarantor)
-    const validCustomer = await returnInputCustomerChange(newPayloadCustomer)
+    const validCar = await returnInputCarChange(newPayloadCar);
+    const validGuarantor = await returnInputGuarantorChange(
+      newPayloadGuarantor
+    );
+    const validCustomer = await returnInputCustomerChange(newPayloadCustomer);
 
     setValidationForm({
-        car: validCar,
-        guarantor: validGuarantor,
-        customer: validCustomer
-    })
-    setStateForm("view")
+      car: validCar,
+      guarantor: validGuarantor,
+      customer: validCustomer,
+    });
+    setStateForm("view");
     // setDisableForm({
     //     customer: true,
     //     guarantor: true,
     //     car: true
     // })
-    setShowModalSearchSale(false)
-  }
+    setShowModalSearchSale(false);
+  };
 
-//   useEffect( ()=> {
-//     console.log("***Effect***")
-//     // onClearForm()
-//   }, [] )
 
   return (
     <>
-        <ModalSearchSaleItem showModal={showModalSearchSale} returnViewData={onViewData} returnShowModal={()=> setShowModalSearchSale(false)} />
+      <ModalSearchSaleItem
+        showModal={showModalSearchSale}
+        returnViewData={onViewData}
+        returnShowModal={() => setShowModalSearchSale(false)}
+      />
       <div className="flex justify-between">
         <p className="font-bold text-2xl text-white">ข้อมูลลูกค้า</p>
         <div className="flex space-x-2">
-          <span className="text-white font-semibold">รหัส : xxxxxxxxx</span>
+          <span className="text-white font-semibold">รหัส : {idSaleItem}</span>
           <span className="text-white font-semibold">|</span>
           <span className="text-white font-semibold">
             {" "}
-            วันที่ซื้อ : {dayjs().format("DD/MM/YYYY")}
+            วันที่ซื้อ : {dateCreate}
           </span>
         </div>
       </div>
@@ -376,7 +405,7 @@ const CustomerInformation = () => {
               </div>
             </button>
             <button
-                onClick={()=> setShowModalSearchSale(true)}
+              onClick={() => setShowModalSearchSale(true)}
               type="button"
               className="bg-orange-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-orange-400"
             >
@@ -401,11 +430,19 @@ const CustomerInformation = () => {
         <div className="w-full mt-5">
           {tabActive === 1 ? (
             <div>
-              <FormCustomer returnInputChange={returnInputCustomerChange} payloadCustomer={payloadCustomer} stateForm={stateForm} />
+              <FormCustomer
+                returnInputChange={returnInputCustomerChange}
+                payloadCustomer={payloadCustomer}
+                stateForm={stateForm}
+              />
             </div>
           ) : tabActive === 2 ? (
             <div>
-              <FormGuarantor payloadGuarantor={payloadGuarantor} returnInputChange={returnInputGuarantorChange} stateForm={stateForm} />
+              <FormGuarantor
+                payloadGuarantor={payloadGuarantor}
+                returnInputChange={returnInputGuarantorChange}
+                stateForm={stateForm}
+              />
             </div>
           ) : (
             <FormCar
@@ -416,9 +453,12 @@ const CustomerInformation = () => {
           )}
         </div>
 
-        {(fnCheckValidation() && stateForm !== "view") && (
+        {fnCheckValidation() && stateForm !== "view" && (
           <div className="mt-8 flex justify-end">
-            <button onClick={onSubmitForm} className="bg-orange-600 hover:bg-orange-500 rounded-lg text-white px-16 py-3 font-bold">
+            <button
+              onClick={onSubmitForm}
+              className="bg-orange-600 hover:bg-orange-500 rounded-lg text-white px-16 py-3 font-bold"
+            >
               <div className="flex items-center space-x-3">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

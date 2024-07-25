@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import _PaymentApi from "../../api/payment";
 import { LoadContext } from "../../context/loading-context";
 import { getLoginStorage } from "../../helpers/set-storage";
+import BankList from "../../assets/bank.json"
 
 const columns = [
   { label: "วันที่ชำระ", width: "10%", field: "datePay" },
@@ -10,8 +11,9 @@ const columns = [
   { label: "ดอกเบี้ย", width: "10%", field: "InterestPay" },
   { label: "ค่าปรับ", width: "10%", field: "fee" },
   { label: "วิธีชำระ", width: "10%", field: "methodPay" },
+  { label: "ธนาคาร", width: "15%", field: "bank" },
   { label: "ผู้รับชำระ", width: "10%", field: "receiver" },
-  { label: "Note", width: "30%", field: "note" },
+  { label: "Note", width: "25%", field: "note" },
 ];
 
 const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
@@ -19,7 +21,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
   const loginStorage = getLoginStorage()?.profile;
   const [amount, setAmount] = useState<any>("");
   const [showSubmit, setShowSubmit] = useState<boolean>(false);
-//   const [showModalCloseOrder, setShowModalCloseOrder] = useState<boolean>(false);
+  //   const [showModalCloseOrder, setShowModalCloseOrder] = useState<boolean>(false);
   const [payload, setPayload] = useState<any>({
     methodPay: "เงินสด",
     receiver: loginStorage?.firstName + "  " + loginStorage?.lastName,
@@ -28,6 +30,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     fee: "", //ค่าปรับ
     datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
     note: "",
+    bank: ""
   });
   const [rowsHistory, setRowsHistory] = useState<any>([]);
 
@@ -39,10 +42,11 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       InterestPay: "", //ดอกเบี้ย
       fee: "", //ค่าปรับ
       datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
-      note: ""
+      note: "",
+      bank: ""
     });
     setAmount("");
-    (document.getElementById("note") as HTMLFormElement).value = ''
+    (document.getElementById("note") as HTMLFormElement).value = "";
   };
 
   const onLoadHistory = async (saleID: number) => {
@@ -70,7 +74,6 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       });
       setRowsHistory(newRows);
     }
-    console.log("result--> ", result);
     context?.setLoadingContext(false);
   };
 
@@ -83,7 +86,9 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
 
       if (payloadCustomer.interestType === "คงที่") {
         const InterestPay =
-          (Number(payloadCustomer.totalOrder) / Number(payloadCustomer.numInstallments)) * (Number(payloadCustomer.interestRate) / 100);
+          (Number(payloadCustomer.totalOrder) /
+            Number(payloadCustomer.numInstallments)) *
+          (Number(payloadCustomer.interestRate) / 100);
         setPayload({ ...payload, InterestPay: InterestPay.toFixed(2) });
       } else {
         // ลดต้นลดดอก
@@ -92,27 +97,34 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
           (Number(payloadCustomer.interestRate) / 100);
         setPayload({ ...payload, InterestPay: InterestPay.toFixed(2) });
       }
-      console.log("payloadCustomer--> ", payloadCustomer);
     }
     context?.setLoadingContext(false);
   }, [payloadCustomer.id, payloadCustomer.totalInterest]);
 
   const onChangeMethodPay = (result: string) => {
-    setPayload({ ...payload, methodPay: result });
+    if( result === "เงินสด" ){
+        setPayload({ ...payload, methodPay: result, bank: "" });
+    }else{
+        setPayload({ ...payload, methodPay: result });
+    }
+    
   };
-
 
   const onChangeInput = (event: any) => {
     if (event.target.name === "amount") {
-        setAmount(event.target.value);
-        const amountPay = Number(event.target.value) - Number(payload.InterestPay) - Number(payload.fee);
-        setPayload({ ...payload, amountPay: amountPay.toFixed(2),  });
-    }else if( event.target.name === "fee" ){
-        const fee = event.target.value;
-        const amountPay = Number(amount) - Number(payload.InterestPay) - Number(fee);
-        setPayload({ ...payload, amountPay: amountPay.toFixed(2), fee: fee });
-    }else{
-        setPayload({ ...payload, [event.target.name]: event.target.value });
+      setAmount(event.target.value);
+      const amountPay =
+        Number(event.target.value) -
+        Number(payload.InterestPay) -
+        Number(payload.fee);
+      setPayload({ ...payload, amountPay: amountPay.toFixed(2) });
+    } else if (event.target.name === "fee") {
+      const fee = event.target.value;
+      const amountPay =
+        Number(amount) - Number(payload.InterestPay) - Number(fee);
+      setPayload({ ...payload, amountPay: amountPay.toFixed(2), fee: fee });
+    } else {
+      setPayload({ ...payload, [event.target.name]: event.target.value });
     }
   };
 
@@ -139,7 +151,6 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     if (window.confirm("คุณต้องการลบข้อมูลกรชำระเงินล่าสุด ใช่หรือไม่?")) {
       context?.setLoadingContext(true);
       const result = await _PaymentApi().delete(row.id);
-      console.log("result--> ", result);
       if (result.statusCode === 200) {
         alert("ลบข้อมูลสำเร็จ");
         onClearForm();
@@ -150,22 +161,30 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     }
   };
 
-  useEffect( ()=> {
-    if( payload.methodPay &&
-        payload.InterestPay &&
-        payload.fee &&
-        Number(payload.amountPay) >= 0 && 
-        rowsHistory.length < payloadCustomer.numInstallments
-    ){
-        return setShowSubmit(true)
+  useEffect(() => {
+    if (
+      payload.methodPay &&
+      payload.InterestPay &&
+      payload.fee &&
+      Number(payload.amountPay) >= 0 &&
+      rowsHistory.length < payloadCustomer.numInstallments
+    ) {
+        if( payload.methodPay === "เงินโอน" ){
+            if( payload.bank ){
+                return setShowSubmit(true);
+            }
+        }else{
+            return setShowSubmit(true);
+        }
+      
     }
 
-    setShowSubmit(false)
-  }, [payload] )
+    setShowSubmit(false);
+  }, [payload]);
 
-//   const onCloseOrder = () => {
-//     setShowModalCloseOrder(true)
-//   }
+  //   const onCloseOrder = () => {
+  //     setShowModalCloseOrder(true)
+  //   }
 
   return (
     <>
@@ -174,37 +193,46 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
           <p className="font-bold text-2xl text-white">ข้อมูลการชำระเงิน</p>
           <div className="flex space-x-3 items-center">
             <span className="text-white">ชำระครั้งที่</span>
-            <div className="px-3 py-1 rounded-full bg-orange-500 text-white font-bold">{rowsHistory.length + 1} / {payloadCustomer.numInstallments}</div>
+            <div className="px-3 py-1 rounded-full bg-orange-500 text-white font-bold">
+              {rowsHistory.length + 1} / {payloadCustomer.numInstallments}
+            </div>
           </div>
         </div>
 
         <div className="mt-5 px-3 pb-6 ">
-          <div className="flex mb-5 px-3 justify-between">
-            <div className="flex space-x-10 ">
-                <div className="flex space-x-2">
+          <div className="flex space-x-10  mb-5 px-3">
+              <div className="flex space-x-2">
                 <input
-                    type="radio"
-                    name="methodPay"
-                    value="เงินสด"
-                    checked={payload.methodPay === "เงินสด"}
-                    onChange={() => onChangeMethodPay("เงินสด")}
-                    className="radio radio-warning"
-                    defaultChecked
+                  type="radio"
+                  name="methodPay"
+                  value="เงินสด"
+                  checked={payload.methodPay === "เงินสด"}
+                  onChange={() => onChangeMethodPay("เงินสด")}
+                  className="radio radio-warning"
+                  defaultChecked
                 />
                 <p className="text-white font-semibold">เงินสด</p>
-                </div>
-                <div className="flex space-x-2">
+              </div>
+              <div className="flex space-x-2">
                 <input
-                    type="radio"
-                    name="methodPay"
-                    value="เงินโอน"
-                    checked={payload.methodPay === "เงินโอน"}
-                    onChange={() => onChangeMethodPay("เงินโอน")}
-                    className="radio radio-warning"
+                  type="radio"
+                  name="methodPay"
+                  value="เงินโอน"
+                  checked={payload.methodPay === "เงินโอน"}
+                  onChange={() => onChangeMethodPay("เงินโอน")}
+                  className="radio radio-warning"
                 />
                 <p className="text-white font-semibold">เงินโอน</p>
-                </div>
-            </div>
+              </div>
+
+             { payload.methodPay === "เงินโอน" && 
+              <div className="basis-3/12 px-2">
+                <select name="bank" value={payload.bank} className="bg-slate-50 text-black w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2" onChange={onChangeInput}>
+                  <option value="">------ เลือกธนาคาร ------</option>
+                   {BankList.map( (item: any, indexList: number) => ( <option key={"list" + indexList} value={item.value}>{item.label}</option>) )}
+                </select>
+              </div>
+            }
           </div>
 
           <div className="flex flex-wrap">
@@ -276,41 +304,69 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
             </div>
 
             <div className="basis-full px-2">
-              <p className="text-white font-semibold mb-1">Note : {payload?.note}</p>
-              <textarea name="note" id='note' onChange={onChangeInput} maxLength={512} rows={3} className="bg-slate-50 text-black mb-3 py-3 w-full rounded-lg  px-3 focus:outline-primary focus:outline focus:outline-2">
+              <p className="text-white font-semibold mb-1">
+                Note : 
+              </p>
+              <textarea
+                name="note"
+                id="note"
+                onChange={onChangeInput}
+                maxLength={512}
+                rows={3}
+                className="bg-slate-50 text-black mb-3 py-3 w-full rounded-lg  px-3 focus:outline-primary focus:outline focus:outline-2"
+              >
                 {payload?.note || ""}
               </textarea>
             </div>
-
           </div>
           {/* amountPay InterestPay fee */}
           <div className="basis-4/12 px-2 justify-end flex space-x-3">
-                {/* <button type="button" className="bg-green-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-500" onClick={onCloseOrder}>
+            {/* <button type="button" className="bg-green-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-500" onClick={onCloseOrder}>
                     <div className="flex py-2 px-4 items-center">
                         ปิดยอด
                     </div>
                 </button> */}
-            {showSubmit&& (
-                <button
-                  onClick={onSubmit}
-                  type="button"
-                  className="bg-orange-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-orange-400"
-                >
-                  <div className="flex py-2 px-4 items-center">
-                    <span>บันทึก</span>
-                  </div>
-                </button>
+            {showSubmit && (
+              <button
+                onClick={onSubmit}
+                type="button"
+                className="bg-orange-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-orange-400"
+              >
+                <div className="flex py-2 px-4 items-center">
+                  <span>บันทึก</span>
+                </div>
+              </button>
             )}
-            </div>
+          </div>
+
+          
 
           <div className="w-full divider text-white">ประวัติการชำระเงิน</div>
-
-          <div className="flex flex-wrap w-full">
+          <div className="flex items-center">
+            <div className="px-3 py-1 rounded-full bg-orange-200">
+                <span className="text-black font-bold">ยอดจัด {Number(payloadCustomer.totalOrder).toLocaleString()} บาท</span>
+            </div> 
+            <span className="px-6 text-white">/</span>
+            <div className="px-3 py-1 rounded-full bg-orange-200">
+                <span className="text-black font-bold">จ่ายแล้ว(เงินต้น) {Number(payloadCustomer.paymentAmount).toLocaleString()} บาท</span>
+            </div> 
+            <span className="px-6 text-white">/</span>
+            <div className="px-3 py-1 rounded-full bg-orange-200">
+                <span className="text-black font-bold">คงเหลือ(เงินต้น) {Number(payloadCustomer.remainingBalance).toLocaleString()} บาท</span>
+            </div> 
+          </div>
+          <div className="flex flex-wrap w-full mt-4">
             <table className="table table-pin-rows">
               <thead>
                 <tr className="bg-slate-400">
                   {columns.map((item: any, index: number) => (
-                    <th key={index} style={{ width: item.width }} className={`text-white text-lg ${item.field==='note' && 'text-center'}`}>
+                    <th
+                      key={index}
+                      style={{ width: item.width }}
+                      className={`text-white text-lg ${
+                        item.field === "note" && "text-center"
+                      }`}
+                    >
                       {item.label}
                     </th>
                   ))}
@@ -366,11 +422,8 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       {/* ---------------------------------------------------------------------------------------------------------- */}
 
       <dialog id="modal-close-order" className="modal">
-        <div className="modal-box w-11/12 max-w-5xl">
-                
-        </div>
+        <div className="modal-box w-11/12 max-w-5xl"></div>
       </dialog>
-
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { axiosPost } from "./axios-service"
+import { axiosGet, axiosPost } from "./axios-service"
 
 const _SaleItemApi = () => {
     return {
@@ -8,6 +8,10 @@ const _SaleItemApi = () => {
 
         create: async(body: any) => {
             return await axiosPost("/saleitem/createAdvance", body)
+        },
+
+        getMaxID: async() => {
+            return await axiosGet("/saleitem/maxid")
         },
 
         // update: async(id:string, body: any) => {

@@ -20,6 +20,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
   const [formSearch, setFormSearch] = useState<any>({
     carInformation_licensePlate: "",
     customerName: "",
+    id: ""
   });
   const [pagination, setPagination] = useState<any>({
     page: 1,
@@ -58,7 +59,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
         alert("ไม่พบข้อมูล");
       }
       const newRows = resultRows.data.map( (item: any) => {
-        return {...item, licensePlate: item.carInformation.licensePlate}
+        return {...item, licensePlate: item.carInformation?.licensePlate}
       } )
       setRows(newRows);
       setPagination({
@@ -84,13 +85,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
     });
   };
 
-//   const onToPayment = (row: any) => {
-//     console.log("row--> ", row)
-//     navigate("/payment", { state: { data: row } });
-//   }
-
   useEffect(() => {
-    console.log("---> ", pagination);
     // onSubmitSearch(pagination.page);
   }, [pagination.page]);
 
@@ -108,6 +103,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
     setFormSearch({
         carInformation_licensePlate: "",
         customerName: "",
+        id: ""
       })
   }, [showModal]);
   return (
@@ -126,6 +122,23 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
           </div>
 
           <div className="w-full mt-5 flex ">
+          <div className="w-1/2 px-3 ">
+              <p className="text-white mb-1">รหัสสัญญา</p>
+              <input
+                disabled={contextLoad}
+                placeholder="รหัสสัญญา"
+                type="number"
+                onChange={(event: any) =>
+                  setFormSearch({
+                    ...formSearch,
+                    [event.target.name]: event.target.value,
+                  })
+                }
+                value={formSearch.id}
+                name="id"
+                className="bg-slate-50 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+              />
+            </div>
             <div className="w-1/2 px-3 ">
               <p className="text-white mb-1">เลขทะเบียน</p>
               <input

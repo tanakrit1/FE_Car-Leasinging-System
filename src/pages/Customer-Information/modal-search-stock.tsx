@@ -92,7 +92,6 @@ const ModalSearchStock = ({ showModal, returnShowModal, returnViewData }: any) =
   };
 
   useEffect(() => {
-    console.log("---> ", pagination);
     // onSubmitSearch(pagination.page);
   }, [pagination.page]);
 
