@@ -44,11 +44,11 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
         });
       }
     }
-    mapJson = [...mapJson, {
-        field: "statusInstallment",
-        operator: "isNull",
-        value: "",
-    }]
+    // mapJson = [...mapJson, {
+    //     field: "statusInstallment",
+    //     operator: "isNull",
+    //     value: "",
+    // }]
     const json: any = {
       page: page ? page : 1,
       limit: pagination.limit,

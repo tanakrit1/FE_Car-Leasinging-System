@@ -3,7 +3,8 @@ import { useContext, useEffect, useState } from "react";
 import _PaymentApi from "../../api/payment";
 import { LoadContext } from "../../context/loading-context";
 import { getLoginStorage } from "../../helpers/set-storage";
-import BankList from "../../assets/bank.json"
+import BankList from "../../assets/bank.json";
+import ModalCloseOrder from "./modal-close-order";
 
 const columns = [
   { label: "วันที่ชำระ", width: "10%", field: "datePay" },
@@ -21,7 +22,6 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
   const loginStorage = getLoginStorage()?.profile;
   const [amount, setAmount] = useState<any>("");
   const [showSubmit, setShowSubmit] = useState<boolean>(false);
-  //   const [showModalCloseOrder, setShowModalCloseOrder] = useState<boolean>(false);
   const [payload, setPayload] = useState<any>({
     methodPay: "เงินสด",
     receiver: loginStorage?.firstName + "  " + loginStorage?.lastName,
@@ -30,9 +30,13 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     fee: "", //ค่าปรับ
     datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
     note: "",
-    bank: ""
+    bank: "",
   });
   const [rowsHistory, setRowsHistory] = useState<any>([]);
+
+  const [formDisable, setFormDisable] = useState<boolean>(false);
+  const [showModalCloseOrder, setShowModalCloseOrder] =
+    useState<boolean>(false);
 
   const onClearForm = () => {
     setPayload({
@@ -43,7 +47,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       fee: "", //ค่าปรับ
       datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
       note: "",
-      bank: ""
+      bank: "",
     });
     setAmount("");
     (document.getElementById("note") as HTMLFormElement).value = "";
@@ -98,16 +102,21 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
         setPayload({ ...payload, InterestPay: InterestPay.toFixed(2) });
       }
     }
+
+    if( Number(payloadCustomer.remainingBalance) === 0 ){
+        setFormDisable(true)
+    }else{
+        setFormDisable(false)
+    }
     context?.setLoadingContext(false);
   }, [payloadCustomer.id, payloadCustomer.totalInterest]);
 
   const onChangeMethodPay = (result: string) => {
-    if( result === "เงินสด" ){
-        setPayload({ ...payload, methodPay: result, bank: "" });
-    }else{
-        setPayload({ ...payload, methodPay: result });
+    if (result === "เงินสด") {
+      setPayload({ ...payload, methodPay: result, bank: "" });
+    } else {
+      setPayload({ ...payload, methodPay: result });
     }
-    
   };
 
   const onChangeInput = (event: any) => {
@@ -167,72 +176,100 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       payload.InterestPay &&
       payload.fee &&
       Number(payload.amountPay) >= 0 &&
-      rowsHistory.length < payloadCustomer.numInstallments
+      rowsHistory.length+1 < Number(payloadCustomer.numInstallments)
     ) {
-        if( payload.methodPay === "เงินโอน" ){
-            if( payload.bank ){
-                return setShowSubmit(true);
-            }
-        }else{
-            return setShowSubmit(true);
+      if (payload.methodPay === "เงินโอน") {
+        if (payload.bank) {
+          return setShowSubmit(true);
         }
-      
+      } else {
+        return setShowSubmit(true);
+      }
+    }else{
+        setShowSubmit(false);
     }
 
-    setShowSubmit(false);
+    if( rowsHistory.length+1 > Number(payloadCustomer.numInstallments) ){
+      setShowSubmit(false);
+    }
+
+
   }, [payload]);
 
-  //   const onCloseOrder = () => {
-  //     setShowModalCloseOrder(true)
-  //   }
+  const onCloseOrder = () => {
+    setShowModalCloseOrder(true);
+  };
+
+  const returnShowModalCloseOrder = (result: boolean) => {
+    setShowModalCloseOrder(result);
+  };
+
+  const returnCloseOrderSuccess = () => {
+    onRefetchDetail(payloadCustomer.id);
+    onClearForm();
+    setShowModalCloseOrder(false);
+  }
 
   return (
     <>
       <div className="w-full rounded-lg bg-slate-700 ">
         <div className="flex items-center bg-slate-600 px-3 h-16 rounded-t-lg justify-between">
           <p className="font-bold text-2xl text-white">ข้อมูลการชำระเงิน</p>
+          { Number(payloadCustomer.remainingBalance) !== 0  &&
           <div className="flex space-x-3 items-center">
             <span className="text-white">ชำระครั้งที่</span>
             <div className="px-3 py-1 rounded-full bg-orange-500 text-white font-bold">
               {rowsHistory.length + 1} / {payloadCustomer.numInstallments}
             </div>
           </div>
+            }
         </div>
 
         <div className="mt-5 px-3 pb-6 ">
           <div className="flex space-x-10  mb-5 px-3">
-              <div className="flex space-x-2">
-                <input
-                  type="radio"
-                  name="methodPay"
-                  value="เงินสด"
-                  checked={payload.methodPay === "เงินสด"}
-                  onChange={() => onChangeMethodPay("เงินสด")}
-                  className="radio radio-warning"
-                  defaultChecked
-                />
-                <p className="text-white font-semibold">เงินสด</p>
-              </div>
-              <div className="flex space-x-2">
-                <input
-                  type="radio"
-                  name="methodPay"
-                  value="เงินโอน"
-                  checked={payload.methodPay === "เงินโอน"}
-                  onChange={() => onChangeMethodPay("เงินโอน")}
-                  className="radio radio-warning"
-                />
-                <p className="text-white font-semibold">เงินโอน</p>
-              </div>
+            <div className="flex space-x-2">
+              <input
+                disabled={formDisable}
+                type="radio"
+                name="methodPay"
+                value="เงินสด"
+                checked={payload.methodPay === "เงินสด"}
+                onChange={() => onChangeMethodPay("เงินสด")}
+                className="radio radio-warning"
+                defaultChecked
+              />
+              <p className="text-white font-semibold">เงินสด</p>
+            </div>
+            <div className="flex space-x-2">
+              <input
+                disabled={formDisable}
+                type="radio"
+                name="methodPay"
+                value="เงินโอน"
+                checked={payload.methodPay === "เงินโอน"}
+                onChange={() => onChangeMethodPay("เงินโอน")}
+                className="radio radio-warning"
+              />
+              <p className="text-white font-semibold">เงินโอน</p>
+            </div>
 
-             { payload.methodPay === "เงินโอน" && 
+            {payload.methodPay === "เงินโอน" && (
               <div className="basis-3/12 px-2">
-                <select name="bank" value={payload.bank} className="bg-slate-50 text-black w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2" onChange={onChangeInput}>
+                <select
+                  name="bank"
+                  value={payload.bank}
+                  className="bg-slate-50 text-black w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                  onChange={onChangeInput}
+                >
                   <option value="">------ เลือกธนาคาร ------</option>
-                   {BankList.map( (item: any, indexList: number) => ( <option key={"list" + indexList} value={item.value}>{item.label}</option>) )}
+                  {BankList.map((item: any, indexList: number) => (
+                    <option key={"list" + indexList} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
                 </select>
               </div>
-            }
+            )}
           </div>
 
           <div className="flex flex-wrap">
@@ -241,11 +278,12 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                 จำนวนเงินที่จ่ายจริง :
               </p>
               <input
+                disabled={formDisable}
                 onChange={onChangeInput}
                 type="number"
                 name="amount"
                 value={amount}
-                className="bg-slate-50 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${formDisable ? "bg-slate-300" : "bg-slate-50" }`}
               />
             </div>
             <div className="basis-4/12 px-2">
@@ -284,11 +322,12 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                 <span className="text-red-500 font-semibold text">*</span>
               </p>
               <input
+                disabled={formDisable}
                 onChange={onChangeInput}
                 type="number"
                 name="fee"
                 value={payload.fee}
-                className="bg-slate-50 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${formDisable ? "bg-slate-300" : "bg-slate-50" }`}
               />
             </div>
 
@@ -304,29 +343,31 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
             </div>
 
             <div className="basis-full px-2">
-              <p className="text-white font-semibold mb-1">
-                Note : 
-              </p>
+              <p className="text-white font-semibold mb-1">Note :</p>
               <textarea
+                disabled={formDisable}
                 name="note"
                 id="note"
                 onChange={onChangeInput}
                 maxLength={512}
                 rows={3}
-                className="bg-slate-50 text-black mb-3 py-3 w-full rounded-lg  px-3 focus:outline-primary focus:outline focus:outline-2"
+                className={`text-black mb-3 py-3 w-full rounded-lg  px-3 focus:outline-primary focus:outline focus:outline-2 ${formDisable ? "bg-slate-300" : "bg-slate-50" }`}
               >
                 {payload?.note || ""}
               </textarea>
             </div>
           </div>
           {/* amountPay InterestPay fee */}
+          { formDisable === false && (
           <div className="basis-4/12 px-2 justify-end flex space-x-3">
-            {/* <button type="button" className="bg-green-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-500" onClick={onCloseOrder}>
-                    <div className="flex py-2 px-4 items-center">
-                        ปิดยอด
-                    </div>
-                </button> */}
-            {showSubmit && (
+            <button
+              type="button"
+              className="bg-green-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-500"
+              onClick={onCloseOrder}
+            >
+              <div className="flex py-2 px-4 items-center">ปิดยอด</div>
+            </button>
+                {showSubmit && (formDisable === false) && (
               <button
                 onClick={onSubmit}
                 type="button"
@@ -338,22 +379,29 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
               </button>
             )}
           </div>
-
-          
+        )}
 
           <div className="w-full divider text-white">ประวัติการชำระเงิน</div>
           <div className="flex items-center">
             <div className="px-3 py-1 rounded-full bg-orange-200">
-                <span className="text-black font-bold">ยอดจัด {Number(payloadCustomer.totalOrder).toLocaleString()} บาท</span>
-            </div> 
+              <span className="text-black font-bold">
+                ยอดจัด {Number(payloadCustomer.totalOrder).toLocaleString()} บาท
+              </span>
+            </div>
             <span className="px-6 text-white">/</span>
             <div className="px-3 py-1 rounded-full bg-orange-200">
-                <span className="text-black font-bold">จ่ายแล้ว(เงินต้น) {Number(payloadCustomer.paymentAmount).toLocaleString()} บาท</span>
-            </div> 
+              <span className="text-black font-bold">
+                จ่ายแล้ว(เงินต้น){" "}
+                {Number(payloadCustomer.paymentAmount).toLocaleString()} บาท
+              </span>
+            </div>
             <span className="px-6 text-white">/</span>
             <div className="px-3 py-1 rounded-full bg-orange-200">
-                <span className="text-black font-bold">คงเหลือ(เงินต้น) {Number(payloadCustomer.remainingBalance).toLocaleString()} บาท</span>
-            </div> 
+              <span className="text-black font-bold">
+                คงเหลือ(เงินต้น){" "}
+                {Number(payloadCustomer.remainingBalance).toLocaleString()} บาท
+              </span>
+            </div>
           </div>
           <div className="flex flex-wrap w-full mt-4">
             <table className="table table-pin-rows">
@@ -421,9 +469,13 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
 
       {/* ---------------------------------------------------------------------------------------------------------- */}
 
-      <dialog id="modal-close-order" className="modal">
-        <div className="modal-box w-11/12 max-w-5xl"></div>
-      </dialog>
+      <ModalCloseOrder
+        rowsHistory={rowsHistory}
+        payloadCustomer={payloadCustomer}
+        showModalCloseOrder={showModalCloseOrder}
+        returnShowModalCloseOrder={returnShowModalCloseOrder}
+        returnSuccess={returnCloseOrderSuccess}
+      />
     </>
   );
 };

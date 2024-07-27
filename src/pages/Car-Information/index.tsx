@@ -87,6 +87,7 @@ const CarInformation = () => {
       }
     } else {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+      context?.setLoadingContext(false);
     }
   };
 

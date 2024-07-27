@@ -12,6 +12,10 @@ const _PaymentApi = () => {
 
         delete: async(id: any) => {
             return await axiosDelete(`/payment/${id}`)
+        },
+
+        closeInstallment: async(body: any) => {
+            return await axiosPost(`/payment/closeInstallment`, body)
         }
     }
 }

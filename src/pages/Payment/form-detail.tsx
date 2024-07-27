@@ -3,7 +3,7 @@ const FormDetail = ({ dataInput }: any) => {
   return (
     <>
       <div className="w-full rounded-lg bg-slate-700 ">
-        <div className="flex items-center bg-slate-600 px-3 h-16 rounded-t-lg">
+        <div className="flex items-center bg-slate-600 px-3 h-16 rounded-t-lg ">
           <p className="font-bold text-2xl text-white">รายละเอียดลูกค้า</p>
         </div>
 
