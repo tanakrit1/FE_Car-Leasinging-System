@@ -1,33 +1,40 @@
+import { useEffect, useState } from "react";
 import TableList from "../../components/TableList";
 
 const columns = [
-  { label: "A", width: "10%", field: "a" },
-  { label: "B", width: "10%", field: "b" },
-  { label: "C", width: "40%", field: "c" },
-  { label: "D", width: "10%", field: "d" },
-  { label: "E", width: "10%", field: "e" },
-  { label: "F", width: "10%", field: "f" },
-  { label: "G", width: "10%", field: "g" },
+  { label: "ชื่อลูกค้า", width: "20%", field: "customerName" },
+  { label: "เบอร์โทร", width: "15%", field: "phoneNumber" },
+  { label: "ทะเบียนรถ", width: "10%", field: "licensePlate" },
+  { label: "ยี่ห้อ", width: "15%", field: "carBrand" },
+  { label: "รุ่นรถ", width: "15%", field: "model" },
+  { label: "วันนัดชำระ", width: "20%", field: "dueDate" },
+  { label: "รหัสลูกค้า", width: "5%", field: "id" },
 ];
 
-const rows = [
-    {a: "1", b: "2", c: "3", d: "4", e: "5", f: "6", g: "7"},
-    {a: "1", b: "2", c: "3", d: "4", e: "5", f: "6", g: "7"},
-    {a: "1", b: "2", c: "3", d: "4", e: "5", f: "6", g: "7"},
-    {a: "1", b: "2", c: "3", d: "4", e: "5", f: "6", g: "7"},
-    {a: "1", b: "2", c: "3", d: "4", e: "5", f: "6", g: "7"},
-    {a: "1", b: "2", c: "3", d: "4", e: "5", f: "6", g: "7"},
-];
 
-const TableCustomer = () => {
+const TableCustomer = ({rows}: any) => {
+    const [rowsData, setRowsData] = useState<any>([])
+
+    useEffect( ()=> {
+        const mapData = rows.map( (item: any) => {
+            return { 
+                    ...item, 
+                    licensePlate: item?.carInformation?.licensePlate,
+                    carBrand: item?.carInformation?.carBrand,
+                    model: item?.carInformation?.model,
+                    }
+        } )
+
+        setRowsData(mapData)
+    }, [rows] )
   return (
     <>
       <div className="h-full  bg-slate-700 rounded-lg" >
         <div className="px-6 pt-3" style={{ height: "3%", zIndex: "1000000" }} >
-          <p className="font-bold text-xl text-white">รายชื่อลูกค้าใกล้ครบกำหนดชำระ</p>
+          <p className="font-bold text-xl text-white">รายชื่อลูกค้าใกล้ครบกำหนดชำระ (5 วัน)</p>
         </div>
         <div className="mt-8" style={{ overflowY: "auto", height: "85%" }}>
-          <TableList columns={columns} rows={rows} height="100%" />
+          <TableList columns={columns} rows={rowsData || []} height="100%" />
         </div>
       </div>
     </>

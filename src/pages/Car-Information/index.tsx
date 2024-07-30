@@ -10,6 +10,7 @@ import {
 } from "../../helpers/function-service";
 import _CarInformationApi from "../../api/car-information";
 import { LoadContext } from "../../context/loading-context";
+import ModalExport from "./modal-export";
 
 const CarInformation = () => {
   const context = useContext(LoadContext);
@@ -19,6 +20,7 @@ const CarInformation = () => {
   const [showModalSearch, setShowModalSearch] = useState<boolean>(false);
   const [imageData, setImageData] = useState<any>(null);
   const [rowActive, setRowActive] = useState<any>(null);
+  const [showModalExport, setShowModalExport] = useState<boolean>(false);
 
   const onChangeInputForm = (result: any) => {
     console.log("result--> ", result)
@@ -179,6 +181,10 @@ const CarInformation = () => {
     }
   };
 
+  const onShowReport = () => {
+    setShowModalExport(true)
+  }
+
   useEffect(() => {
     let objPayload: any = {};
     for (let i = 0; i < inputList.length; i++) {
@@ -191,6 +197,7 @@ const CarInformation = () => {
 
   return (
     <>
+        <ModalExport showModal={showModalExport} returnShowModal={(result: boolean) => setShowModalExport(result)}/>
       <ModalSearch
         showModal={showModalSearch}
         returnShowModal={(result: boolean) => setShowModalSearch(result)}
@@ -248,6 +255,7 @@ const CarInformation = () => {
                 <button
                   type="button"
                   className="rounded-lg bg-yellow-500 hover:bg-yellow-400 px-3 py-1 text-white"
+                  onClick={onShowReport}
                 >
                   <div className="flex space-x-3 items-center">
                     <svg

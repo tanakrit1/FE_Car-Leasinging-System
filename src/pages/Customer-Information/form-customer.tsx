@@ -246,7 +246,7 @@ const FormCustomer = ({
               />
             </div>
 
-            {/* {payloadCustomer.interestType === "คงที่" && ( */}
+            {payloadCustomer.interestType === "คงที่" && (
               <div className="basis-4/12 px-2">
                 <p className="text-white font-semibold mb-1">
                   ดอกเบี้ย/เดือน :
@@ -262,7 +262,7 @@ const FormCustomer = ({
                   className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
                 />
               </div>
-            {/* )} */}
+           ) }
 
             {/* <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">

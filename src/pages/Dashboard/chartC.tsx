@@ -1,31 +1,59 @@
 import * as echarts from "echarts";
 import { useEffect } from "react";
 
-const ChartC = () => {
-  const onSetChart = () => {
-    const option: any = {
-      xAxis: {
-        type: "category",
-        data: ["ขายแล้ว", "สต็อก"],
-      },
-      yAxis: {
-        type: "value",
-      },
-      series: [
-        {
-          data: [385, 220],
-          type: "bar",
-        },
-      ],
-    };
-    const chartElement = document.getElementById("chartC");
-    const chart = echarts.init(chartElement);
-    chart.setOption(option);
-  };
-
-  useEffect(() => {
-    onSetChart();
-  }, []);
+const ChartC = ({data}: any) => {
+    const onSetChart = (month: string[], value: any[]) => {
+        const option: any = {
+          tooltip: {
+            trigger: "axis",
+            axisPointer: {
+              type: "shadow",
+            },
+          },
+          grid: {
+            left: "3%",
+            right: "4%",
+            bottom: "3%",
+            containLabel: true,
+          },
+          xAxis: [
+            {
+              type: "category",
+              data: month,
+              axisTick: {
+                alignWithLabel: true,
+              },
+            },
+          ],
+          yAxis: [
+            {
+              type: "value",
+            },
+          ],
+          series: [
+            {
+              name: "จำนวน",
+              type: "bar",
+              barWidth: "60%",
+              data: value,
+            },
+          ],
+        };
+        const chartElement = document.getElementById("chartC");
+        const chart = echarts.init(chartElement);
+        chart.setOption(option);
+      };
+    
+      useEffect(() => {
+        let keyData: string[] = [];
+        let value: number[] = [];
+        for (let key in data) {
+            keyData.push(key);
+            value.push(data[key]);
+        }
+        
+        onSetChart(keyData, value);
+      }, [data]);
 
   return (
     <>

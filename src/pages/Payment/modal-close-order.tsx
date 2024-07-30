@@ -19,14 +19,15 @@ const ModalCloseOrder = ({
     remainingBalance: "", // เงินต้นคงเหลือ
     totalInterest: "", // ดอกเบี้ยชำระเเล้ว
     remainingInterest: "", // ดอกเบี้ยคงเหลือ
+    discount: "",
 
     bank: "",
     methodPay: "เงินสด",
   });
   const [amount, setAmount] = useState<any>("");
+  const [totalFee, setTotalFee] = useState<any>(0);
 
   const processOrder = () => {
-    console.log("**");
     if (payloadCustomer.interestType === "คงที่") {
       const remainingInstallment =
         Number(payloadCustomer.numInstallments) - rowsHistory.length; // จํานวนงวดคงเหลือ
@@ -41,12 +42,13 @@ const ModalCloseOrder = ({
         totalInterest: Number(payloadCustomer.totalInterest).toFixed(2),
         remainingInterest: Number(totalPay).toFixed(2),
         remainingBalance: Number(payloadCustomer.remainingBalance).toFixed(2),
+        discount: "",
 
         bank: "",
         methodPay: "เงินสด",
       });
       const payamount =
-        Number(payloadCustomer.remainingBalance) + Number(totalPay);
+        Number(payloadCustomer.remainingBalance) + Number(totalPay)
       setAmount(payamount.toFixed(2));
     } else {
       // ลดต้นลดดอก
@@ -59,14 +61,19 @@ const ModalCloseOrder = ({
         totalInterest: Number(payloadCustomer.totalInterest).toFixed(2),
         remainingInterest: Number(InterestPay).toFixed(2),
         remainingBalance: Number(payloadCustomer.remainingBalance).toFixed(2),
+        discount: "",
 
         bank: "",
         methodPay: "เงินสด",
       });
-      const payamount =
-        Number(payloadCustomer.remainingBalance) + Number(InterestPay);
+      const payamount = Number(payloadCustomer.remainingBalance) + Number(InterestPay)
       setAmount(payamount.toFixed(2));
     }
+
+    const sumTotalFee = rowsHistory.reduce((accumulator: any, current: any) => {
+        return Number(accumulator) + (Number(current.fee) || 0);
+      }, 0);
+      setTotalFee(sumTotalFee.toFixed(2))
   };
 
   const onSubmit = async() => {
@@ -74,10 +81,10 @@ const ModalCloseOrder = ({
     const json = {
         ...payloadPayment,
         InterestPay: Number(payloadPayment.remainingInterest),   // ดอกเบี้ย
-        amountPay: Number(payloadPayment.remainingBalance),       // ยอดคงเหลือ
+        amountPay: Number(amount),       // ยอดคงเหลือ
         fee: 0,
         receiver: profile.firstName + " " + profile.lastName,
-        discount: 0,
+        discount: Number(payloadPayment.discount),
         saleItem_id: Number(payloadCustomer.id),
     }
     console.log("json--> ", json)
@@ -103,6 +110,25 @@ const ModalCloseOrder = ({
       (document.getElementById("modal-close-order") as HTMLFormElement).close();
     }
   }, [showModalCloseOrder]);
+
+
+  const processDiscount = () => {
+    if (payloadCustomer.interestType === "คงที่") {
+        const remainingInstallment = Number(payloadCustomer.numInstallments) - rowsHistory.length; // จํานวนงวดคงเหลือ
+      const InterestPay = (Number(payloadCustomer.totalOrder) / Number(payloadCustomer.numInstallments)) * (Number(payloadCustomer.interestRate) / 100);
+      const totalPay = InterestPay * remainingInstallment;
+      const payamount = (Number(payloadCustomer.remainingBalance) + Number(totalPay)) - Number(payloadPayment.discount); 
+      setAmount(payamount.toFixed(2));
+    }else{
+        const InterestPay = Number(payloadCustomer.remainingBalance) * (Number(payloadCustomer.interestRate) / 100);
+        const payamount = (Number(payloadCustomer.remainingBalance) + Number(InterestPay)) - Number(payloadPayment.discount);
+        setAmount(payamount.toFixed(2));
+    }
+  }
+
+  useEffect( () => {
+    processDiscount()
+  }, [payloadPayment.discount] )
 
   return (
     <>
@@ -150,13 +176,31 @@ const ModalCloseOrder = ({
                 {payloadPayment.remainingInterest || 0} บาท
               </span>
             </div>
+            <div className="text-white flex justify-between mb-3">
+              <span>ค่าปรับรวม</span>
+              <span className="text-red-500">
+                {totalFee || 0} บาท
+              </span>
+            </div>
+            <div className="text-white items-center flex justify-between mb-3">
+              <span>ส่วนลด</span>
+              <div className="flex justify-end space-x-2">
+                <input 
+                    type="number" 
+                    value={payloadPayment.discount}  
+                    onChange={(e: any) => setPayloadPayment({...payloadPayment, discount: e.target.value})}
+                    className="bg-slate-50 text-black w-3/6 rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                    />
+                <span className="text-white">
+                     บาท
+                </span>
+                </div>
+            </div>
+
 
             <div className="text-white flex justify-between mt-10">
               <span>
                 ยอดที่ต้องชำระ{" "}
-                {`( เงินต้น ${
-                  payloadPayment.remainingBalance || 0
-                } + ดอกเบี้ย ${payloadPayment.remainingInterest || 0} )`}
               </span>
               <span className="text-orange-500 border-b border-orange-500">
                 {amount} บาท

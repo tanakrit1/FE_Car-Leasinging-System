@@ -74,15 +74,15 @@ const CustomerInformation = () => {
 
   const returnInputCustomerChange = async (result: any) => {
     let newObj: any = {};
-    // if( result.interestType === "ลดต้น/ลดดอก" ){
-    //     for( let field in result ){
-    //         if( field !== "interestMonth" && field !== "numInstallments" ){
-    //             newObj = {...newObj, [field]: result[field]}
-    //         }
-    //     }
-    // }else{
+    if( result.interestType === "ลดต้น/ลดดอก" ){
+        for( let field in result ){
+            if( field !== "interestMonth" ){
+                newObj = {...newObj, [field]: result[field]}
+            }
+        }
+    }else{
     newObj = result;
-    // }
+    }
     setPayloadCustomer(result);
     const validateCustomer = payloadCustomer
       ? validateInputRequired(newObj)
@@ -208,7 +208,7 @@ const CustomerInformation = () => {
         ...payloadCustomer,
         ...newPayloadCar,
         // discount: Number(payloadCustomer.discount),
-        interestMonth: Number(payloadCustomer.interestMonth),
+        interestMonth: payloadCustomer.interestType === "คงที่" ?  0 : Number(payloadCustomer.interestMonth),
         interestRate: Number(payloadCustomer.interestRate),
         totalOrder: Number(payloadCustomer.totalOrder),
         downPayment: Number(payloadCustomer.downPayment),

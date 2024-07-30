@@ -103,7 +103,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       }
     }
 
-    if( Number(payloadCustomer.remainingBalance) === 0 ){
+    if( payloadCustomer.statusInstallment === "Close" ){
         setFormDisable(true)
     }else{
         setFormDisable(false)
@@ -399,7 +399,8 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
             <div className="px-3 py-1 rounded-full bg-orange-200">
               <span className="text-black font-bold">
                 คงเหลือ(เงินต้น){" "}
-                {Number(payloadCustomer.remainingBalance).toLocaleString()} บาท
+                
+                { payloadCustomer.statusInstallment === "Close" ? 0 : Number(payloadCustomer.remainingBalance).toLocaleString()} บาท
               </span>
             </div>
           </div>

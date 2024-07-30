@@ -53,9 +53,9 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
     };
     const resultRows = await _CarInformationApi().search(json);
     if (resultRows.statusCode === 200) {
-      if (resultRows.data.length === 0) {
-        alert("ไม่พบข้อมูล");
-      }
+    //   if (resultRows.data.length === 0) {
+    //     alert("ไม่พบข้อมูล");
+    //   }
       setRows(resultRows.data);
       setPagination({
         ...pagination,
@@ -82,7 +82,7 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
 
   useEffect(() => {
     console.log("---> ", pagination);
-    // onSubmitSearch(pagination.page);
+    onSubmitSearch(pagination.page);
   }, [pagination.page]);
 
   useEffect(() => {

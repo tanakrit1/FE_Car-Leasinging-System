@@ -40,6 +40,7 @@ const Payment = () => {
       numInstallments: "",
       remainingBalance: "",
       guarantors: [],
+      discount: ""
     });
   };
   const onViewData = (data: any) => {

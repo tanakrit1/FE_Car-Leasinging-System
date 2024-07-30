@@ -38,7 +38,6 @@ const App = () => {
 
   const fnCheckLogin = () => {
     const result = getLoginStorage();
-    console.log("resultAAABBB---> ", result);
 
     if (window.location.pathname === "/login") {
       setLoginMode(false);

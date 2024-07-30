@@ -30,6 +30,7 @@ const axiosPost = async (path: string, body: any) => {
             return response.data
         })
         .catch((error) => {
+            console.log("error--> ", error)
             if (error.response.status === 401) {
                 window.location.href = "/login"
             }
