@@ -72,9 +72,16 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       },
     };
     const result = await _PaymentApi().search(json);
+    console.log("load--> ", result)
     if (result.statusCode === 200) {
       const newRows = result.data.map((item: any) => {
-        return { ...item, datePay: dayjs(item.datePay).format("DD/MM/YYYY") };
+        return { 
+                ...item, 
+                datePay: dayjs(item.datePay).format("DD/MM/YYYY"), 
+                amountPay: Math.ceil(item.amountPay).toLocaleString(), 
+                InterestPay: Math.ceil(item.InterestPay).toLocaleString() ,
+                fee: Math.ceil(item.fee).toLocaleString()
+            };
       });
       setRowsHistory(newRows);
     }
@@ -90,16 +97,16 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
 
       if (payloadCustomer.interestType === "คงที่") {
         const InterestPay =
-          (Number(payloadCustomer.totalOrder) /
-            Number(payloadCustomer.numInstallments)) *
-          (Number(payloadCustomer.interestRate) / 100);
-        setPayload({ ...payload, InterestPay: InterestPay.toFixed(2) });
+          (Math.ceil(payloadCustomer.totalOrder) /
+            Math.ceil(payloadCustomer.numInstallments)) *
+          (Math.ceil(payloadCustomer.interestRate) / 100);
+        setPayload({ ...payload, InterestPay: Math.ceil(InterestPay) });
       } else {
         // ลดต้นลดดอก
         const InterestPay =
-          Number(payloadCustomer.remainingBalance) *
-          (Number(payloadCustomer.interestRate) / 100);
-        setPayload({ ...payload, InterestPay: InterestPay.toFixed(2) });
+          Math.ceil(payloadCustomer.remainingBalance) *
+          (Math.ceil(payloadCustomer.interestRate) / 100);
+        setPayload({ ...payload, InterestPay: Math.ceil(InterestPay) });
       }
     }
 
@@ -123,15 +130,15 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     if (event.target.name === "amount") {
       setAmount(event.target.value);
       const amountPay =
-        Number(event.target.value) -
-        Number(payload.InterestPay) -
-        Number(payload.fee);
-      setPayload({ ...payload, amountPay: amountPay.toFixed(2) });
+        Math.ceil(event.target.value) -
+        Math.ceil(payload.InterestPay) -
+        Math.ceil(payload.fee);
+      setPayload({ ...payload, amountPay: amountPay });
     } else if (event.target.name === "fee") {
       const fee = event.target.value;
       const amountPay =
-        Number(amount) - Number(payload.InterestPay) - Number(fee);
-      setPayload({ ...payload, amountPay: amountPay.toFixed(2), fee: fee });
+        Math.ceil(amount) - Math.ceil(payload.InterestPay) - Math.ceil(fee);
+      setPayload({ ...payload, amountPay: amountPay, fee: fee });
     } else {
       setPayload({ ...payload, [event.target.name]: event.target.value });
     }
@@ -141,10 +148,10 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     context?.setLoadingContext(true);
     const json = {
       ...payload,
-      InterestPay: Number(payload.InterestPay),
-      amountPay: Number(payload.amountPay),
-      fee: Number(payload.fee),
-      saleItem_id: Number(payloadCustomer.id),
+      InterestPay: Math.ceil(payload.InterestPay),
+      amountPay: Math.ceil(payload.amountPay),
+      fee: Math.ceil(payload.fee),
+      saleItem_id: Math.ceil(payloadCustomer.id),
     };
     const result = await _PaymentApi().create(json);
     if (result.statusCode === 200) {
@@ -175,8 +182,8 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       payload.methodPay &&
       payload.InterestPay &&
       payload.fee &&
-      Number(payload.amountPay) >= 0 &&
-      rowsHistory.length+1 < Number(payloadCustomer.numInstallments)
+      Math.ceil(payload.amountPay) >= 0 &&
+      rowsHistory.length+1 < Math.ceil(payloadCustomer.numInstallments)
     ) {
       if (payload.methodPay === "เงินโอน") {
         if (payload.bank) {
@@ -189,7 +196,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
         setShowSubmit(false);
     }
 
-    if( rowsHistory.length+1 > Number(payloadCustomer.numInstallments) ){
+    if( rowsHistory.length+1 > Math.ceil(payloadCustomer.numInstallments) ){
       setShowSubmit(false);
     }
 
@@ -215,7 +222,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       <div className="w-full rounded-lg bg-slate-700 ">
         <div className="flex items-center bg-slate-600 px-3 h-16 rounded-t-lg justify-between">
           <p className="font-bold text-2xl text-white">ข้อมูลการชำระเงิน</p>
-          { Number(payloadCustomer.remainingBalance) !== 0  &&
+          { Math.ceil(payloadCustomer.remainingBalance) !== 0  &&
           <div className="flex space-x-3 items-center">
             <span className="text-white">ชำระครั้งที่</span>
             <div className="px-3 py-1 rounded-full bg-orange-500 text-white font-bold">
@@ -385,14 +392,14 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
           <div className="flex items-center">
             <div className="px-3 py-1 rounded-full bg-orange-200">
               <span className="text-black font-bold">
-                ยอดจัด {Number(payloadCustomer.totalOrder).toLocaleString()} บาท
+                ยอดจัด {Math.ceil(payloadCustomer.totalOrder).toLocaleString()} บาท
               </span>
             </div>
             <span className="px-6 text-white">/</span>
             <div className="px-3 py-1 rounded-full bg-orange-200">
               <span className="text-black font-bold">
                 จ่ายแล้ว(เงินต้น){" "}
-                {Number(payloadCustomer.paymentAmount).toLocaleString()} บาท
+                {Math.ceil(payloadCustomer.paymentAmount).toLocaleString()} บาท
               </span>
             </div>
             <span className="px-6 text-white">/</span>
@@ -400,7 +407,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
               <span className="text-black font-bold">
                 คงเหลือ(เงินต้น){" "}
                 
-                { payloadCustomer.statusInstallment === "Close" ? 0 : Number(payloadCustomer.remainingBalance).toLocaleString()} บาท
+                { payloadCustomer.statusInstallment === "Close" ? 0 : Math.ceil(payloadCustomer.remainingBalance).toLocaleString()} บาท
               </span>
             </div>
           </div>

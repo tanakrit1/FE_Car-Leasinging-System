@@ -134,7 +134,7 @@ const Payment = () => {
       </div>
 
       <div className="mt-5">
-        <FormDetail dataInput={payloadCustomer} />
+        <FormDetail dataInput={payloadCustomer} onRefetchDetail={onRefetchDetail} />
       </div>
 
       {payloadCustomer?.id && (

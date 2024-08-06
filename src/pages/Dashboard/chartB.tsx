@@ -63,10 +63,9 @@ const ChartB = ({ data }: any) => {
   const onExport = async() => {
     context?.setLoadingContext(true)
     console.log("***onExport***");
-    const result = await _DashboardApi().getReport({ date: dayjs().format("YYYY-MM-DD") });
-    if( result?.statusCode === 200 ){
-        console.log("result--> ", result.data)
-        const response = result.data
+    const response = await _DashboardApi().getReport({ date: dayjs().format("YYYY-MM-DD") });
+    // if( response?.statusCode === 200 ){
+        console.log("response--> ", response)
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('รายงาน');
 
@@ -89,14 +88,14 @@ const ChartB = ({ data }: any) => {
         worksheet.getCell('A1').value = `รายงานสรุปยอดรับชำระประจำเดือน ${dayjs().format("MM/YYYY")}`;
 
         worksheet.getCell('A2').value = "เงินต้น";
-        worksheet.getCell('B2').value = response.totalAmountPay
+        worksheet.getCell('B2').value = Math.ceil(response.Result.totalAmountPay).toLocaleString()
         worksheet.getCell('C2').value = "ดอกเบี้ย";
-        worksheet.getCell('D2').value = response.totalInterestPay
+        worksheet.getCell('D2').value = Math.ceil(response.Result.totalInterestPay).toLocaleString()
 
         worksheet.getCell('A3').value = "ค่าปรับ";
-        worksheet.getCell('B3').value = response.totalFee
+        worksheet.getCell('B3').value = Math.ceil(response.Result.totalFee).toLocaleString()
         worksheet.getCell('C3').value = "ยอดรวม";
-        worksheet.getCell('D3').value = response.grandTotal
+        worksheet.getCell('D3').value = Math.ceil(response.Result.grandTotal).toLocaleString()
 
         worksheet.getRow(1).alignment = { horizontal: 'center' };
         worksheet.getRow(2).alignment = { horizontal: 'center' };
@@ -118,6 +117,52 @@ const ChartB = ({ data }: any) => {
             }
         }
 
+        // ------------------------------------------------------------------------ //
+
+        for (let i = 65; i <= 68; i++) {
+            const char = String.fromCharCode(i); //A-D
+            worksheet.getCell(`${char}6`).fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'fff3fa08' },
+            }
+            worksheet.getCell(`${char}6`).border = {
+                top: { style: 'thin', color: { argb: 'ff050505' } },
+                left: { style: 'thin', color: { argb: 'ff050505' } },
+                bottom: { style: 'thin', color: { argb: 'ff050505' } },
+                right: { style: 'thin', color: { argb: 'ff050505' } }
+            }
+        }
+
+        worksheet.getCell('A6').value = "ชื่อ";
+        worksheet.getCell('B6').value = "เงินต้น";
+        worksheet.getCell('C6').value = "ดอกเบี้ย";
+        worksheet.getCell('D6').value = "ค่าปรับ";
+        worksheet.getRow(6).alignment = { horizontal: 'center' };
+
+        let row = 7
+        for( let i=0; i<response.Transection.length; i++ ){
+            worksheet.getRow(row).alignment = { horizontal: 'center' };
+            worksheet.getCell(`A${row}`).value = response.Transection[i]?.saleItem?.customerName
+            worksheet.getCell(`B${row}`).value = Math.ceil(response.Transection[i]?.amountPay).toLocaleString()
+            worksheet.getCell(`C${row}`).value = Math.ceil(response.Transection[i]?.InterestPay).toLocaleString()
+            worksheet.getCell(`D${row}`).value = Math.ceil(response.Transection[i]?.fee).toLocaleString()
+
+            for (let key = 65; key <= 68; key++) {
+                const char = String.fromCharCode(key); //A-D
+                worksheet.getCell(`${char}${row}`).border = {
+                    top: { style: 'thin', color: { argb: 'ff050505' } },
+                    left: { style: 'thin', color: { argb: 'ff050505' } },
+                    bottom: { style: 'thin', color: { argb: 'ff050505' } },
+                    right: { style: 'thin', color: { argb: 'ff050505' } }
+                }
+            }
+            
+            row++
+        }
+
+
+
         workbook.xlsx.writeBuffer().then((data) => {
             const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             const url = window.URL.createObjectURL(blob);
@@ -127,7 +172,7 @@ const ChartB = ({ data }: any) => {
             a.click();
         });
 
-    }
+    // }
     context?.setLoadingContext(false)
   };
 

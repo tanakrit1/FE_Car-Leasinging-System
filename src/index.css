@@ -36,3 +36,16 @@ input[type="number"] {
 ::-webkit-scrollbar-thumb:hover {
   background: #f3bb03;
 }
+
+/* ::-webkit-calendar-picker-indicator {
+    color: black;
+} */
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    width: 20px;
+    height: 20px;
+    background-color: #777777;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
+  }

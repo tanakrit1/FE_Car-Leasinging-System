@@ -190,7 +190,7 @@ const CustomerInformation = () => {
 
     const result = await _SaleItemApi().getMaxID();
     if (result?.data.length > 0) {
-      setIdSaleItem(Number(result.data[0].id) + 1);
+      setIdSaleItem(Math.ceil(result.data[0].id) + 1);
     }
     setDateCreate(dayjs().format("DD/MM/YYYY"))
   };
@@ -208,11 +208,11 @@ const CustomerInformation = () => {
         ...payloadCustomer,
         ...newPayloadCar,
         // discount: Number(payloadCustomer.discount),
-        interestMonth: payloadCustomer.interestType === "คงที่" ?  0 : Number(payloadCustomer.interestMonth),
-        interestRate: Number(payloadCustomer.interestRate),
-        totalOrder: Number(payloadCustomer.totalOrder),
-        downPayment: Number(payloadCustomer.downPayment),
-        sellingPrice: Number(payloadCar.sellingPrice),
+        interestMonth: payloadCustomer.interestType === "คงที่" ?  0 : Math.ceil(payloadCustomer.interestMonth),
+        interestRate: Math.ceil(payloadCustomer.interestRate),
+        totalOrder: Math.ceil(payloadCustomer.totalOrder),
+        downPayment: Math.ceil(payloadCustomer.downPayment),
+        sellingPrice: Math.ceil(payloadCar.sellingPrice),
         saleType: payloadCar.carType,
         guarantors: payloadGuarantor,
       };

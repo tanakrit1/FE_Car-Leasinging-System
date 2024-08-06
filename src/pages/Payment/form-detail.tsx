@@ -1,23 +1,29 @@
 import dayjs from 'dayjs';
 import ExcelJS from 'exceljs';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LoadContext } from '../../context/loading-context';
-const FormDetail = ({ dataInput }: any) => {
+import _SaleItemApi from '../../api/saleItem';
+const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
     const context = useContext(LoadContext)
+
+    const [showModalChangeNum, setShowModalChangeNum] = useState<boolean>(false)
+    const [newNum, setNewNum] = useState<any>(null)
+
     const process = () => {
         if (dataInput.interestType === "คงที่") {
-            const InterestPay = (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) * (Number(dataInput.interestRate) / 100);
-              const amountPay = (Number(dataInput.totalOrder) / Number(dataInput.numInstallments))
-              return (amountPay + InterestPay).toFixed(2)
+            const InterestPay = (Math.ceil(dataInput.totalOrder) / Math.ceil(dataInput.numInstallments)) * (Math.ceil(dataInput.interestRate) / 100);
+              const amountPay = (Math.ceil(dataInput.totalOrder) / Math.ceil(dataInput.numInstallments))
+              return (amountPay + InterestPay)
 
           } else { // ลดต้นลดดอก
-            const InterestPay = Number(dataInput.remainingBalance) * (Number(dataInput.interestRate) / 100);
-            return InterestPay.toFixed(2)
+            const InterestPay = Math.ceil(dataInput.remainingBalance) * (Math.ceil(dataInput.interestRate) / 100);
+            return InterestPay
           }
     }
 
     const onExport = () => {
         context?.setLoadingContext(true)
+        console.log("dataInput--> ", dataInput)
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('จดหมายเตือน');
         for (let i = 65; i <= 69; i++) {
@@ -38,8 +44,8 @@ const FormDetail = ({ dataInput }: any) => {
         worksheet.mergeCells(1, 1, 1, 5)
         worksheet.getCell('A1').value = "จดหมายเตือนชำระหนี้รถยนต์";
         worksheet.getCell('E2').value = dayjs().format('DD/MM/YYYY');
-        worksheet.getCell('B3').value = "เรียน คุณ";dataInput?.customerName
-        worksheet.getCell('C4').value = dataInput?.customerName
+        worksheet.getCell('B3').value = "เรียน คุณ";
+        worksheet.getCell('C3').value = dataInput?.customerName
 
         worksheet.getCell('A4').value = "ตามที่ท่านได้เช่าซื้อรถยนต์"
         worksheet.getCell('B4').value = dataInput?.carInformation.carBrand
@@ -94,14 +100,54 @@ const FormDetail = ({ dataInput }: any) => {
         context?.setLoadingContext(false)
     }
 
+    useEffect( () => {
+        if( showModalChangeNum === true ){
+            ( document.getElementById("modal-change-num") as HTMLFormElement ).showModal();
+            setNewNum("")
+        }else{
+            ( document.getElementById("modal-change-num") as HTMLFormElement ).close();
+        }
+    }, [showModalChangeNum] )
+    const onOpenModalChangeNum = () => {
+        setShowModalChangeNum(true)
+    }
+
+    const onCloseModalChangeNum = () => {
+        setShowModalChangeNum(false)
+    }
+
+    const onSubmitChangeNum = async() => {
+        if( newNum === "" || newNum === null || newNum === undefined ){
+            return alert("กรุณาใส่จำนวนงวด")
+        }
+        if( Number(newNum) <= Number(dataInput.numInstallments) ){
+            return alert("จำนวนงวดใหม่ต้องไม่น้อยกว่าจำนวนงวดเดิม")
+        }
+        context?.setLoadingContext(true)
+        const json = {
+            numInstallments: newNum.toString()
+        }
+        const result = await _SaleItemApi().update(dataInput.id, json)
+        if( result.statusCode === 200 ){
+            setShowModalChangeNum(false)
+            onRefetchDetail(dataInput.id)
+        }
+        context?.setLoadingContext(false)
+    }
+
   return (
     <>
       <div className="w-full rounded-lg bg-slate-700 ">
         <div className="flex justify-between items-center bg-slate-600 px-3 h-16 rounded-t-lg ">
           <p className="font-bold text-2xl text-white">รายละเอียดลูกค้า</p>
-          { dataInput.idCardNumber != "" && 
-            <button className='bg-yellow-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-yellow-500' onClick={onExport}>ใบแจ้งหนี้</button>
+          <div className='flex space-x-3'>
+            { dataInput.idCardNumber != "" && 
+                <button className='bg-yellow-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-yellow-500' onClick={onExport}>ใบแจ้งหนี้</button>
             }
+            { dataInput?.interestType === "ลดต้น/ลดดอก" &&
+                <button className='bg-green-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-400' onClick={onOpenModalChangeNum}>เพิ่มจำนวนงวด</button>
+            }
+          </div>
         </div>
 
         <div className="mt-5 px-3 pb-6 flex flex-wrap">
@@ -237,10 +283,10 @@ const FormDetail = ({ dataInput }: any) => {
                 type="text"
                 name="interestMonth"
                 value={(
-                  Number(dataInput.totalOrder) /
-                    Number(dataInput.numInstallments) +
-                  Number(dataInput.interestMonth)
-                ).toFixed(2)}
+                    Math.ceil(dataInput.totalOrder) /
+                    Math.ceil(dataInput.numInstallments) +
+                    Math.ceil(dataInput.interestMonth)
+                )}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>
@@ -315,6 +361,34 @@ const FormDetail = ({ dataInput }: any) => {
           ))} */}
         </div>
       </div>
+
+      {/* --------------------------------------------------------------------------------------------------------------- */}
+      <dialog id="modal-change-num" className="modal">
+        <div className="modal-box w-11/12 max-w-lg">
+            <div className="flex justify-between">
+                <h3 className="font-bold text-lg text-white">แก้ไขจำนวนงวด</h3>
+                <button
+                    onClick={onCloseModalChangeNum}
+                    type="button"
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white"
+                >
+                    ✕
+                </button>
+          </div>
+          <div className="w-full mt-5  ">
+                <p className='text-white'> เพิ่มจำนวนงวดเดิม : { dataInput?.numInstallments } </p>
+
+                <div className='flex space-x-6 mt-3 items-center'>
+                    <p className='text-white'>เป็น</p>
+                    <input type='number' value={newNum} onChange={(e) => setNewNum(e.target.value)} className='bg-slate-50 text-black mb-3 w-32 rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2' />                
+                </div>
+          </div>
+          <div className='mt-5 flex justify-end'>
+            <button className='bg-green-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-400' onClick={onSubmitChangeNum}>บันทึก</button>
+          </div>
+        </div>
+      </dialog>
+
     </>
   );
 };

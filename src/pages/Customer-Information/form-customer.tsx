@@ -28,11 +28,11 @@ const FormCustomer = ({
   const onChangeInput = (event: any) => {
     if(event.target.name==="totalOrder" || event.target.name==="numInstallments" || event.target.name==="interestRate"){  //totalOrder numInstallments interestRate
         setPayload({ ...payload, [event.target.name]: event.target.value });
-        const totalOrder = event.target.name==="totalOrder" ? Number(event.target.value) : Number(payload.totalOrder);
-        const numInstallments = event.target.name==="numInstallments" ? Number(event.target.value) : Number(payload.numInstallments);
-        const interestRate = event.target.name==="interestRate" ? Number(event.target.value) : Number(payload.interestRate);
-        const interestMonth = (Number(totalOrder) / Number(numInstallments)) * (Number(interestRate) / 100)
-        setPayload({ ...payload, [event.target.name]: event.target.value, interestMonth: interestMonth.toFixed(2) } );
+        const totalOrder = event.target.name==="totalOrder" ? Math.ceil(event.target.value) : Math.ceil(payload.totalOrder);
+        const numInstallments = event.target.name==="numInstallments" ? Math.ceil(event.target.value) : Math.ceil(payload.numInstallments);
+        const interestRate = event.target.name==="interestRate" ? Math.ceil(event.target.value) : Math.ceil(payload.interestRate);
+        const interestMonth = (Math.ceil(totalOrder) / Math.ceil(numInstallments)) * (Math.ceil(interestRate) / 100)
+        setPayload({ ...payload, [event.target.name]: event.target.value, interestMonth: Math.ceil(interestMonth) } );
     }else{
         setPayload({ ...payload, [event.target.name]: event.target.value });
     }
@@ -310,7 +310,7 @@ const FormCustomer = ({
                 type="date"
                 name="contractDate"
                 value={payloadCustomer.contractDate}
-                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                className={` dark:text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
               />

@@ -30,62 +30,62 @@ const ModalCloseOrder = ({
   const processOrder = () => {
     if (payloadCustomer.interestType === "คงที่") {
       const remainingInstallment =
-        Number(payloadCustomer.numInstallments) - rowsHistory.length; // จํานวนงวดคงเหลือ
+        Math.ceil(payloadCustomer.numInstallments) - rowsHistory.length; // จํานวนงวดคงเหลือ
       const InterestPay =
-        (Number(payloadCustomer.totalOrder) /
-          Number(payloadCustomer.numInstallments)) *
-        (Number(payloadCustomer.interestRate) / 100);
+        (Math.ceil(payloadCustomer.totalOrder) /
+          Math.ceil(payloadCustomer.numInstallments)) *
+        (Math.ceil(payloadCustomer.interestRate) / 100);
       const totalPay = InterestPay * remainingInstallment;
       setPayloadPayment({
-        totalOrder: Number(payloadCustomer.totalOrder).toFixed(2),
-        paymentAmount: Number(payloadCustomer.paymentAmount).toFixed(2),
-        totalInterest: Number(payloadCustomer.totalInterest).toFixed(2),
-        remainingInterest: Number(totalPay).toFixed(2),
-        remainingBalance: Number(payloadCustomer.remainingBalance).toFixed(2),
+        totalOrder: Math.ceil(payloadCustomer.totalOrder),
+        paymentAmount: Math.ceil(payloadCustomer.paymentAmount),
+        totalInterest: Math.ceil(payloadCustomer.totalInterest),
+        remainingInterest: Math.ceil(totalPay),
+        remainingBalance: Math.ceil(payloadCustomer.remainingBalance),
         discount: "",
 
         bank: "",
         methodPay: "เงินสด",
       });
       const payamount =
-        Number(payloadCustomer.remainingBalance) + Number(totalPay)
-      setAmount(payamount.toFixed(2));
+        Math.ceil(payloadCustomer.remainingBalance) + Math.ceil(totalPay)
+      setAmount(payamount);
     } else {
       // ลดต้นลดดอก
       const InterestPay =
-        Number(payloadCustomer.remainingBalance) *
-        (Number(payloadCustomer.interestRate) / 100);
+        Math.ceil(payloadCustomer.remainingBalance) *
+        (Math.ceil(payloadCustomer.interestRate) / 100);
       setPayloadPayment({
-        totalOrder: Number(payloadCustomer.totalOrder).toFixed(2),
-        paymentAmount: Number(payloadCustomer.paymentAmount).toFixed(2),
-        totalInterest: Number(payloadCustomer.totalInterest).toFixed(2),
-        remainingInterest: Number(InterestPay).toFixed(2),
-        remainingBalance: Number(payloadCustomer.remainingBalance).toFixed(2),
+        totalOrder: Math.ceil(payloadCustomer.totalOrder),
+        paymentAmount: Math.ceil(payloadCustomer.paymentAmount),
+        totalInterest: Math.ceil(payloadCustomer.totalInterest),
+        remainingInterest: Math.ceil(InterestPay),
+        remainingBalance: Math.ceil(payloadCustomer.remainingBalance),
         discount: "",
 
         bank: "",
         methodPay: "เงินสด",
       });
-      const payamount = Number(payloadCustomer.remainingBalance) + Number(InterestPay)
-      setAmount(payamount.toFixed(2));
+      const payamount = Math.ceil(payloadCustomer.remainingBalance) + Math.ceil(InterestPay)
+      setAmount(payamount);
     }
 
     const sumTotalFee = rowsHistory.reduce((accumulator: any, current: any) => {
-        return Number(accumulator) + (Number(current.fee) || 0);
+        return Math.ceil(accumulator) + (Math.ceil(current.fee) || 0);
       }, 0);
-      setTotalFee(sumTotalFee.toFixed(2))
+      setTotalFee(sumTotalFee)
   };
 
   const onSubmit = async() => {
     context?.setLoadingContext(true)
     const json = {
         ...payloadPayment,
-        InterestPay: Number(payloadPayment.remainingInterest),   // ดอกเบี้ย
-        amountPay: Number(amount),       // ยอดคงเหลือ
+        InterestPay: Math.ceil(payloadPayment.remainingInterest),   // ดอกเบี้ย
+        amountPay: Math.ceil(amount),       // ยอดคงเหลือ
         fee: 0,
         receiver: profile.firstName + " " + profile.lastName,
-        discount: Number(payloadPayment.discount),
-        saleItem_id: Number(payloadCustomer.id),
+        discount: Math.ceil(payloadPayment.discount),
+        saleItem_id: Math.ceil(payloadCustomer.id),
     }
     console.log("json--> ", json)
     // return
@@ -114,15 +114,15 @@ const ModalCloseOrder = ({
 
   const processDiscount = () => {
     if (payloadCustomer.interestType === "คงที่") {
-        const remainingInstallment = Number(payloadCustomer.numInstallments) - rowsHistory.length; // จํานวนงวดคงเหลือ
-      const InterestPay = (Number(payloadCustomer.totalOrder) / Number(payloadCustomer.numInstallments)) * (Number(payloadCustomer.interestRate) / 100);
+        const remainingInstallment = Math.ceil(payloadCustomer.numInstallments) - rowsHistory.length; // จํานวนงวดคงเหลือ
+      const InterestPay = (Math.ceil(payloadCustomer.totalOrder) / Math.ceil(payloadCustomer.numInstallments)) * (Math.ceil(payloadCustomer.interestRate) / 100);
       const totalPay = InterestPay * remainingInstallment;
-      const payamount = (Number(payloadCustomer.remainingBalance) + Number(totalPay)) - Number(payloadPayment.discount); 
-      setAmount(payamount.toFixed(2));
+      const payamount = (Math.ceil(payloadCustomer.remainingBalance) + Math.ceil(totalPay)) - Math.ceil(payloadPayment.discount); 
+      setAmount(payamount);
     }else{
-        const InterestPay = Number(payloadCustomer.remainingBalance) * (Number(payloadCustomer.interestRate) / 100);
-        const payamount = (Number(payloadCustomer.remainingBalance) + Number(InterestPay)) - Number(payloadPayment.discount);
-        setAmount(payamount.toFixed(2));
+        const InterestPay = Math.ceil(payloadCustomer.remainingBalance) * (Math.ceil(payloadCustomer.interestRate) / 100);
+        const payamount = (Math.ceil(payloadCustomer.remainingBalance) + Math.ceil(InterestPay)) - Math.ceil(payloadPayment.discount);
+        setAmount(payamount);
     }
   }
 

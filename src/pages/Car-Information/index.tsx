@@ -23,10 +23,9 @@ const CarInformation = () => {
   const [showModalExport, setShowModalExport] = useState<boolean>(false);
 
   const onChangeInputForm = (result: any) => {
-    console.log("result--> ", result)
     let cloneInputList = [...inputList];
-    const cost = Number(result.buyingPrice || '0') + Number(result.maintenanceCost || '0')
-    const sellingPrice = cost + Number(result.desiredProfit || '0')
+    const cost = Math.ceil(result.buyingPrice || '0') + Math.ceil(result.maintenanceCost || '0')
+    const sellingPrice = cost + Math.ceil(result.desiredProfit || '0')
     
     const findIndexCost = cloneInputList.findIndex( (row: any) => row.name === "cost" )
     const findIndexsellingPrice = cloneInputList.findIndex( (row: any) => row.name === "sellingPrice" )
@@ -62,11 +61,11 @@ const CarInformation = () => {
     if (validateInputRequired(payload)) {
       const json = {
         ...payload,
-        sellingPrice: Number(payload.sellingPrice),
-        buyingPrice: Number(payload.buyingPrice),
-        maintenanceCost: Number(payload.maintenanceCost),
-        cost: Number(payload.cost),
-        desiredProfit: Number(payload.desiredProfit),
+        sellingPrice: Math.ceil(payload.sellingPrice),
+        buyingPrice: Math.ceil(payload.buyingPrice),
+        maintenanceCost: Math.ceil(payload.maintenanceCost),
+        cost: Math.ceil(payload.cost),
+        desiredProfit: Math.ceil(payload.desiredProfit),
         carStatus: statusForm==='add' ? "stock" : rowActive?.carStatus,
         carType: statusForm==='add' ? "buy" : rowActive?.carType
       };
@@ -108,8 +107,8 @@ const CarInformation = () => {
 
   const onChangeFile = async (event: any) => {
     if (event.target.files[0]) {
-      setImageData(event.target.files[0]);
       const imageBase64 = await getBase64(event.target.files[0]);
+      setImageData(imageBase64);
       setPayload({ ...payload, carImage: imageBase64 });
     } else {
       onClearImage();
@@ -143,14 +142,9 @@ const CarInformation = () => {
   };
 
   const onDownloadFile = () => {
-    console.log("**")
     if (typeof imageData === "string") {
-        console.log("1")
-      // base64 => ข้อมูลที่เปิดเพื่อแก้ไข
-      // base64toBlob(imageData)
       const base64String = imageData.split(",")[1]; // ตัด 'data:image/png;base64,' ออก
       if (isBase64(base64String)) {
-        console.log("2")
         const blob = base64toBlob(base64String);
         const blobUrl = URL.createObjectURL(blob);
         let downloadLink = document.createElement("a");
@@ -159,7 +153,6 @@ const CarInformation = () => {
         downloadLink.click();
       }
     } else {
-        console.log("3")
       // ข้อมูลที่เพิ่มใหม่
       const blobUrl = URL.createObjectURL(imageData);
       let downloadLink = document.createElement("a");
@@ -169,17 +162,17 @@ const CarInformation = () => {
     }
   };
 
-  const onRemoveData = async () => {
-    context?.setLoadingContext(true);
-    if (window.confirm("คุณต้องการลบข้อมูลใช่หรือไม่") === true) {
-      const result = await _CarInformationApi().remove(rowActive.id);
-      if (result.statusCode === 200) {
-        alert("บันทึกข้อมูลสำเร็จ");
-        onClearForm();
-      }
-      context?.setLoadingContext(false);
-    }
-  };
+//   const onRemoveData = async () => {
+//     if (window.confirm("คุณต้องการลบข้อมูลใช่หรือไม่") === true) {
+//         context?.setLoadingContext(true);
+//       const result = await _CarInformationApi().remove(rowActive.id);
+//       if (result.statusCode === 200) {
+//         alert("บันทึกข้อมูลสำเร็จ");
+//         onClearForm();
+//       }
+//       context?.setLoadingContext(false);
+//     }
+//   };
 
   const onShowReport = () => {
     setShowModalExport(true)
@@ -316,89 +309,85 @@ const CarInformation = () => {
                   ></input>
                 </div>
 
-                <div className="w-1/2">
+                <div className="w-1/2 h-96">
                   {imageData && (
-                    <div className="w-2/3 h-24 border-2 border-white rounded-lg flex justify-between items-center px-3 text-white">
-                      <div>
-                        <p className="font-bold">
-                          {imageData?.name ? imageData?.name : "ไฟล์ภาพ"}
-                        </p>
-                        <p>{imageData?.size ? `${imageData?.size} MB` : ""} </p>
-                      </div>
-                      <div className="flex space-x-3 items-center">
-                        <button
-                          className="px-2 py-2 bg-slate-500 hover:bg-slate-400 rounded-full"
-                          onClick={onDownloadFile}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="32"
-                            height="32"
-                            viewBox="0 0 24 24"
-                          >
-                            <rect
-                              width="16"
-                              height="2"
-                              x="4"
-                              y="18"
-                              fill="currentColor"
-                              rx="1"
-                              ry="1"
-                            />
-                            <rect
-                              width="4"
-                              height="2"
-                              x="3"
-                              y="17"
-                              fill="currentColor"
-                              rx="1"
-                              ry="1"
-                              transform="rotate(-90 5 18)"
-                            />
-                            <rect
-                              width="4"
-                              height="2"
-                              x="17"
-                              y="17"
-                              fill="currentColor"
-                              rx="1"
-                              ry="1"
-                              transform="rotate(-90 19 18)"
-                            />
-                            <path
-                              fill="currentColor"
-                              d="M12 15a1 1 0 0 1-.58-.18l-4-2.82a1 1 0 0 1-.24-1.39a1 1 0 0 1 1.4-.24L12 12.76l3.4-2.56a1 1 0 0 1 1.2 1.6l-4 3a1 1 0 0 1-.6.2"
-                            />
-                            <path
-                              fill="currentColor"
-                              d="M12 13a1 1 0 0 1-1-1V4a1 1 0 0 1 2 0v8a1 1 0 0 1-1 1"
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          className="px-2 py-2 bg-slate-500 hover:bg-slate-400 rounded-full"
-                          onClick={onClearImage}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="32"
-                            height="32"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              fill="currentColor"
-                              d="m13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29l-4.3 4.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l4.29-4.3l4.29 4.3a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.42Z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
+                    <div className="">
+                        <div className="flex justify-end h-10 space-x-4 px-3 mt-2">
+                            <button
+                            className="px-2 py-2 bg-slate-500 hover:bg-slate-400 rounded-full"
+                            onClick={onDownloadFile}
+                            >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                            >
+                                <rect
+                                width="16"
+                                height="2"
+                                x="4"
+                                y="18"
+                                fill="currentColor"
+                                rx="1"
+                                ry="1"
+                                />
+                                <rect
+                                width="4"
+                                height="2"
+                                x="3"
+                                y="17"
+                                fill="currentColor"
+                                rx="1"
+                                ry="1"
+                                transform="rotate(-90 5 18)"
+                                />
+                                <rect
+                                width="4"
+                                height="2"
+                                x="17"
+                                y="17"
+                                fill="currentColor"
+                                rx="1"
+                                ry="1"
+                                transform="rotate(-90 19 18)"
+                                />
+                                <path
+                                fill="currentColor"
+                                d="M12 15a1 1 0 0 1-.58-.18l-4-2.82a1 1 0 0 1-.24-1.39a1 1 0 0 1 1.4-.24L12 12.76l3.4-2.56a1 1 0 0 1 1.2 1.6l-4 3a1 1 0 0 1-.6.2"
+                                />
+                                <path
+                                fill="currentColor"
+                                d="M12 13a1 1 0 0 1-1-1V4a1 1 0 0 1 2 0v8a1 1 0 0 1-1 1"
+                                />
+                            </svg>
+                            
+                            </button>
+                            <button
+                            className="px-2 py-2 bg-slate-500 hover:bg-slate-400 rounded-full"
+                            onClick={onClearImage}
+                            >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                fill="currentColor"
+                                d="m13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29l-4.3 4.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l4.29-4.3l4.29 4.3a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.42Z"
+                                />
+                            </svg>
+                            </button>
+                        </div>
+                        <img src={imageData} className="mt-2 w-full h-80 rounded-lg"/>
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="flex justify-end px-3 mt-6 space-x-4">
-                {statusForm === "edit" && (
+                {/* {statusForm === "edit" && (
                   <button
                     onClick={onRemoveData}
                     type="button"
@@ -419,7 +408,7 @@ const CarInformation = () => {
                       <span>ลบข้อมูล</span>
                     </div>
                   </button>
-                )}
+                )} */}
 
                 <button
                   onClick={onSubmit}
