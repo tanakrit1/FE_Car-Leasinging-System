@@ -38,7 +38,7 @@ const ModalManage = ({
     isCustomerData: false,
     isPayment: false,
     isEmployee: false,
-    role: "",
+    role: "เจ้าของธุรกิจ",
   });
 
   const [formDisable, setFormDisable] = useState<any>({
@@ -70,12 +70,10 @@ const ModalManage = ({
 
   const onSubmit = (event: any) => {
     event.preventDefault();
-    console.log("***Submit***", formData);
     returnSubmitModal(formData, statusForm);
   };
 
   useEffect(() => {
-    console.log("data--> ", data);
     if (statusForm == "add") {
       setFormData({
         employeeID: "",
@@ -90,7 +88,7 @@ const ModalManage = ({
         isCustomerData: false,
         isPayment: false,
         isEmployee: false,
-        role: "",
+        role: "เจ้าของธุรกิจ",
       });
       setFormDisable({
         employeeID: false,
@@ -152,7 +150,6 @@ const ModalManage = ({
   }, [showModal]);
 
   useEffect(() => {
-    console.log("***");
   }, [statusForm, data]);
   return (
     <>
@@ -264,6 +261,7 @@ const ModalManage = ({
                   </p>
                   <select
                     disabled={formDisable.role}
+                    value={formData.role}
                     required
                     name="role"
                     onChange={onChangeInput}

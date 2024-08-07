@@ -283,9 +283,7 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
                 type="text"
                 name="interestMonth"
                 value={(
-                    Math.ceil(dataInput.totalOrder) /
-                    Math.ceil(dataInput.numInstallments) +
-                    Math.ceil(dataInput.interestMonth)
+                    Math.ceil( (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) + Number(dataInput.interestMonth))
                 )}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
