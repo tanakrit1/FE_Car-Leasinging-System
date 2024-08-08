@@ -9,7 +9,8 @@ const columns = [
   { label: "ยี่ห้อ", width: "20%", field: "carBrand" },
   { label: "รุ่น", width: "20%", field: "model" },
   { label: "สี", width: "10%", field: "carColor" },
-  { label: "ชื่อผู้ขาย", width: "20%", field: "sellerName" },
+  { label: "ประเภทการนำเข้า", width: "10%", field: "carType" },
+  { label: "ชื่อผู้ขาย/ผู้จำนำ", width: "20%", field: "sellerName" },
 ];
 
 const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
@@ -56,7 +57,11 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
     //   if (resultRows.data.length === 0) {
     //     alert("ไม่พบข้อมูล");
     //   }
-      setRows(resultRows.data);
+    console.log("resultRows--> ", resultRows.data)
+    const newRows = resultRows.data.map( (item: any) => {
+        return { ...item, carType: item.carType=="buy" ? "รับซื้อ" : "รับจำนำ" }
+    } )
+      setRows(newRows);
       setPagination({
         ...pagination,
         page: resultRows.metadata.page,
@@ -131,7 +136,7 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
               />
             </div>
             <div className="w-1/2 px-3 ">
-              <p className="text-white mb-1">ชื่อผู้ขาย</p>
+              <p className="text-white mb-1">ชื่อผู้ขาย/ผู้จำนำ</p>
               <input
                 disabled={contextLoad}
                 type="text"

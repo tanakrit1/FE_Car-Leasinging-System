@@ -23,9 +23,7 @@ const Login = ({returnLogin}: Props) => {
     event.preventDefault();
     // returnLogin(true)
     const result: any = await _AuthApi().authen(payload)
-    console.log("result--> ", result)
     if( result?.statusCode === 200 ){
-        console.log("resultAA--> ", result)
         const response = result.data
         setLoginStorage( response.profile, response.access_token )
         return returnLogin(true)
@@ -70,7 +68,7 @@ const Login = ({returnLogin}: Props) => {
             >
                 เข้าสู่ระบบ
             </button>
-            <p className='mt-3'>(dev version. 1.0.7)</p>
+            <p className='mt-3'>(dev version. 1.0.9)</p>
           </div>
         </div>
       </form>

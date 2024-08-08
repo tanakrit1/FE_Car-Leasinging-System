@@ -139,7 +139,12 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
     <>
       <div className="w-full rounded-lg bg-slate-700 ">
         <div className="flex justify-between items-center bg-slate-600 px-3 h-16 rounded-t-lg ">
+            <div className="flex space-x-5 items-center">
           <p className="font-bold text-2xl text-white">รายละเอียดลูกค้า</p>
+          { dataInput?.statusInstallment === "Close" &&  
+                <div className="px-5 py-2 rounded-lg outline outline-green-400 text-green-400  -rotate-12 hover:-rotate-0">ปิดยอด</div>
+            }
+            </div>
           <div className='flex space-x-3'>
             { dataInput.idCardNumber != "" && 
                 <button className='bg-yellow-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-yellow-500' onClick={onExport}>ใบแจ้งหนี้</button>

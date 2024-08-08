@@ -54,6 +54,7 @@ const CarInformation = () => {
     objPayload = { ...objPayload, carImage: "" };
     setPayload({ ...objPayload, carImage: "" });
     setImageData(null);
+    setRowActive(null)
   };
 
   const onSubmit = async () => {
@@ -124,6 +125,7 @@ const CarInformation = () => {
   const onViewData = (row: any) => {
     setStatusForm("edit");
     setRowActive(row);
+    console.log("row--> ", row)
     let newPayload: any = {};
     let cloneInputList = [...inputList];
     for (let field in row) {
@@ -190,20 +192,31 @@ const CarInformation = () => {
 
   return (
     <>
+      {showModalExport &&
         <ModalExport showModal={showModalExport} returnShowModal={(result: boolean) => setShowModalExport(result)}/>
+      }
+
+      { showModalSearch &&  
       <ModalSearch
         showModal={showModalSearch}
         returnShowModal={(result: boolean) => setShowModalSearch(result)}
         returnViewData={onViewData}
       />
+        }
       <p className="font-bold text-2xl text-white">บันทึกข้อมูลรถ</p>
       <div className="flex space-x-2 mt-5">
         <div className="w-full">
           <div className="w-full rounded-lg bg-slate-700 ">
             <div className="flex justify-between items-center bg-slate-600 px-3 h-16 rounded-t-lg">
-              <p className="text-white text-xl font-bold">
-                {statusForm === "add" ? "บันทึกข้อมูล" : "แก้ไขข้อมูลรถ"}
-              </p>
+                <div className="flex space-x-5 items-center">
+                    <p className="text-white text-xl font-bold">
+                        {statusForm === "add" ? "บันทึกข้อมูล" : "แก้ไขข้อมูลรถ"}
+                    </p>
+                    {rowActive?.carStatus === "sold" && 
+                        <div className="px-5 py-2 rounded-lg outline outline-red-500 text-red-500  -rotate-12 hover:-rotate-0">ขายแล้ว</div>
+                    }
+                </div>
+
               <div className="flex space-x-3 items-center">
                 <button
                   onClick={() => onClearForm()}

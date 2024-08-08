@@ -20,6 +20,7 @@ const axiosGet = async (path: string) => {
             if (error.response.status === 401) {
                 window.location.href = "/login"
             }
+            alert(error?.response?.data.message.join(" , "))
             return error
         });
 }
@@ -34,10 +35,11 @@ const axiosPost = async (path: string, body: any) => {
             if (error.response.status === 401) {
                 window.location.href = "/login"
             }
-            const mapValidation = error?.response?.data.message.map((item: any) => {
-                return `<li>${item}</li>`;
-            });
-            alert(mapValidation)
+            // const mapValidation = error?.response?.data.message.map((item: any) => {
+            //     return `<li>${item}</li>`;
+            // });
+            // alert(mapValidation)
+            alert(error?.response?.data.message.join(" , "))
             return error?.response
         });
 }
@@ -51,6 +53,7 @@ const axiosPatch = async (path: string, body: any) => {
             if (error.response.status === 401) {
                 window.location.href = "/login"
             }
+            alert(error?.response?.data.message.join(" , "))
             return error
         });
 }
@@ -64,6 +67,7 @@ const axiosDelete = async (path: string) => {
             if (error.response.status === 401) {
                 window.location.href = "/login"
             }
+            alert(error?.response?.data.message.join(" , "))
             return error
         });
 }

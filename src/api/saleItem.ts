@@ -18,6 +18,10 @@ const _SaleItemApi = () => {
             return await axiosGet("/saleitem/maxid")
         },
 
+        updateAdvance: async(body: any) => {
+            return await axiosPost("/saleitem/updateAdvance", body)
+        }
+
         // update: async(id:string, body: any) => {
         //     return await axiosPatch(`/carInformation/${id}`, body)
         // },

@@ -15,8 +15,9 @@ const FormGuarantor = ({
   const [disableForm, setDisableForm] = useState<boolean>(false);
 
   useEffect(() => {
-    setDisableForm(stateForm === "view" ? true : false);
-  }, [setDisableForm]);
+    // console.log("stateForm--> ", stateForm)
+    setDisableForm(stateForm == "view" ? true : false);
+  }, [stateForm]);
 
   const onAddGuarantor = () => {
     setPayload([
@@ -80,9 +81,10 @@ const FormGuarantor = ({
             >
               <div className="basis-4/12 px-2">
                 <p className="text-white font-semibold mb-1">
-                  ชื่อ : <span className="text-red-500">*</span>
+                  ชื่อ : <span className="text-red-500">*</span> 
                 </p>
                 <input
+                // disabled={true}
                   disabled={disableForm}
                   required
                   autoComplete="off"
@@ -91,8 +93,9 @@ const FormGuarantor = ({
                   onChange={(event) => onChangeInput(event, index)}
                   value={item?.guarantorName}
                   className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
-                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                    disableForm===true ? "bg-slate-300" : "bg-slate-50"
                   }`}
+                //   className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
                 />
               </div>
 
@@ -102,6 +105,7 @@ const FormGuarantor = ({
                 </p>
                 <input
                   required
+                  disabled={disableForm}
                   autoComplete="off"
                   type="text"
                   name="guarantorAddress"
@@ -119,6 +123,7 @@ const FormGuarantor = ({
                 </p>
                 <input
                   required
+                  disabled={disableForm}
                   autoComplete="off"
                   type="number"
                   name="guarantorIdCard"
@@ -136,6 +141,7 @@ const FormGuarantor = ({
                 </p>
                 <input
                   required
+                  disabled={disableForm}
                   autoComplete="off"
                   type="number"
                   name="guarantorPhone"

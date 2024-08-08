@@ -11,6 +11,9 @@ import { LoadContext } from "../../context/loading-context";
 const CustomerInformation = () => {
   const context = useContext(LoadContext);
   const [idSaleItem, setIdSaleItem] = useState<any>(null);
+  const [idCarInformation, setIdCarInformation] = useState<any>(null);
+  const [rowActive, setRowActive] = useState<any>(null);
+//   const [idGuarantor, setIdGuarantor] = useState<any>(null);
   const [dateCreate, setDateCreate] = useState<any>(dayjs().format("DD/MM/YYYY"));
   const [showModalSearchSale, setShowModalSearchSale] =
     useState<boolean>(false);
@@ -73,6 +76,7 @@ const CustomerInformation = () => {
   const [stateForm, setStateForm] = useState<string>("add");
 
   const returnInputCustomerChange = async (result: any) => {
+    console.log("result--> ", result)
     let newObj: any = {};
     if( result.interestType === "ลดต้น/ลดดอก" ){
         for( let field in result ){
@@ -81,7 +85,7 @@ const CustomerInformation = () => {
             }
         }
     }else{
-    newObj = result;
+        newObj = result;
     }
     setPayloadCustomer(result);
     const validateCustomer = payloadCustomer
@@ -147,6 +151,7 @@ const CustomerInformation = () => {
 
   const onClearForm = async () => {
     setStateForm("add");
+    setRowActive(null)
     setValidationForm({
       customer: false,
       guarantor: false,
@@ -164,7 +169,7 @@ const CustomerInformation = () => {
       interestType: "",
       interestMonth: "",
       // discount: "",
-      contractDate: "",
+      contractDate: dayjs().format("YYYY-MM-DD"),
       gps: "",
     });
     setPayloadGuarantor([
@@ -208,7 +213,7 @@ const CustomerInformation = () => {
         ...payloadCustomer,
         ...newPayloadCar,
         // discount: Number(payloadCustomer.discount),
-        interestMonth: payloadCustomer.interestType === "คงที่" ?  0 : Math.ceil(payloadCustomer.interestMonth),
+        interestMonth: payloadCustomer.interestType === "ลดต้น/ลดดอก" ?  0 : Math.ceil(payloadCustomer.interestMonth),
         interestRate: Math.ceil(payloadCustomer.interestRate),
         totalOrder: Math.ceil(payloadCustomer.totalOrder),
         downPayment: Math.ceil(payloadCustomer.downPayment),
@@ -234,7 +239,11 @@ const CustomerInformation = () => {
     //     carID: row.carInformation.id,
     //     guarantorID: row.guarantors.map((item: any)=> item.id).filter((item:any)=> item!== null&&item !== undefined),
     // })
+    console.log("row--> ", row)
+    setRowActive(row)
     setIdSaleItem(row.id)
+    setIdCarInformation(row.carInformation.id)
+    
     setDateCreate(dayjs(row.createdAt).format("DD/MM/YYYY"))
     const newPayloadCustomer = {
       customerName: row.customerName,
@@ -299,6 +308,25 @@ const CustomerInformation = () => {
     setShowModalSearchSale(false);
   };
 
+  const onUpdate = async() => {
+    console.log("")
+    const json = {
+      ...payloadCustomer,
+      interestMonth: Math.ceil(payloadCustomer.interestMonth),
+      interestRate: Math.ceil(payloadCustomer.interestRate),
+      totalOrder: Math.ceil(payloadCustomer.totalOrder),
+      downPayment: Math.ceil(payloadCustomer.downPayment),
+      saleitem_id: idSaleItem,
+      carInformation_id: idCarInformation
+    }
+    context?.setLoadingContext(true);
+    const result = await _SaleItemApi().updateAdvance(json)
+    if( result.statusCode === 200 ){
+      alert("แก้ไขข้อมูลสำเร็จ")
+    }
+    context?.setLoadingContext(false);
+  }
+
 
   return (
     <>
@@ -321,68 +349,73 @@ const CustomerInformation = () => {
 
       <div className="mt-5">
         <div className="flex  justify-between">
-          <div className="flex">
-            <div
-              onClick={() => onChangeTab(1)}
-              className={`cursor-pointer h-16 bg-white hover:bg-gray-300 w-60 rounded-l-lg border-r-2 flex items-center justify-center space-x-3 px-3 ${
-                tabActive === 1 && `border-b-4 border-b-amber-600`
-              }`}
-            >
-              <svg
-                className={validationForm.customer ? "text-green-500" : ""}
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="currentColor"
-                  d="m10 17l-5-5l1.41-1.42L10 14.17l7.59-7.59L19 8m-7-6A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2"
-                />
-              </svg>
-              <span className="font-bold text-black">ข้อมูลลูกค้า</span>
+            <div className="flex space-x-14 items-center">
+                <div className="flex">
+                    <div
+                    onClick={() => onChangeTab(1)}
+                    className={`cursor-pointer h-16 bg-white hover:bg-gray-300 w-60 rounded-l-lg border-r-2 flex items-center justify-center space-x-3 px-3 ${
+                        tabActive === 1 && `border-b-4 border-b-amber-600`
+                    }`}
+                    >
+                    <svg
+                        className={validationForm.customer ? "text-green-500" : ""}
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                        fill="currentColor"
+                        d="m10 17l-5-5l1.41-1.42L10 14.17l7.59-7.59L19 8m-7-6A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2"
+                        />
+                    </svg>
+                    <span className="font-bold text-black">ข้อมูลลูกค้า</span>
+                    </div>
+                    <div
+                    onClick={() => onChangeTab(2)}
+                    className={`cursor-pointer h-16 bg-white hover:bg-gray-300 w-60 flex items-center border-r-2 justify-center space-x-3 px-3 ${
+                        tabActive === 2 && `border-b-4 border-b-amber-600`
+                    }`}
+                    >
+                    <svg
+                        className={validationForm.guarantor ? "text-green-500" : ""}
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                        fill="currentColor"
+                        d="m10 17l-5-5l1.41-1.42L10 14.17l7.59-7.59L19 8m-7-6A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2"
+                        />
+                    </svg>
+                    <span className="font-bold text-black">ข้อมูลผู้ค้ำประกัน</span>
+                    </div>
+                    <div
+                    onClick={() => onChangeTab(3)}
+                    className={`cursor-pointer h-16 bg-white hover:bg-gray-300 w-60 rounded-r-lg flex items-center justify-center space-x-3 px-3 ${
+                        tabActive === 3 && `border-b-4 border-b-amber-600`
+                    }`}
+                    >
+                    <svg
+                        className={validationForm.car ? "text-green-500" : ""}
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                        fill="currentColor"
+                        d="m10 17l-5-5l1.41-1.42L10 14.17l7.59-7.59L19 8m-7-6A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2"
+                        />
+                    </svg>
+                    <span className="font-bold text-black">ข้อมูลรถ</span>
+                    </div>
+                </div>
+                { rowActive?.statusInstallment === "Close" &&
+                    <div className="px-5 py-2 rounded-lg outline outline-green-500 text-green-500  -rotate-12 hover:-rotate-0">ปิดยอด</div>
+                }
             </div>
-            <div
-              onClick={() => onChangeTab(2)}
-              className={`cursor-pointer h-16 bg-white hover:bg-gray-300 w-60 flex items-center border-r-2 justify-center space-x-3 px-3 ${
-                tabActive === 2 && `border-b-4 border-b-amber-600`
-              }`}
-            >
-              <svg
-                className={validationForm.guarantor ? "text-green-500" : ""}
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="currentColor"
-                  d="m10 17l-5-5l1.41-1.42L10 14.17l7.59-7.59L19 8m-7-6A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2"
-                />
-              </svg>
-              <span className="font-bold text-black">ข้อมูลผู้ค้ำประกัน</span>
-            </div>
-            <div
-              onClick={() => onChangeTab(3)}
-              className={`cursor-pointer h-16 bg-white hover:bg-gray-300 w-60 rounded-r-lg flex items-center justify-center space-x-3 px-3 ${
-                tabActive === 3 && `border-b-4 border-b-amber-600`
-              }`}
-            >
-              <svg
-                className={validationForm.car ? "text-green-500" : ""}
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="currentColor"
-                  d="m10 17l-5-5l1.41-1.42L10 14.17l7.59-7.59L19 8m-7-6A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2"
-                />
-              </svg>
-              <span className="font-bold text-black">ข้อมูลรถ</span>
-            </div>
-          </div>
           <div className="flex space-x-3">
             <button
               onClick={onClearForm}
@@ -476,6 +509,31 @@ const CustomerInformation = () => {
             </button>
           </div>
         )}
+
+        {fnCheckValidation() && stateForm == "view" && (
+          <div className="mt-8 flex justify-end">
+            <button
+              onClick={onUpdate}
+              className="bg-orange-600 hover:bg-orange-500 rounded-lg text-white px-16 py-3 font-bold"
+            >
+              <div className="flex items-center space-x-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 512 512"
+                >
+                  <path
+                    d="M362.7 64h-256C83 64 64 83.2 64 106.7v298.7c0 23.5 19 42.7 42.7 42.7h298.7c23.5 0 42.7-19.2 42.7-42.7v-256L362.7 64zM256 405.3c-35.4 0-64-28.6-64-64s28.6-64 64-64 64 28.6 64 64-28.6 64-64 64zM320 192H106.7v-85.3H320V192z"
+                    fill="currentColor"
+                  />
+                </svg>
+                <span>แก้ไข</span>
+              </div>
+            </button>
+          </div>
+        )}
+
       </div>
     </>
   );

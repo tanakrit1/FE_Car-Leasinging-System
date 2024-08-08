@@ -20,13 +20,13 @@ const FormCar = ({
   const [disableRadio, setDisableRadio] = useState<boolean>(false);
 
     useEffect(()=> {
-        setDisableRadio(stateForm=="view" ? true : false)
-        setDisableForm(stateForm=="view" ? true : false)
+        setDisableRadio(stateForm == "view" ? true : false);
+        setDisableForm(stateForm == "view" ? true : false);
     }, [stateForm])
 
-  useEffect(() => {
-    setDisableForm(payload?.carType === "buy" ? true : false);
-  }, []);
+//   useEffect(() => {
+//     setDisableForm(payload?.carType === "buy" ? true : false);
+//   }, []);
 
   useEffect(() => {
     returnPayload(payload);
@@ -56,6 +56,9 @@ const FormCar = ({
   };
 
   useEffect(() => {
+    if( stateForm == "view" ){
+        return setDisableForm(true)
+    }
     setDisableForm(payloadData.carType === "buy" ? true : false);
   }, [payloadData.carType]);
 
@@ -124,7 +127,7 @@ const FormCar = ({
           <div className="flex flex-row flex-wrap">
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                ยี่ห้อ :<span className="text-red-500 font-semibold text">*</span>
+                ยี่ห้อ :<span className="text-red-500 font-semibold text">*</span> : {disableForm.toString()}  : {disableRadio.toString()}
               </p>
               <select
                 onChange={onChangeInput}
