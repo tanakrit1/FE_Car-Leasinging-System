@@ -96,10 +96,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       onLoadHistory(saleItemID);
 
       if (payloadCustomer.interestType === "คงที่") {
-        const InterestPay =
-          (Math.ceil(payloadCustomer.totalOrder) /
-            Math.ceil(payloadCustomer.numInstallments)) *
-          (Math.ceil(payloadCustomer.interestRate) / 100);
+        const InterestPay = payloadCustomer?.interestMonth
         setPayload({ ...payload, InterestPay: Math.ceil(InterestPay) });
       } else {
         // ลดต้นลดดอก
@@ -154,7 +151,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       saleItem_id: Math.ceil(payloadCustomer.id),
     };
     const result = await _PaymentApi().create(json);
-    if (result.statusCode === 200) {
+    if (result?.statusCode === 200) {
       alert("บันทึกข้อมูลสำเร็จ");
       onClearForm();
       onLoadHistory(payloadCustomer.id);
@@ -318,7 +315,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                 type="number"
                 name="InterestPay"
                 // value={3000}
-                value={payload?.InterestPay}
+                value={payloadCustomer?.statusInstallment == "Close" ? "" : payload?.InterestPay}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>
@@ -344,7 +341,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                 disabled
                 type="text"
                 name="receiver"
-                value={payload?.receiver}
+                value={payloadCustomer?.statusInstallment == "Close" ? "" : payload?.receiver }
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>
@@ -381,7 +378,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                 className="bg-orange-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-orange-400"
               >
                 <div className="flex py-2 px-4 items-center">
-                  <span>บันทึก</span>
+                  <span>ชำระ</span>
                 </div>
               </button>
             )}
@@ -390,12 +387,12 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
 
           <div className="w-full divider text-white">ประวัติการชำระเงิน</div>
           <div className="flex items-center">
-            <div className="px-3 py-1 rounded-full bg-orange-200">
+            {/* <div className="px-3 py-1 rounded-full bg-orange-200">
               <span className="text-black font-bold">
                 ยอดจัด {Math.ceil(payloadCustomer.totalOrder).toLocaleString()} บาท
               </span>
             </div>
-            <span className="px-6 text-white">/</span>
+            <span className="px-6 text-white">/</span> */}
             <div className="px-3 py-1 rounded-full bg-orange-200">
               <span className="text-black font-bold">
                 จ่ายแล้ว(เงินต้น){" "}

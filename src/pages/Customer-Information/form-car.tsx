@@ -127,7 +127,7 @@ const FormCar = ({
           <div className="flex flex-row flex-wrap">
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                ยี่ห้อ :<span className="text-red-500 font-semibold text">*</span> : {disableForm.toString()}  : {disableRadio.toString()}
+                ยี่ห้อ :<span className="text-red-500 font-semibold text">*</span>
               </p>
               <select
                 onChange={onChangeInput}

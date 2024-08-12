@@ -29,10 +29,15 @@ const FormCustomer = ({
     if(event.target.name==="totalOrder" || event.target.name==="numInstallments" || event.target.name==="interestRate"){  //totalOrder numInstallments interestRate
         setPayload({ ...payload, [event.target.name]: event.target.value });
         const totalOrder = event.target.name==="totalOrder" ? Math.ceil(event.target.value) : Math.ceil(payload.totalOrder);
-        const numInstallments = event.target.name==="numInstallments" ? Math.ceil(event.target.value) : Math.ceil(payload.numInstallments);
-        const interestRate = event.target.name==="interestRate" ? Math.ceil(event.target.value) : Math.ceil(payload.interestRate);
-        const interestMonth = (Math.ceil(totalOrder) / Math.ceil(numInstallments)) * (Math.ceil(interestRate) / 100)
-        setPayload({ ...payload, [event.target.name]: event.target.value, interestMonth: Math.ceil(interestMonth) } );
+        // const numInstallments = event.target.name==="numInstallments" ? Math.ceil(event.target.value) : Math.ceil(payload.numInstallments);
+        const interestRate = event.target.name==="interestRate" ? event.target.value : payload.interestRate;
+        
+        const interestPerMonth = Math.ceil(Number(totalOrder) * (Number(interestRate) / 100))  // ได้ดอกเบี้ยต่อเดือน 
+        // const totalInterest = Number(interestPerMonth) * Number(numInstallments) // ได้ดอกเบี้ยทั้งหมด
+        // const 
+        
+        // const interestMonth = (Math.ceil(totalOrder) / Math.ceil(numInstallments)) * (Math.ceil(interestRate) / 100)
+        setPayload({ ...payload, [event.target.name]: event.target.value, interestMonth: Math.ceil(interestPerMonth) } );
     }else{
         setPayload({ ...payload, [event.target.name]: event.target.value });
     }
@@ -205,7 +210,7 @@ const FormCustomer = ({
             {/* {payloadCustomer.interestType === "คงที่" && ( */}
               <div className="basis-4/12 px-2">
                 <p className="text-white font-semibold mb-1">
-                  จำนวนงวด :
+                ระยะสัญญา(เดือน) :
                   <span className="text-red-500 font-semibold text">*</span>
                 </p>
                 <input

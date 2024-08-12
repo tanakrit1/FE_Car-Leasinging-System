@@ -11,9 +11,10 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
 
     const process = () => {
         if (dataInput.interestType === "คงที่") {
-            const InterestPay = (Math.ceil(dataInput.totalOrder) / Math.ceil(dataInput.numInstallments)) * (Math.ceil(dataInput.interestRate) / 100);
-              const amountPay = (Math.ceil(dataInput.totalOrder) / Math.ceil(dataInput.numInstallments))
-              return (amountPay + InterestPay)
+            const totalAmount = (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) + Number(dataInput.interestMonth)
+            //   const amountPay = (Number(dataInput.totalOrder) / Number(dataInput.numInstallments))
+            //   return (amountPay + InterestPay)
+            return Math.ceil(totalAmount).toLocaleString()
 
           } else { // ลดต้นลดดอก
             const InterestPay = Math.ceil(dataInput.remainingBalance) * (Math.ceil(dataInput.interestRate) / 100);
@@ -54,7 +55,7 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
         worksheet.getCell('E4').value = dataInput?.carInformation.licensePlate
 
         worksheet.getCell('A5').value = "เมื่อวันที่"
-        worksheet.getCell('B5').value = dataInput?.contractDate
+        worksheet.getCell('B5').value = dayjs(dataInput?.contractDate).format('DD/MM/YYYY')
         worksheet.getCell('C5').value = "ขณะนี้ท่านมียอดค้างชำระจำนวน"
         worksheet.getCell('D5').value = process()
         worksheet.getCell('E5').value = "บาท"
@@ -140,11 +141,12 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
       <div className="w-full rounded-lg bg-slate-700 ">
         <div className="flex justify-between items-center bg-slate-600 px-3 h-16 rounded-t-lg ">
             <div className="flex space-x-5 items-center">
-          <p className="font-bold text-2xl text-white">รายละเอียดลูกค้า</p>
+          <p className="font-bold text-2xl text-white">รายละเอียดสัญญา</p>
           { dataInput?.statusInstallment === "Close" &&  
                 <div className="px-5 py-2 rounded-lg outline outline-green-400 text-green-400  -rotate-12 hover:-rotate-0">ปิดยอด</div>
             }
             </div>
+            { dataInput.statusInstallment !== "Close" && 
           <div className='flex space-x-3'>
             { dataInput.idCardNumber != "" && 
                 <button className='bg-yellow-600 text-white font-bold py-1 px-4 rounded-lg hover:bg-yellow-500' onClick={onExport}>ใบแจ้งหนี้</button>
@@ -153,6 +155,12 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
                 <button className='bg-green-500 text-white font-bold py-1 px-4 rounded-lg hover:bg-green-400' onClick={onOpenModalChangeNum}>เพิ่มจำนวนงวด</button>
             }
           </div>
+            }
+        </div>
+
+{/* ------------------------------------------------------------------------------------ */}
+        <div className="w-full divider text-white">
+            ข้อมูลลูกค้า
         </div>
 
         <div className="mt-5 px-3 pb-6 flex flex-wrap">
@@ -163,28 +171,6 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
               type="text"
               name="customerName"
               value={dataInput?.customerName}
-              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
-            />
-          </div>
-          <div className="basis-8/12 px-2">
-            <p className="text-white font-semibold mb-1">ที่อยู่ :</p>
-            <input
-              disabled
-              type="text"
-              name="address"
-              value={dataInput?.address}
-              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
-            />
-          </div>
-          <div className="basis-4/12 px-2">
-            <p className="text-white font-semibold mb-1">
-              เลขบัตรประจำตัวประชาชน :
-            </p>
-            <input
-              disabled
-              type="text"
-              name="idCardNumber"
-              value={dataInput?.idCardNumber}
               className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
             />
           </div>
@@ -199,15 +185,49 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
             />
           </div>
           <div className="basis-4/12 px-2">
-            <p className="text-white font-semibold mb-1">เงินดาวน์ :</p>
+            <p className="text-white font-semibold mb-1">ที่อยู่ :</p>
             <input
               disabled
               type="text"
-              name="downPayment"
-              value={dataInput?.downPayment}
+              name="address"
+              value={dataInput?.address}
               className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
             />
           </div>
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">ราคาขาย :</p>
+            <input
+              disabled
+              type="text"
+              name="address"
+              value={dataInput?.carInformation?.sellingPrice ? Number(dataInput?.carInformation?.sellingPrice).toLocaleString() : ""}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">วันที่เซ็นสัญญา :</p>
+            <input
+              disabled
+              type="text"
+              name="address"
+              value={dataInput?.contractDate ? dayjs(dataInput?.contractDate).format('DD/MM/YYYY') : ""}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+          {/* <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">
+              เลขบัตรประจำตัวประชาชน :
+            </p>
+            <input
+              disabled
+              type="text"
+              name="idCardNumber"
+              value={dataInput?.idCardNumber}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div> */}
+          
+         
           <div className="basis-4/12 px-2">
             <p className="text-white font-semibold mb-1">ประเภทดอกเบี้ย :</p>
             <input
@@ -215,6 +235,16 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
               type="text"
               name="interestType"
               value={dataInput?.interestType}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">เงินดาวน์ :</p>
+            <input
+              disabled
+              type="text"
+              name="downPayment"
+              value={dataInput?.downPayment ? Number(dataInput?.downPayment).toLocaleString() : ""}
               className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
             />
           </div>
@@ -229,7 +259,7 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
             />
           </div> */}
           <div className="basis-4/12 px-2">
-            <p className="text-white font-semibold mb-1">อัตราดอกเบี้ย :</p>
+            <p className="text-white font-semibold mb-1">อัตราดอกเบี้ยต่อเดือน :</p>
             <input
               disabled
               type="text"
@@ -241,7 +271,7 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
 
           {/* {dataInput?.interestType === "คงที่" && ( */}
           <div className="basis-4/12 px-2">
-            <p className="text-white font-semibold mb-1">จำนวนงวด :</p>
+            <p className="text-white font-semibold mb-1">ระยะสัญญา(เดือน) :</p>
             <input
               disabled
               type="text"
@@ -251,6 +281,17 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
             />
           </div>
           {/* )} */}
+
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">ยอดจัด :</p>
+            <input
+              disabled
+              type="text"
+              name="numInstallments"
+              value={dataInput?.totalOrder ? Number(dataInput?.totalOrder).toLocaleString() : ""}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
 
           {/* <div className="basis-4/12 px-2">
             <p className="text-white font-semibold mb-1">
@@ -278,38 +319,53 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
             />
           </div> */}
 
+        {dataInput?.interestType === "คงที่" && (
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">ดอกเบี้ยต่อเดือน :</p>
+              <input
+                disabled
+                type="text"
+                name="interestMonth"
+                value={dataInput?.interestMonth ? Number(dataInput?.interestMonth).toLocaleString() : ""}
+                className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+              />
+            </div>
+          )}
+
+        {dataInput?.interestType === "คงที่" && (
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">เงินต้นรวมดอกเบี้ยทั้งหมด :</p>
+              <input
+                disabled
+                type="text"
+                name="interestMonth"
+                value={ (Number(dataInput.totalOrder) + (Number(dataInput.interestMonth) * Number(dataInput.numInstallments))).toLocaleString() }
+                className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+              />
+            </div>
+          )}
+
+
+
           {dataInput?.interestType === "คงที่" && (
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                จำนวนเงินที่ต้องชำระ/เดือน :
+                ค่างวดต่อเดือน :
               </p>
               <input
                 disabled
                 type="text"
                 name="interestMonth"
-                value={(
-                    Math.ceil( (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) + Number(dataInput.interestMonth))
-                )}
+                value={( Math.ceil( (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) + Number(dataInput.interestMonth)) ).toLocaleString()}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>
           )}
 
-          {dataInput?.interestType === "คงที่" && (
-            <div className="basis-4/12 px-2">
-              <p className="text-white font-semibold mb-1">ดอกเบี้ย/เดือน :</p>
-              <input
-                disabled
-                type="text"
-                name="interestMonth"
-                value={dataInput?.interestMonth}
-                className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
-              />
-            </div>
-          )}
+          
 
           <div className="basis-4/12 px-2">
-            <p className="text-white font-semibold mb-1">วันครบกำหนดชำระ :</p>
+            <p className="text-white font-semibold mb-1">ส่งวันที่ :</p>
             <input
               disabled
               type="text"
@@ -325,7 +381,7 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
               disabled
               type="text"
               name="interestType"
-              value={dataInput?.discount}
+              value={dataInput?.discount ? Number(dataInput?.discount).toLocaleString() : ""}
               className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
             />
           </div>
@@ -363,6 +419,83 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
             </div>
           ))} */}
         </div>
+
+        <div className="w-full divider text-white">
+            ข้อมูลรถ
+        </div>
+        <div className="mt-5 px-3 pb-6 flex flex-wrap">
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">ยี่ห้อรถ :</p>
+            <input
+              disabled
+              type="text"
+              name="customerName"
+              value={dataInput?.carInformation?.carBrand}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">รุ่น :</p>
+            <input
+              disabled
+              type="text"
+              name="customerName"
+              value={dataInput?.carInformation?.model}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">สี :</p>
+            <input
+              disabled
+              type="text"
+              name="customerName"
+              value={dataInput?.carInformation?.carColor}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">ปี :</p>
+            <input
+              disabled
+              type="text"
+              name="customerName"
+              value={dataInput?.carInformation?.carDate}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">ทะเบียนรถ :</p>
+            <input
+              disabled
+              type="text"
+              name="customerName"
+              value={dataInput?.carInformation?.licensePlate}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">เลขตัวถัง :</p>
+            <input
+              disabled
+              type="text"
+              name="customerName"
+              value={dataInput?.carInformation?.vin}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+          <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">เลขเครื่องยนต์ :</p>
+            <input
+              disabled
+              type="text"
+              name="customerName"
+              value={dataInput?.carInformation?.engineNumber}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+        </div>
+
       </div>
 
       {/* --------------------------------------------------------------------------------------------------------------- */}

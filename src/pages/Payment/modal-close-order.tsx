@@ -31,10 +31,7 @@ const ModalCloseOrder = ({
     if (payloadCustomer.interestType === "คงที่") {
       const remainingInstallment =
         Math.ceil(payloadCustomer.numInstallments) - rowsHistory.length; // จํานวนงวดคงเหลือ
-      const InterestPay =
-        (Math.ceil(payloadCustomer.totalOrder) /
-          Math.ceil(payloadCustomer.numInstallments)) *
-        (Math.ceil(payloadCustomer.interestRate) / 100);
+      const InterestPay = payloadCustomer.interestMonth
       const totalPay = InterestPay * remainingInstallment;
       setPayloadPayment({
         totalOrder: Math.ceil(payloadCustomer.totalOrder),
@@ -149,37 +146,37 @@ const ModalCloseOrder = ({
             <div className="text-white flex justify-between mb-3">
               <span>ยอดจัด</span>
               <span className="text-green-500">
-                {payloadPayment.totalOrder || 0} บาท
+                {payloadPayment?.totalOrder ? Number(payloadPayment?.totalOrder).toLocaleString() : 0} บาท
               </span>
             </div>
             <div className="text-white flex justify-between mb-3">
               <span>เงินต้นชำระแล้ว</span>
               <span className="text-yellow-500">
-                {payloadPayment.paymentAmount || 0} บาท
+                {payloadPayment?.paymentAmount ? Number(payloadPayment?.paymentAmount).toLocaleString() : 0} บาท
               </span>
             </div>
             <div className="text-white flex justify-between mb-3">
               <span>ดอกเบี้ยชำระแล้ว</span>
               <span className="text-yellow-500">
-                {payloadPayment.totalInterest || 0} บาท
+                {payloadPayment?.totalInterest ? Number(payloadPayment?.totalInterest).toLocaleString() : 0} บาท
               </span>
             </div>
             <div className="text-white flex justify-between mb-3">
               <span>เงินต้นคงเหลือ</span>
               <span className="text-red-500">
-                {payloadPayment.remainingBalance || 0} บาท
+                {payloadPayment?.remainingBalance ? Number(payloadPayment?.remainingBalance).toLocaleString() : 0} บาท
               </span>
             </div>
             <div className="text-white flex justify-between mb-3">
               <span>ดอกเบี้ยคงเหลือ</span>
               <span className="text-red-500">
-                {payloadPayment.remainingInterest || 0} บาท
+                {payloadPayment?.remainingInterest ? Number(payloadPayment?.remainingInterest).toLocaleString() : 0} บาท
               </span>
             </div>
             <div className="text-white flex justify-between mb-3">
               <span>ค่าปรับรวม</span>
               <span className="text-red-500">
-                {totalFee || 0} บาท
+                {totalFee ? Number(totalFee).toLocaleString() : 0} บาท
               </span>
             </div>
             <div className="text-white items-center flex justify-between mb-3">
@@ -203,7 +200,7 @@ const ModalCloseOrder = ({
                 ยอดที่ต้องชำระ{" "}
               </span>
               <span className="text-orange-500 border-b border-orange-500">
-                {amount} บาท
+                {amount ? Number(amount).toLocaleString() : 0} บาท
               </span>
             </div>
 

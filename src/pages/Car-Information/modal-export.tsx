@@ -146,11 +146,11 @@ const ModalExport = ({ showModal, returnShowModal }: any) => {
         worksheet.getCell('F'+row).value = dataRows[index]?.sellerName
         worksheet.getCell('G'+row).value = dataRows[index]?.vin
         worksheet.getCell('H'+row).value = dataRows[index]?.engineNumber
-        worksheet.getCell('I'+row).value = dataRows[index]?.buyingPrice
-        worksheet.getCell('J'+row).value = dataRows[index]?.maintenanceCost
-        worksheet.getCell('K'+row).value = dataRows[index]?.cost
-        worksheet.getCell('L'+row).value = dataRows[index]?.desiredProfit
-        worksheet.getCell('M'+row).value = dataRows[index]?.sellingPrice
+        worksheet.getCell('I'+row).value = Number(dataRows[index]?.buyingPrice).toLocaleString()
+        worksheet.getCell('J'+row).value = Number(dataRows[index]?.maintenanceCost).toLocaleString()
+        worksheet.getCell('K'+row).value = Number(dataRows[index]?.cost).toLocaleString()
+        worksheet.getCell('L'+row).value = Number(dataRows[index]?.desiredProfit).toLocaleString()
+        worksheet.getCell('M'+row).value = Number(dataRows[index]?.sellingPrice).toLocaleString()
         worksheet.getCell('N'+row).value = dataRows[index]?.agent
         
         for (let key = 65; key <= 78; key++) {

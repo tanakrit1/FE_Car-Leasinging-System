@@ -1,4 +1,4 @@
-import { axiosGet, axiosPatch, axiosPost } from "./axios-service"
+import { axiosDelete, axiosGet, axiosPatch, axiosPost } from "./axios-service"
 
 const _SaleItemApi = () => {
     return {
@@ -20,6 +20,10 @@ const _SaleItemApi = () => {
 
         updateAdvance: async(body: any) => {
             return await axiosPost("/saleitem/updateAdvance", body)
+        },
+
+        delete: async(id: Number) => {
+            return await axiosDelete(`/saleitem/${id}`)
         }
 
         // update: async(id:string, body: any) => {

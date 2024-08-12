@@ -11,7 +11,7 @@ import { LoadContext } from "../../context/loading-context";
 const CustomerInformation = () => {
   const context = useContext(LoadContext);
   const [idSaleItem, setIdSaleItem] = useState<any>(null);
-  const [idCarInformation, setIdCarInformation] = useState<any>(null);
+//   const [idCarInformation, setIdCarInformation] = useState<any>(null);
   const [rowActive, setRowActive] = useState<any>(null);
 //   const [idGuarantor, setIdGuarantor] = useState<any>(null);
   const [dateCreate, setDateCreate] = useState<any>(dayjs().format("DD/MM/YYYY"));
@@ -214,7 +214,7 @@ const CustomerInformation = () => {
         ...newPayloadCar,
         // discount: Number(payloadCustomer.discount),
         interestMonth: payloadCustomer.interestType === "ลดต้น/ลดดอก" ?  0 : Math.ceil(payloadCustomer.interestMonth),
-        interestRate: Math.ceil(payloadCustomer.interestRate),
+        interestRate: Number(payloadCustomer.interestRate),
         totalOrder: Math.ceil(payloadCustomer.totalOrder),
         downPayment: Math.ceil(payloadCustomer.downPayment),
         sellingPrice: Math.ceil(payloadCar.sellingPrice),
@@ -239,10 +239,10 @@ const CustomerInformation = () => {
     //     carID: row.carInformation.id,
     //     guarantorID: row.guarantors.map((item: any)=> item.id).filter((item:any)=> item!== null&&item !== undefined),
     // })
-    console.log("row--> ", row)
+    // console.log("row--> ", row)
     setRowActive(row)
     setIdSaleItem(row.id)
-    setIdCarInformation(row.carInformation.id)
+    // setIdCarInformation(row.carInformation.id)
     
     setDateCreate(dayjs(row.createdAt).format("DD/MM/YYYY"))
     const newPayloadCustomer = {
@@ -308,23 +308,36 @@ const CustomerInformation = () => {
     setShowModalSearchSale(false);
   };
 
-  const onUpdate = async() => {
-    console.log("")
-    const json = {
-      ...payloadCustomer,
-      interestMonth: Math.ceil(payloadCustomer.interestMonth),
-      interestRate: Math.ceil(payloadCustomer.interestRate),
-      totalOrder: Math.ceil(payloadCustomer.totalOrder),
-      downPayment: Math.ceil(payloadCustomer.downPayment),
-      saleitem_id: idSaleItem,
-      carInformation_id: idCarInformation
+//   const onUpdate = async() => {
+//     const json = {
+//       ...payloadCustomer,
+//       interestMonth: Math.ceil(payloadCustomer.interestMonth),
+//       interestRate: Number(payloadCustomer.interestRate),
+//       totalOrder: Math.ceil(payloadCustomer.totalOrder),
+//       downPayment: Math.ceil(payloadCustomer.downPayment),
+//       saleitem_id: idSaleItem,
+//       carInformation_id: idCarInformation
+//     }
+//     context?.setLoadingContext(true);
+//     const result = await _SaleItemApi().updateAdvance(json)
+//     if( result.statusCode === 200 ){
+//       alert("แก้ไขข้อมูลสำเร็จ")
+//       onClearForm();
+//     }
+//     context?.setLoadingContext(false);
+//   }
+
+  const onDelete = async() => {
+    if( confirm("ท่านต้องการลบข้อมูลสัญญาของ คุณ "+ payloadCustomer.customerName +" ใช่หรือไม่ ?") == true ){
+        context?.setLoadingContext(true);
+        const result = await _SaleItemApi().delete(idSaleItem)
+        if( result.statusCode === 200 ){
+            alert("ลบข้อมูลสำเร็จ")
+            onClearForm();
+        }
+        context?.setLoadingContext(false);
     }
-    context?.setLoadingContext(true);
-    const result = await _SaleItemApi().updateAdvance(json)
-    if( result.statusCode === 200 ){
-      alert("แก้ไขข้อมูลสำเร็จ")
-    }
-    context?.setLoadingContext(false);
+    
   }
 
 
@@ -511,8 +524,8 @@ const CustomerInformation = () => {
         )}
 
         {fnCheckValidation() && stateForm == "view" && (
-          <div className="mt-8 flex justify-end">
-            <button
+          <div className="mt-8 flex justify-end space-x-3">
+            {/* <button
               onClick={onUpdate}
               className="bg-orange-600 hover:bg-orange-500 rounded-lg text-white px-16 py-3 font-bold"
             >
@@ -529,6 +542,16 @@ const CustomerInformation = () => {
                   />
                 </svg>
                 <span>แก้ไข</span>
+              </div>
+            </button> */}
+
+            <button
+              onClick={onDelete}
+              className="bg-red-600 hover:bg-red-500 rounded-lg text-white px-16 py-3 font-bold"
+            >
+              <div className="flex items-center space-x-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M3 6.386c0-.484.345-.877.771-.877h2.665c.529-.016.996-.399 1.176-.965l.03-.1l.115-.391c.07-.24.131-.45.217-.637c.338-.739.964-1.252 1.687-1.383c.184-.033.378-.033.6-.033h3.478c.223 0 .417 0 .6.033c.723.131 1.35.644 1.687 1.383c.086.187.147.396.218.637l.114.391l.03.1c.18.566.74.95 1.27.965h2.57c.427 0 .772.393.772.877s-.345.877-.771.877H3.77c-.425 0-.77-.393-.77-.877"/><path fill="currentColor" fill-rule="evenodd" d="M11.596 22h.808c2.783 0 4.174 0 5.08-.886c.904-.886.996-2.339 1.181-5.245l.267-4.188c.1-1.577.15-2.366-.303-2.865c-.454-.5-1.22-.5-2.753-.5H8.124c-1.533 0-2.3 0-2.753.5c-.454.5-.404 1.288-.303 2.865l.267 4.188c.185 2.906.277 4.36 1.182 5.245c.905.886 2.296.886 5.079.886m-1.35-9.811c-.04-.434-.408-.75-.82-.707c-.413.043-.713.43-.672.864l.5 5.263c.04.434.408.75.82.707c.413-.043.713-.43.672-.864zm4.329-.707c.412.043.713.43.671.864l-.5 5.263c-.04.434-.409.75-.82.707c-.413-.043-.713-.43-.672-.864l.5-5.263c.04-.434.409-.75.82-.707" clip-rule="evenodd"/></svg>
+                <span>ลบ</span>
               </div>
             </button>
           </div>
