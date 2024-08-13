@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 // import FormInput from "../../components/FormInput";
 import ModalSearchStock from "./modal-search-stock";
 import CarBand from "../../assets/car-brand.json"
+import { formatNumber } from "../../helpers/function-service";
 
 interface propsFormCar {
   returnPayload: (result: any) => void;
@@ -63,8 +64,14 @@ const FormCar = ({
   }, [payloadData.carType]);
 
   const onChangeInput = (event: any) => {
-    setPayload({ ...payloadData, [event.target.name]: event.target.value });
+    const input = event.target.name == "sellingPrice" ? event.target.value.replace(/,/g, "") : event.target.value
+    setPayload({ ...payloadData, [event.target.name]: input });
   };
+
+  const fnsetFormatNumber = (value: string) => {
+    const numericValue = value.toString().replace(/,/g, "");
+    return formatNumber(numericValue)
+  }
 
   return (
     <>
@@ -256,16 +263,16 @@ const FormCar = ({
 
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                ราคาขาย :
+                ราคาขาย : 
                 <span className="text-red-500 font-semibold text">*</span>
               </p>
               <input
                 onChange={onChangeInput}
                 disabled={disableForm}
                 autoComplete="off"
-                type="number"
+                type="text"
                 name="sellingPrice"
-                value={payloadData.sellingPrice}
+                value={fnsetFormatNumber(payloadData.sellingPrice)}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}

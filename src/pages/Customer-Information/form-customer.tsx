@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatNumber } from "../../helpers/function-service";
 // import FormInput from "../../components/FormInput";
 // import { inputCustomer } from "./input-form";
 
@@ -27,17 +28,18 @@ const FormCustomer = ({
 
   const onChangeInput = (event: any) => {
     if(event.target.name==="totalOrder" || event.target.name==="numInstallments" || event.target.name==="interestRate"){  //totalOrder numInstallments interestRate
-        setPayload({ ...payload, [event.target.name]: event.target.value });
-        const totalOrder = event.target.name==="totalOrder" ? Math.ceil(event.target.value) : Math.ceil(payload.totalOrder);
+        const input = event.target.name==="totalOrder" ? event.target.value.replace(/,/g, "") : event.target.value
+        setPayload({ ...payload, [event.target.name]: input });
+        const totalOrder = event.target.name==="totalOrder" ? Number(input) : Number(payload.totalOrder);
         // const numInstallments = event.target.name==="numInstallments" ? Math.ceil(event.target.value) : Math.ceil(payload.numInstallments);
-        const interestRate = event.target.name==="interestRate" ? event.target.value : payload.interestRate;
+        const interestRate = event.target.name==="interestRate" ? input : payload.interestRate;
         
         const interestPerMonth = Math.ceil(Number(totalOrder) * (Number(interestRate) / 100))  // ได้ดอกเบี้ยต่อเดือน 
         // const totalInterest = Number(interestPerMonth) * Number(numInstallments) // ได้ดอกเบี้ยทั้งหมด
         // const 
         
         // const interestMonth = (Math.ceil(totalOrder) / Math.ceil(numInstallments)) * (Math.ceil(interestRate) / 100)
-        setPayload({ ...payload, [event.target.name]: event.target.value, interestMonth: Math.ceil(interestPerMonth) } );
+        setPayload({ ...payload, [event.target.name]: input, interestMonth: interestPerMonth } );
     }else{
         setPayload({ ...payload, [event.target.name]: event.target.value });
     }
@@ -50,6 +52,13 @@ const FormCustomer = ({
   useEffect(() => {
     returnInputChange(payload);
   }, [payload]);
+
+
+  const fnsetFormatNumber = (value: string) => {
+    const numericValue = value.toString().replace(/,/g, "");
+    return formatNumber(numericValue)
+  }
+
   return (
     <>
       <div className="w-full rounded-lg bg-slate-700 ">
@@ -131,9 +140,9 @@ const FormCustomer = ({
                 onChange={onChangeInput}
                 // disabled={disableForm}
                 autoComplete="off"
-                type="number"
+                type="text"
                 name="downPayment"
-                value={payloadCustomer.downPayment}
+                value={fnsetFormatNumber(payloadCustomer.downPayment) || ""}
                 className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
               />
             </div>
@@ -172,9 +181,9 @@ const FormCustomer = ({
                 onChange={onChangeInput}
                 disabled={disableForm}
                 autoComplete="off"
-                type="number"
+                type="text"
                 name="totalOrder"
-                value={payloadCustomer.totalOrder}
+                value={fnsetFormatNumber(payloadCustomer.totalOrder) || ""}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}

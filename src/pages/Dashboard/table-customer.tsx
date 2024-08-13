@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import TableList from "../../components/TableList";
+import dayjs from "dayjs";
 
 const columns = [
   { label: "ชื่อลูกค้า", width: "20%", field: "customerName" },
@@ -18,10 +19,11 @@ const TableCustomer = ({rows}: any) => {
     useEffect( ()=> {
         const mapData = rows.map( (item: any) => {
             return { 
-                    ...item, 
-                    licensePlate: item?.carInformation?.licensePlate,
-                    carBrand: item?.carInformation?.carBrand,
-                    model: item?.carInformation?.model,
+                        ...item, 
+                        licensePlate: item?.carInformation?.licensePlate,
+                        carBrand: item?.carInformation?.carBrand,
+                        model: item?.carInformation?.model,
+                        dueDate: dayjs(item?.dueDate).format("DD/MM/YYYY"),
                     }
         } )
 

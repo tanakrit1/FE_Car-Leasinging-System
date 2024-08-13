@@ -5,6 +5,7 @@ import { LoadContext } from "../../context/loading-context";
 import { getLoginStorage } from "../../helpers/set-storage";
 import BankList from "../../assets/bank.json";
 import ModalCloseOrder from "./modal-close-order";
+import { formatNumber } from "../../helpers/function-service";
 
 const columns = [
   { label: "วันที่ชำระ", width: "10%", field: "datePay" },
@@ -125,17 +126,14 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
 
   const onChangeInput = (event: any) => {
     if (event.target.name === "amount") {
-      setAmount(event.target.value);
-      const amountPay =
-        Math.ceil(event.target.value) -
-        Math.ceil(payload.InterestPay) -
-        Math.ceil(payload.fee);
-      setPayload({ ...payload, amountPay: amountPay });
+      const input = event.target.value.replace(/,/g, "")
+      setAmount(input);
+      const amountPay = Number(input) - Number(payload.InterestPay) - Number(payload.fee);
+      setPayload({ ...payload, amountPay: Math.ceil(amountPay) });
     } else if (event.target.name === "fee") {
-      const fee = event.target.value;
-      const amountPay =
-        Math.ceil(amount) - Math.ceil(payload.InterestPay) - Math.ceil(fee);
-      setPayload({ ...payload, amountPay: amountPay, fee: fee });
+      const fee = event.target.value.replace(/,/g, "")
+      const amountPay = Number(amount) - Number(payload.InterestPay) - Number(fee);
+      setPayload({ ...payload, amountPay: amountPay, fee: Math.ceil(fee) });
     } else {
       setPayload({ ...payload, [event.target.name]: event.target.value });
     }
@@ -214,6 +212,11 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     setShowModalCloseOrder(false);
   }
 
+  const fnsetFormatNumber = (value: string) => {
+    const numericValue = value.toString().replace(/,/g, "");
+    return formatNumber(numericValue)
+  }
+
   return (
     <>
       <div className="w-full rounded-lg bg-slate-700 ">
@@ -279,35 +282,34 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
           <div className="flex flex-wrap">
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                จำนวนเงินที่จ่ายจริง :
+                จำนวนเงินที่จ่ายจริง : {" "}
+                <span className="text-red-500 font-semibold text">*</span>
               </p>
               <input
                 disabled={formDisable}
                 onChange={onChangeInput}
-                type="number"
+                type="text"
                 name="amount"
-                value={amount}
+                value={amount ? fnsetFormatNumber(amount) : ""}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${formDisable ? "bg-slate-300" : "bg-slate-50" }`}
               />
             </div>
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                เงินต้น :{" "}
-                <span className="text-red-500 font-semibold text">*</span>
+                เงินต้น :
               </p>
               <input
                 disabled
                 onChange={onChangeInput}
-                type="number"
+                type="text"
                 name="amountPay"
-                value={payload?.amountPay}
+                value={payload?.amountPay ? fnsetFormatNumber(payload?.amountPay) : ""}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                ดอกเบี้ย :{" "}
-                <span className="text-red-500 font-semibold text">*</span>
+                ดอกเบี้ย :
               </p>
               <input
                 disabled
@@ -315,7 +317,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                 type="number"
                 name="InterestPay"
                 // value={3000}
-                value={payloadCustomer?.statusInstallment == "Close" ? "" : payload?.InterestPay}
+                value={payloadCustomer?.statusInstallment == "Close" ? "" : payload?.InterestPay ? fnsetFormatNumber(payload?.InterestPay) : ""}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>

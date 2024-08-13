@@ -24,8 +24,8 @@ const CarInformation = () => {
 
   const onChangeInputForm = (result: any) => {
     let cloneInputList = [...inputList];
-    const cost = Math.ceil(result.buyingPrice || '0') + Math.ceil(result.maintenanceCost || '0')
-    const sellingPrice = cost + Math.ceil(result.desiredProfit || '0')
+    const cost = (Math.ceil(result.buyingPrice || 0) + Math.ceil(result.maintenanceCost || 0)) || 0
+    const sellingPrice = (cost + Math.ceil(result.desiredProfit || 0)) || 0
     
     const findIndexCost = cloneInputList.findIndex( (row: any) => row.name === "cost" )
     const findIndexsellingPrice = cloneInputList.findIndex( (row: any) => row.name === "sellingPrice" )

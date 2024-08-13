@@ -40,4 +40,8 @@ const validateInputRequired = (form: any) => {
     return true
 }
 
-export { getBase64, validateInputRequired, base64toBlob, isBase64 }
+const formatNumber = (num: string) => {
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+export { getBase64, validateInputRequired, base64toBlob, isBase64, formatNumber }

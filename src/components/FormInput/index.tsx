@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
 import { FormInputProps } from "./interface";
+import { formatNumber } from "../../helpers/function-service";
 
 const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
   const [stateInputList, setStateInputList] = useState<any>(inputList);
   const [valueInput, setValueInput] = useState<any>({});
-
+  const fieldNumber = [ "buyingPrice", "maintenanceCost", "cost", "desiredProfit", "sellingPrice" ]
+  
   const handleChangeInput = (event: any, index: number) => {
+    // input.replace(/,/g, "")
+    const input = event.target.value.replace(/,/g, "")
+    // console.log(event.target.name,"--> ", input)
     const cloneStateInputList = [...stateInputList];
-    cloneStateInputList[index].value = event.target.value;
+    cloneStateInputList[index].value = input;
     setStateInputList(cloneStateInputList);
-
-
-    setValueInput({ ...valueInput, [event.target.name]: event.target.value });
+    setValueInput({ ...valueInput, [event.target.name]: input });
 
     returnInputChange({
       ...valueInput,
-      [event.target.name]: event.target.value,
+      [event.target.name]: input,
     });
   };
 
@@ -29,6 +32,11 @@ const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
     // returnInputChange(objPayload)
   }, [inputList] )
 
+  const fnsetFormatNumber = (value: string) => {
+    const numericValue = value.toString().replace(/,/g, "");
+    return formatNumber(numericValue)
+  }
+
   return (
     <>
       <form onSubmit={(event: any) => event.preventDefault()}>
@@ -39,7 +47,7 @@ const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
               <p className="text-white font-semibold mb-1">
                 {item.label} :{" "}
                 {item?.requied ? (
-                  <span className="text-red-500 font-semibold text">*</span>
+                  <span className="text-red-500 font-semibold text">* </span> 
                 ) : (
                   ""
                 )}
@@ -53,7 +61,11 @@ const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
                   id={index.toString()}
                   type={item.type}
                   name={item.name}
-                  value={item?.value}
+                  value={
+                            fieldNumber.includes(item?.name) 
+                                ? fnsetFormatNumber(item?.value)
+                                : item?.value
+                        }
                   className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
                     item?.disabled ? "bg-slate-300" : "bg-slate-50"
                   }`}
