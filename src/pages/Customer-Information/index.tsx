@@ -35,7 +35,7 @@ const CustomerInformation = () => {
   const [payloadCustomer, setPayloadCustomer] = useState<any>({
     customerName: "",
     address: "",
-    idCardNumber: "",
+    // idCardNumber: "",
     phoneNumber: "",
     downPayment: "",
     totalOrder: "",
@@ -160,7 +160,7 @@ const CustomerInformation = () => {
     setPayloadCustomer({
       customerName: "",
       address: "",
-      idCardNumber: "",
+    //   idCardNumber: "",
       phoneNumber: "",
       downPayment: "",
       totalOrder: "",
@@ -248,7 +248,7 @@ const CustomerInformation = () => {
     const newPayloadCustomer = {
       customerName: row.customerName,
       address: row.address,
-      idCardNumber: row.idCardNumber,
+    //   idCardNumber: row.idCardNumber,
       phoneNumber: row.phoneNumber,
       downPayment: row.downPayment,
       totalOrder: row.totalOrder,

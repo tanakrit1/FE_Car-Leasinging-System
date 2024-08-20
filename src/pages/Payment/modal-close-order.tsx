@@ -3,6 +3,7 @@ import BankList from "../../assets/bank.json";
 import _PaymentApi from "../../api/payment";
 import { getLoginStorage } from "../../helpers/set-storage";
 import { LoadContext } from "../../context/loading-context";
+import { formatNumber } from "../../helpers/function-service";
 
 const ModalCloseOrder = ({
   showModalCloseOrder,
@@ -23,14 +24,14 @@ const ModalCloseOrder = ({
 
     bank: "",
     methodPay: "เงินสด",
+    accountName: "",
   });
   const [amount, setAmount] = useState<any>("");
   const [totalFee, setTotalFee] = useState<any>(0);
 
   const processOrder = () => {
     if (payloadCustomer.interestType === "คงที่") {
-      const remainingInstallment =
-        Math.ceil(payloadCustomer.numInstallments) - rowsHistory.length; // จํานวนงวดคงเหลือ
+      const remainingInstallment = Math.ceil(payloadCustomer.numInstallments) - rowsHistory.length; // จํานวนงวดคงเหลือ
       const InterestPay = payloadCustomer.interestMonth
       const totalPay = InterestPay * remainingInstallment;
       setPayloadPayment({
@@ -74,27 +75,33 @@ const ModalCloseOrder = ({
   };
 
   const onSubmit = async() => {
+    if( payloadPayment.methodPay === "เงินโอน" ){
+        if( (payloadPayment.bank === "" || payloadPayment.bank === null || payloadPayment.bank === undefined) || (payloadPayment.accountName === "" || payloadPayment.accountName === null || payloadPayment.accountName === undefined) ){
+            return alert("กรุณาระบุธนาคาร และ ชื่อบัญชี")
+        }
+    }
     context?.setLoadingContext(true)
     const json = {
         ...payloadPayment,
         InterestPay: Math.ceil(payloadPayment.remainingInterest),   // ดอกเบี้ย
-        amountPay: Math.ceil(amount),       // ยอดคงเหลือ
+        // amountPay: Math.ceil(amount),       // ยอดคงเหลือ
+        amountPay: Math.ceil(payloadPayment.remainingBalance),       // เงินต้น
         fee: 0,
         receiver: profile.firstName + " " + profile.lastName,
         discount: Math.ceil(payloadPayment.discount),
         saleItem_id: Math.ceil(payloadCustomer.id),
+        note: "ปิดยอด"
     }
     console.log("json--> ", json)
+    
     // return
     const result = await _PaymentApi().closeInstallment(json)
     if( result.statusCode === 200 ){
         alert("บันทึกข้อมูลสำเร็จ")
         returnSuccess()
-        // onRefetchDetail(payloadCustomer.id)
     }
 
     context?.setLoadingContext(false)
-    console.log("result--> ", result)
   };
 
   useEffect(() => {
@@ -110,22 +117,37 @@ const ModalCloseOrder = ({
 
 
   const processDiscount = () => {
+    const discount = Number(payloadPayment.discount.replace(/,/g, ""))
+    console.log("discount--> ", discount)
     if (payloadCustomer.interestType === "คงที่") {
         const remainingInstallment = Math.ceil(payloadCustomer.numInstallments) - rowsHistory.length; // จํานวนงวดคงเหลือ
-      const InterestPay = (Math.ceil(payloadCustomer.totalOrder) / Math.ceil(payloadCustomer.numInstallments)) * (Math.ceil(payloadCustomer.interestRate) / 100);
-      const totalPay = InterestPay * remainingInstallment;
-      const payamount = (Math.ceil(payloadCustomer.remainingBalance) + Math.ceil(totalPay)) - Math.ceil(payloadPayment.discount); 
+      const InterestPay = payloadCustomer.interestMonth  // ดอกเบี้ยต่อเดือน
+      const totalPay = InterestPay * remainingInstallment;  // ดอกเบี้ยคงเหลือทั้งหมด
+      const payamount = (Math.ceil(payloadCustomer.remainingBalance) + Math.ceil(totalPay)) - Math.ceil(discount); 
+
+      const remainingBalance = Math.ceil(payloadCustomer.remainingBalance) - Number(discount);
+      setPayloadPayment({ ...payloadPayment, remainingBalance: remainingBalance });
       setAmount(payamount);
     }else{
         const InterestPay = Math.ceil(payloadCustomer.remainingBalance) * (Math.ceil(payloadCustomer.interestRate) / 100);
-        const payamount = (Math.ceil(payloadCustomer.remainingBalance) + Math.ceil(InterestPay)) - Math.ceil(payloadPayment.discount);
+        const payamount = (Math.ceil(payloadCustomer.remainingBalance) + Math.ceil(InterestPay)) - Math.ceil(discount);
+
+        const remainingBalance = Math.ceil(payloadCustomer.remainingBalance) - Math.ceil(discount);
+        setPayloadPayment({ ...payloadPayment, remainingBalance: remainingBalance });
         setAmount(payamount);
+        
     }
   }
 
   useEffect( () => {
     processDiscount()
   }, [payloadPayment.discount] )
+
+
+  const fnsetFormatNumber = (value: string) => {
+    const numericValue = value.toString().replace(/,/g, "");
+    return formatNumber(numericValue)
+  }
 
   return (
     <>
@@ -183,8 +205,8 @@ const ModalCloseOrder = ({
               <span>ส่วนลด</span>
               <div className="flex justify-end space-x-2">
                 <input 
-                    type="number" 
-                    value={payloadPayment.discount}  
+                    type="text" 
+                    value={payloadPayment.discount ? fnsetFormatNumber(payloadPayment.discount) : ""}  
                     onChange={(e: any) => setPayloadPayment({...payloadPayment, discount: e.target.value})}
                     className="bg-slate-50 text-black w-3/6 rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
                     />
@@ -239,30 +261,58 @@ const ModalCloseOrder = ({
                 />
                 <p className="text-white font-semibold">เงินโอน</p>
               </div>
-
-              {payloadPayment.methodPay === "เงินโอน" && (
-                <div className="basis-6/12 px-2">
-                  <select
-                    name="bank"
-                    value={payloadPayment.bank}
-                    className="bg-slate-50 text-black w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
-                    onChange={(event: any) =>
-                      setPayloadPayment({
-                        ...payloadPayment,
-                        bank: event.target.value,
-                      })
-                    }
-                  >
-                    <option value="">------ เลือกธนาคาร ------</option>
-                    {BankList.map((item: any, indexList: number) => (
-                      <option key={"list" + indexList} value={item.value}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
             </div>
+
+            <div className="flex space-x-6 items-center mt-3">
+              {payloadPayment.methodPay === "เงินโอน" && (
+                <>
+                    <div className="basis-6/12 px-2">
+                    <p className="text-white font-semibold mb-1">
+                        ธนาคาร : {" "}
+                        <span className="text-red-500 font-semibold text">*</span>
+                    </p>
+                    <select
+                        name="bank"
+                        value={payloadPayment.bank}
+                        className="bg-slate-50 text-black w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                        onChange={(event: any) =>
+                        setPayloadPayment({
+                            ...payloadPayment,
+                            bank: event.target.value,
+                        })
+                        }
+                    >
+                        <option value="">------ เลือกธนาคาร ------</option>
+                        {BankList.map((item: any, indexList: number) => (
+                        <option key={"list" + indexList} value={item.value}>
+                            {item.label}
+                        </option>
+                        ))}
+                    </select>
+                    </div>
+
+                    <div className="basis-6/12 px-2">
+                    <p className="text-white font-semibold mb-1">
+                        ชื่อบัญชี : {" "}
+                        <span className="text-red-500 font-semibold text">*</span>
+                    </p>
+                    <input
+                        onChange={(event: any) =>
+                            setPayloadPayment({
+                                ...payloadPayment,
+                                accountName: event.target.value,
+                            })
+                            }
+                        type="text"
+                        name="accountName"
+                        value={payloadPayment.accountName}
+                        className="bg-slate-50 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                    />
+                    </div>
+                </>
+              )}
+              </div>
+            
 
             <div className="flex justify-center mt-8">
               <button

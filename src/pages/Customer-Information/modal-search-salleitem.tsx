@@ -40,7 +40,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
       if (formSearch[field] !== "") {
         mapJson.push({
           field: field,
-          operator: "equals",
+          operator: field==="carInformation_licensePlate" ? "contains" : "equals",
           value: formSearch[field],
         });
       }

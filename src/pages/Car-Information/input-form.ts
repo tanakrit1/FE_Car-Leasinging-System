@@ -1,44 +1,56 @@
 import CarBand from "../../assets/car-brand.json"
+import CarType from "../../assets/car-type.json"
 const inputList = [
     {
-      name: "carBrand",
-      label: "ยี่ห้อรถ",
-      type: "select",
-      placeholder: "a",
-      width: "4/12",
-      value: "",
-      list: CarBand,
-      requied: true,
+        name: "carBrand",
+        label: "ยี่ห้อรถ",
+        type: "select",
+        placeholder: "a",
+        width: "4/12",
+        value: "",
+        list: CarBand,
+        requied: true,
     },
     {
-      name: "model",
-      label: "รุ่น",
-      type: "text",
-      placeholder: "b",
-      width: "4/12",
-      value: "",
-      disabled: false,
-      requied: true,
+        name: "model",
+        label: "รุ่น",
+        type: "text",
+        placeholder: "b",
+        width: "4/12",
+        value: "",
+        disabled: false,
+        requied: true,
     },
     {
-      name: "carColor",
-      label: "สี",
-      type: "text",
-      placeholder: "b",
-      width: "4/12",
-      value: "",
-      disabled: false,
-      requied: true,
+        name: "carCategory",
+        label: "ประเภทรถ",
+        type: "select",
+        placeholder: "a",
+        width: "4/12",
+        value: "",
+        list: CarType,
+        requied: true,
     },
     {
-      name: "carDate",
-      label: "ปี",
-      type: "text",
-      placeholder: "b",
-      width: "4/12",
-      value: "",
-      disabled: false,
-      requied: true,
+        name: "carColor",
+        label: "สี",
+        type: "text",
+        placeholder: "b",
+        width: "4/12",
+        value: "",
+        disabled: false,
+        requied: true,
+    },
+    
+    {
+        name: "carDate",
+        label: "ปี",
+        type: "text",
+        placeholder: "b",
+        width: "4/12",
+        value: "",
+        disabled: false,
+        requied: true,
     },
     {
         name: "licensePlate",
@@ -49,8 +61,9 @@ const inputList = [
         value: "",
         disabled: false,
         requied: true,
-      },
-      {
+    },
+   
+    {
         name: "sellerName",
         label: "ชื่อผู้ขาย",
         type: "text",
@@ -59,28 +72,56 @@ const inputList = [
         value: "",
         disabled: false,
         requied: true,
-      },
-      {
-        name: "vin",
-        label: "เลขตัวถัง",
+    },
+    //   {
+    //     name: "vin",
+    //     label: "เลขตัวถัง",
+    //     type: "text",
+    //     placeholder: "b",
+    //     width: "4/12",
+    //     value: "",
+    //     disabled: false,
+    //     requied: true,
+    //   },
+    //   {
+    //     name: "engineNumber",
+    //     label: "เลขเครื่องยนต์",
+    //     type: "text",
+    //     placeholder: "b",
+    //     width: "4/12",
+    //     value: "",
+    //     disabled: false,
+    //     requied: true,
+    //   },
+    {
+        name: "carRemarks",
+        label: "หมายเหตุ",
         type: "text",
         placeholder: "b",
         width: "4/12",
         value: "",
         disabled: false,
         requied: true,
-      },
-      {
-        name: "engineNumber",
-        label: "เลขเครื่องยนต์",
-        type: "text",
+    },
+    {
+        name: "purchaseDate",
+        label: "วันที่ซื้อรถเข้า",
+        type: "date",
         placeholder: "b",
         width: "4/12",
         value: "",
         disabled: false,
         requied: true,
-      },
-      {
+    },
+   
+    // ------------------------------------------------------------------------------------------------------ //
+
+    { 
+        name: "divider1",
+        type: "divider",
+        label: "ข้อมูลราคา" 
+    },
+    {
         name: "buyingPrice",
         label: "ราคารับซื้อ",
         type: "text",
@@ -89,8 +130,8 @@ const inputList = [
         value: "",
         disabled: false,
         requied: true,
-      },
-      {
+    },
+    {
         name: "maintenanceCost",
         label: "ค่าซ่อมบำรุง",
         type: "text",
@@ -99,8 +140,8 @@ const inputList = [
         value: "",
         disabled: false,
         requied: true,
-      },
-      {
+    },
+    {
         name: "cost",
         label: "ต้นทุน",
         type: "text",
@@ -109,8 +150,8 @@ const inputList = [
         value: "",
         disabled: true,
         requied: true,
-      },
-      {
+    },
+    {
         name: "desiredProfit",
         label: "กำไรที่ต้องการ",
         type: "text",
@@ -119,8 +160,8 @@ const inputList = [
         value: "",
         disabled: false,
         requied: true,
-      },
-      {
+    },
+    {
         name: "sellingPrice",
         label: "ราคาขาย",
         type: "text",
@@ -129,8 +170,8 @@ const inputList = [
         value: "",
         disabled: true,
         requied: true,
-      },
-      {
+    },
+    {
         name: "agent",
         label: "นายหน้า",
         type: "text",
@@ -139,7 +180,8 @@ const inputList = [
         value: "",
         disabled: false,
         requied: true,
-      },
-  ];
+    },
 
-  export default inputList
+];
+
+export default inputList

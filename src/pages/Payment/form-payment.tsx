@@ -14,9 +14,12 @@ const columns = [
   { label: "ค่าปรับ", width: "10%", field: "fee" },
   { label: "วิธีชำระ", width: "10%", field: "methodPay" },
   { label: "ธนาคาร", width: "15%", field: "bank" },
+  { label: "ชื่อบัญชี", width: "15%", field: "accountName" },
   { label: "ผู้รับชำระ", width: "10%", field: "receiver" },
-  { label: "Note", width: "25%", field: "note" },
+  { label: "Note", width: "10%", field: "note" },
 ];
+
+// (Number(dataInput.totalOrder) + (Number(dataInput.interestMonth) * Number(dataInput.numInstallments))).toLocaleString()
 
 const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
   const context = useContext(LoadContext);
@@ -32,9 +35,13 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
     note: "",
     bank: "",
+    accountName: ""
   });
   const [rowsHistory, setRowsHistory] = useState<any>([]);
-
+  const [chipAmount, setChipAmount] = useState<any>({
+    amountPay: 0,
+    remaining: 0
+  });
   const [formDisable, setFormDisable] = useState<boolean>(false);
   const [showModalCloseOrder, setShowModalCloseOrder] =
     useState<boolean>(false);
@@ -49,12 +56,13 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
       note: "",
       bank: "",
+      accountName: ""
     });
     setAmount("");
     (document.getElementById("note") as HTMLFormElement).value = "";
   };
 
-  const onLoadHistory = async (saleID: number) => {
+  const onLoadHistory = async (saleID: number, data: any) => {
     context?.setLoadingContext(true);
     const json = {
       page: 1,
@@ -73,8 +81,21 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       },
     };
     const result = await _PaymentApi().search(json);
-    console.log("load--> ", result)
+    // console.log("load--> ", result)
     if (result.statusCode === 200) {
+        let amountPay = 0
+        for( let i=0; i < result.data.length; i++ ){
+            amountPay = amountPay + ( Math.ceil(result.data[i].amountPay) +  Math.ceil(result.data[i].InterestPay) )
+        }
+        // setChipAmount({...chipAmount, amountPay: amountPay})
+
+        if( data.interestType === "คงที่" ){
+            const totalAmount = Number(data.totalOrder) + (Number(data.interestMonth) * Number(data.numInstallments))
+            const remaining = totalAmount - amountPay
+            setChipAmount({amountPay: amountPay, remaining: remaining,})
+        }else{
+            setChipAmount({amountPay: amountPay, remaining: data.remainingBalance})
+        }
       const newRows = result.data.map((item: any) => {
         return { 
                 ...item, 
@@ -84,6 +105,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                 fee: Math.ceil(item.fee).toLocaleString()
             };
       });
+
       setRowsHistory(newRows);
     }
     context?.setLoadingContext(false);
@@ -94,7 +116,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     const saleItemID = payloadCustomer.id;
     onClearForm();
     if (saleItemID !== undefined && saleItemID !== null && saleItemID !== "") {
-      onLoadHistory(saleItemID);
+      onLoadHistory(saleItemID, payloadCustomer);
 
       if (payloadCustomer.interestType === "คงที่") {
         const InterestPay = payloadCustomer?.interestMonth
@@ -152,7 +174,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     if (result?.statusCode === 200) {
       alert("บันทึกข้อมูลสำเร็จ");
       onClearForm();
-      onLoadHistory(payloadCustomer.id);
+      onLoadHistory(payloadCustomer.id, payloadCustomer);
       onRefetchDetail(payloadCustomer.id);
     }
     context?.setLoadingContext(false);
@@ -165,7 +187,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       if (result.statusCode === 200) {
         alert("ลบข้อมูลสำเร็จ");
         onClearForm();
-        onLoadHistory(payloadCustomer.id);
+        onLoadHistory(payloadCustomer.id, payloadCustomer);
         onRefetchDetail(payloadCustomer.id);
       }
       context?.setLoadingContext(false);
@@ -173,21 +195,29 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
   };
 
   useEffect(() => {
+    console.log("payload", payload)
     if (
       payload.methodPay &&
       payload.InterestPay &&
-      payload.fee &&
+      (payload.fee !== null && payload.fee !== undefined && payload.fee !== "")  &&
       Math.ceil(payload.amountPay) >= 0 &&
       rowsHistory.length+1 < Math.ceil(payloadCustomer.numInstallments)
     ) {
+        console.log("111")
       if (payload.methodPay === "เงินโอน") {
-        if (payload.bank) {
+        console.log("222")
+        if ((payload.bank!= "" && payload.bank!= null && payload.bank!= undefined) && (payload.accountName != "" && payload.accountName != null && payload.accountName != undefined) ) {
+            console.log("333")
           return setShowSubmit(true);
+        }else{
+            return setShowSubmit(false);
         }
       } else {
+        console.log("444")
         return setShowSubmit(true);
       }
     }else{
+        console.log("555")
         setShowSubmit(false);
     }
 
@@ -261,21 +291,41 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
             </div>
 
             {payload.methodPay === "เงินโอน" && (
-              <div className="basis-3/12 px-2">
-                <select
-                  name="bank"
-                  value={payload.bank}
-                  className="bg-slate-50 text-black w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
-                  onChange={onChangeInput}
-                >
-                  <option value="">------ เลือกธนาคาร ------</option>
-                  {BankList.map((item: any, indexList: number) => (
-                    <option key={"list" + indexList} value={item.value}>
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <>
+                    <div className="basis-3/12 px-2">
+                    <p className="text-white font-semibold mb-1">
+                        ธนาคาร : {" "}
+                        <span className="text-red-500 font-semibold text">*</span>
+                    </p>
+                        <select
+                        name="bank"
+                        value={payload.bank}
+                        className="bg-slate-50 text-black w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                        onChange={onChangeInput}
+                        >
+                        <option value="">------ เลือกธนาคาร ------</option>
+                        {BankList.map((item: any, indexList: number) => (
+                            <option key={"list" + indexList} value={item.value}>
+                            {item.label}
+                            </option>
+                        ))}
+                        </select>
+                    </div>
+                    <div className="basis-4/12 px-2">
+                    <p className="text-white font-semibold mb-1">
+                        ชื่อบัญชี : {" "}
+                        <span className="text-red-500 font-semibold text">*</span>
+                    </p>
+                    <input
+                        disabled={formDisable}
+                        onChange={onChangeInput}
+                        type="text"
+                        name="accountName"
+                        value={payload.accountName}
+                        className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${formDisable ? "bg-slate-300" : "bg-slate-50" }`}
+                    />
+                    </div>
+              </>
             )}
           </div>
 
@@ -309,15 +359,15 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
             </div>
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                ดอกเบี้ย :
+                ดอกเบี้ย :  
               </p>
               <input
                 disabled
                 onChange={onChangeInput}
-                type="number"
+                type="text"
                 name="InterestPay"
                 // value={3000}
-                value={payloadCustomer?.statusInstallment == "Close" ? "" : payload?.InterestPay ? fnsetFormatNumber(payload?.InterestPay) : ""}
+                value={payloadCustomer.statusInstallment == "Close" ? "" : payload?.InterestPay ? fnsetFormatNumber(payload?.InterestPay) : ""}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>
@@ -330,9 +380,9 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
               <input
                 disabled={formDisable}
                 onChange={onChangeInput}
-                type="number"
+                type="text"
                 name="fee"
-                value={payload.fee}
+                value={fnsetFormatNumber(payload.fee)}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${formDisable ? "bg-slate-300" : "bg-slate-50" }`}
               />
             </div>
@@ -397,16 +447,18 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
             <span className="px-6 text-white">/</span> */}
             <div className="px-3 py-1 rounded-full bg-orange-200">
               <span className="text-black font-bold">
-                จ่ายแล้ว(เงินต้น){" "}
-                {Math.ceil(payloadCustomer.paymentAmount).toLocaleString()} บาท
+                จ่ายแล้ว{" "}
+                {/* {Math.ceil(payloadCustomer.paymentAmount).toLocaleString()}  */}
+                {Math.ceil(chipAmount.amountPay).toLocaleString()} บาท
               </span>
             </div>
             <span className="px-6 text-white">/</span>
             <div className="px-3 py-1 rounded-full bg-orange-200">
               <span className="text-black font-bold">
-                คงเหลือ(เงินต้น){" "}
+                คงเหลือ{" "}
                 
-                { payloadCustomer.statusInstallment === "Close" ? 0 : Math.ceil(payloadCustomer.remainingBalance).toLocaleString()} บาท
+                {/* { payloadCustomer.statusInstallment === "Close" ? 0 : Math.ceil(payloadCustomer.remainingBalance).toLocaleString()}  */}
+                { payloadCustomer.statusInstallment === "Close" ? 0 : Math.ceil(chipAmount.remaining).toLocaleString()} บาท
               </span>
             </div>
           </div>

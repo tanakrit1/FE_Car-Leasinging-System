@@ -55,8 +55,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     text-align: center;
   }
 
+  
 
 
   input[type="date"]::-webkit-datetime-edit-text {
     padding: 5px;
   } */
+
+  /* HTML: <div class="loader"></div> */
+

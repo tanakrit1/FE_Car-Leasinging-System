@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
+import "./index.css";
+import { LoadContext } from "../../context/loading-context";
 
 interface PaginationProps {
   currentPage: number;
@@ -21,6 +23,7 @@ const Pagination: React.FC<PaginationProps> = ({
 }) => {
   const [localCurrentPage, setLocalCurrentPage] = useState<number>(currentPage);
   const [localLimit, setLocalLimit] = useState<number>(limit);
+  const context = useContext(LoadContext)
 
   useEffect(() => {
     setLocalCurrentPage(currentPage);
@@ -107,11 +110,15 @@ const Pagination: React.FC<PaginationProps> = ({
           )}
         </div>
         <div aria-label="" className="flex items-center">
+            { context?.loadingContext &&
+                <div className="loader-spinner mr-6"></div>
+            }
+        
           <a
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              prevPage();
+              !context?.loadingContext && prevPage();
             }}
             className="p-2 mr-4 rounded-full hover:bg-white hover:text-black"
           >
@@ -140,7 +147,8 @@ const Pagination: React.FC<PaginationProps> = ({
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    changePage(Number(pageNumber));
+                    !context?.loadingContext && changePage(Number(pageNumber));
+                    
                   }}
                   className={`px-4 py-2 rounded-full ${
                     localCurrentPage === pageNumber
@@ -153,12 +161,14 @@ const Pagination: React.FC<PaginationProps> = ({
               )}
             </React.Fragment>
           ))}
+          
+          
 
           <a
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              nextPage();
+              !context?.loadingContext && nextPage();
             }}
             className="p-2 ml-4 rounded-full hover:bg-white hover:text-black"
           >

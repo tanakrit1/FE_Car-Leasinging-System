@@ -22,7 +22,10 @@ const CarInformation = () => {
   const [rowActive, setRowActive] = useState<any>(null);
   const [showModalExport, setShowModalExport] = useState<boolean>(false);
 
-  const onChangeInputForm = (result: any) => {
+  const onChangeInputForm = (value: any) => {
+    // console.log("value--> ", value)
+    const {divider1, ...result} = value  // เอาคีย์ divider1 ออก
+    // console.log("result--> ", result)
     let cloneInputList = [...inputList];
     const cost = (Math.ceil(result.buyingPrice || 0) + Math.ceil(result.maintenanceCost || 0)) || 0
     const sellingPrice = (cost + Math.ceil(result.desiredProfit || 0)) || 0
