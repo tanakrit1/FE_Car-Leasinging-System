@@ -4,6 +4,7 @@ import Pagination from "../../components/pagination";
 import _CarInformationApi from "../../api/car-information";
 import { LoadContext } from "../../context/loading-context";
 import ExcelJS from 'exceljs';
+import CarType from "../../assets/car-type.json"
 
 const columns = [
   { label: "ทะเบียนรถ", width: "20%", field: "licensePlate" },
@@ -132,10 +133,16 @@ const ModalExport = ({ showModal, returnShowModal }: any) => {
     worksheet.getColumn('M').width = 20;
     worksheet.getColumn('N').width = 20;
 
+    let objCarType: any = {}
+    for( let i=0; i < CarType.length; i++) {
+        objCarType[CarType[i].value] = 0
+    }
+
     let row = 1
     for( let index = 0; index < dataRows.length; index++) {
         row++;
-        console.log("row--> ", row, index)
+        console.log("row--> ", dataRows[row])
+        objCarType[dataRows[index].carCategory] = objCarType[dataRows[index].carCategory] + 1
         worksheet.getRow(row).alignment = { horizontal: 'center' };
 
         worksheet.getCell('A'+row).value = dataRows[index]?.carBrand
@@ -163,6 +170,87 @@ const ModalExport = ({ showModal, returnShowModal }: any) => {
             }
         }
     }
+    console.log("objCarType--> ", objCarType)
+    // ------------------------------------------------------------------------------- //
+    row = row + 2;
+
+    worksheet.getCell('A'+row).value = "รถยนต์"
+    worksheet.getCell('B'+row).value = objCarType["รถยนต์"]
+    worksheet.getCell(`$A${row}`).border = {
+        top: { style: 'thin', color: { argb: 'ff050505' } },
+        left: { style: 'thin', color: { argb: 'ff050505' } },
+        bottom: { style: 'thin', color: { argb: 'ff050505' } },
+        right: { style: 'thin', color: { argb: 'ff050505' } }
+    }
+    worksheet.getCell(`$B${row}`).border = {
+        top: { style: 'thin', color: { argb: 'ff050505' } },
+        left: { style: 'thin', color: { argb: 'ff050505' } },
+        bottom: { style: 'thin', color: { argb: 'ff050505' } },
+        right: { style: 'thin', color: { argb: 'ff050505' } }
+    }
+    row = row + 1;
+    worksheet.getCell('A'+row).value = "รถจักรยานยนต์"
+    worksheet.getCell('B'+row).value = objCarType["รถจักรยานยนต์"]
+    worksheet.getCell(`$A${row}`).border = {
+        top: { style: 'thin', color: { argb: 'ff050505' } },
+        left: { style: 'thin', color: { argb: 'ff050505' } },
+        bottom: { style: 'thin', color: { argb: 'ff050505' } },
+        right: { style: 'thin', color: { argb: 'ff050505' } }
+    }
+    worksheet.getCell(`$B${row}`).border = {
+        top: { style: 'thin', color: { argb: 'ff050505' } },
+        left: { style: 'thin', color: { argb: 'ff050505' } },
+        bottom: { style: 'thin', color: { argb: 'ff050505' } },
+        right: { style: 'thin', color: { argb: 'ff050505' } }
+    }
+    row = row + 1;
+    worksheet.getCell('A'+row).value = "รถบรรทุก 6 ล้อ"
+    worksheet.getCell('B'+row).value = objCarType["รถบรรทุก 6 ล้อ"]
+    worksheet.getCell(`$A${row}`).border = {
+        top: { style: 'thin', color: { argb: 'ff050505' } },
+        left: { style: 'thin', color: { argb: 'ff050505' } },
+        bottom: { style: 'thin', color: { argb: 'ff050505' } },
+        right: { style: 'thin', color: { argb: 'ff050505' } }
+    }
+    worksheet.getCell(`$B${row}`).border = {
+        top: { style: 'thin', color: { argb: 'ff050505' } },
+        left: { style: 'thin', color: { argb: 'ff050505' } },
+        bottom: { style: 'thin', color: { argb: 'ff050505' } },
+        right: { style: 'thin', color: { argb: 'ff050505' } }
+    }
+    row = row + 1;
+    worksheet.getCell('A'+row).value = "เครื่องจักร"
+    worksheet.getCell('B'+row).value = objCarType["เครื่องจักร"]
+    worksheet.getCell(`$A${row}`).border = {
+        top: { style: 'thin', color: { argb: 'ff050505' } },
+        left: { style: 'thin', color: { argb: 'ff050505' } },
+        bottom: { style: 'thin', color: { argb: 'ff050505' } },
+        right: { style: 'thin', color: { argb: 'ff050505' } }
+    }
+    worksheet.getCell(`$B${row}`).border = {
+        top: { style: 'thin', color: { argb: 'ff050505' } },
+        left: { style: 'thin', color: { argb: 'ff050505' } },
+        bottom: { style: 'thin', color: { argb: 'ff050505' } },
+        right: { style: 'thin', color: { argb: 'ff050505' } }
+    }
+    row = row + 1;
+    worksheet.getCell('A'+row).value = "รถใช้งานไม่ได้"
+    worksheet.getCell('B'+row).value = objCarType["รถใช้งานไม่ได้"]
+    worksheet.getCell(`$A${row}`).border = {
+        top: { style: 'thin', color: { argb: 'ff050505' } },
+        left: { style: 'thin', color: { argb: 'ff050505' } },
+        bottom: { style: 'thin', color: { argb: 'ff050505' } },
+        right: { style: 'thin', color: { argb: 'ff050505' } }
+    }
+    worksheet.getCell(`$B${row}`).border = {
+        top: { style: 'thin', color: { argb: 'ff050505' } },
+        left: { style: 'thin', color: { argb: 'ff050505' } },
+        bottom: { style: 'thin', color: { argb: 'ff050505' } },
+        right: { style: 'thin', color: { argb: 'ff050505' } }
+    }
+
+
+
 
     workbook.xlsx.writeBuffer().then((data) => {
         const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });

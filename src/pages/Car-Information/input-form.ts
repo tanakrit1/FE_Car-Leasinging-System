@@ -2,6 +2,16 @@ import CarBand from "../../assets/car-brand.json"
 import CarType from "../../assets/car-type.json"
 const inputList = [
     {
+        name: "carCategory",
+        label: "ประเภทรถ",
+        type: "select",
+        placeholder: "a",
+        width: "4/12",
+        value: "",
+        list: CarType,
+        requied: true,
+    },
+    {
         name: "carBrand",
         label: "ยี่ห้อรถ",
         type: "select",
@@ -19,16 +29,6 @@ const inputList = [
         width: "4/12",
         value: "",
         disabled: false,
-        requied: true,
-    },
-    {
-        name: "carCategory",
-        label: "ประเภทรถ",
-        type: "select",
-        placeholder: "a",
-        width: "4/12",
-        value: "",
-        list: CarType,
         requied: true,
     },
     {

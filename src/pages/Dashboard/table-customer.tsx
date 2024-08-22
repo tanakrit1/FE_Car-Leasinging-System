@@ -6,10 +6,8 @@ const columns = [
   { label: "ชื่อลูกค้า", width: "20%", field: "customerName" },
   { label: "เบอร์โทร", width: "15%", field: "phoneNumber" },
   { label: "ทะเบียนรถ", width: "10%", field: "licensePlate" },
-  { label: "ยี่ห้อ", width: "15%", field: "carBrand" },
-  { label: "รุ่นรถ", width: "15%", field: "model" },
   { label: "วันนัดชำระ", width: "20%", field: "dueDate" },
-  { label: "รหัสลูกค้า", width: "5%", field: "id" },
+  { label: "จำนวนงวดที่ค้าง", width: "5%", field: "RemainingInstallment" },
 ];
 
 
@@ -18,12 +16,15 @@ const TableCustomer = ({rows}: any) => {
 
     useEffect( ()=> {
         const mapData = rows.map( (item: any) => {
+            console.log("row--> ", item)
+            const result = Number(item.numInstallments) - item.payments.length
             return { 
                         ...item, 
                         licensePlate: item?.carInformation?.licensePlate,
                         carBrand: item?.carInformation?.carBrand,
                         model: item?.carInformation?.model,
                         dueDate: dayjs(item?.dueDate).format("DD/MM/YYYY"),
+                        RemainingInstallment: result
                     }
         } )
 

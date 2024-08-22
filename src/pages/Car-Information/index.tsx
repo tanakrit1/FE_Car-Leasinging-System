@@ -11,6 +11,7 @@ import {
 import _CarInformationApi from "../../api/car-information";
 import { LoadContext } from "../../context/loading-context";
 import ModalExport from "./modal-export";
+import Resizer from "react-image-file-resizer";
 
 const CarInformation = () => {
   const context = useContext(LoadContext);
@@ -21,6 +22,7 @@ const CarInformation = () => {
   const [imageData, setImageData] = useState<any>(null);
   const [rowActive, setRowActive] = useState<any>(null);
   const [showModalExport, setShowModalExport] = useState<boolean>(false);
+//   const [resizedFile, setResizedFile] = useState<any>(null);
 
   const onChangeInputForm = (value: any) => {
     // console.log("value--> ", value)
@@ -41,6 +43,7 @@ const CarInformation = () => {
   };
 
   const onClearForm = () => {
+    (document.getElementById("carImage") as HTMLFormElement).value = null;
     setStatusForm("add");
     const inputListClear = inputList.map((item: any) => {
       return { ...item, value: "" };
@@ -111,9 +114,27 @@ const CarInformation = () => {
 
   const onChangeFile = async (event: any) => {
     if (event.target.files[0]) {
-      const imageBase64 = await getBase64(event.target.files[0]);
-      setImageData(imageBase64);
-      setPayload({ ...payload, carImage: imageBase64 });
+        console.log("---> ", event.target.files[0])
+        // let newFile: any = null
+        Resizer.imageFileResizer(
+            event.target.files[0],
+            300,
+            300,
+            "JPEG",
+            100,
+            0,
+            (uri) => {
+            setImageData(uri);
+            setPayload({ ...payload, carImage: uri });
+            },
+            "base64",
+            200,
+            200
+          );
+        // console.log("newFile--> ", resizedFile)
+    //   const imageBase64 = await getBase64(event.target.files[0]);
+    //   setImageData(imageBase64);
+    //   setPayload({ ...payload, carImage: imageBase64 });
     } else {
       onClearImage();
     }
