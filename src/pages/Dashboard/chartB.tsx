@@ -87,25 +87,31 @@ const ChartB = ({ data }: any) => {
         worksheet.mergeCells(1, 1, 1, 4)
         worksheet.getCell('A1').value = `รายงานสรุปยอดรับชำระประจำเดือน ${dayjs().format("MM/YYYY")}`;
 
-        worksheet.getCell('A2').value = "เงินต้น";
+        worksheet.getCell('A2').value = "เงินต้นที่ได้รับทั้งหมด";
         worksheet.getCell('B2').value = Math.ceil(response.Result.totalAmountPay).toLocaleString()
-        worksheet.getCell('C2').value = "ดอกเบี้ย";
+        worksheet.getCell('C2').value = "ยอดชำระดอกเบี้ยทั้งหมด";
         worksheet.getCell('D2').value = Math.ceil(response.Result.totalInterestPay).toLocaleString()
 
-        worksheet.getCell('A3').value = "ค่าปรับ";
+        worksheet.getCell('A3').value = "ค่าปรับทั้งหมด";
         worksheet.getCell('B3').value = Math.ceil(response.Result.totalFee).toLocaleString()
         worksheet.getCell('C3').value = "ยอดรวม";
         worksheet.getCell('D3').value = Math.ceil(response.Result.grandTotal).toLocaleString()
 
+        worksheet.getCell('A4').value = "ยอดรวมการลงทุน";
+        worksheet.getCell('B4').value = Math.ceil(response.Result.totalCost).toLocaleString() 
+        worksheet.getCell('C4').value = "ยอดคงเหลือของการผ่อนทั้งหมด";
+        worksheet.getCell('D4').value = Math.ceil(response.Result.totalInstallmentBal).toLocaleString()  
+
         worksheet.getRow(1).alignment = { horizontal: 'center' };
         worksheet.getRow(2).alignment = { horizontal: 'center' };
         worksheet.getRow(3).alignment = { horizontal: 'center' };
+        worksheet.getRow(4).alignment = { horizontal: 'center' };
         worksheet.getColumn('A').width = 30;
         worksheet.getColumn('B').width = 30;
         worksheet.getColumn('C').width = 30;
         worksheet.getColumn('D').width = 30;
 
-        for( let row=1; row<=3; row++ ){
+        for( let row=1; row<=4; row++ ){
             for (let key = 65; key <= 68; key++) {
                 const char = String.fromCharCode(key); //A-D
                 worksheet.getCell(`${char}${row}`).border = {
@@ -119,14 +125,14 @@ const ChartB = ({ data }: any) => {
 
         // ------------------------------------------------------------------------ //
 
-        for (let i = 65; i <= 68; i++) {
+        for (let i = 65; i <= 72; i++) {
             const char = String.fromCharCode(i); //A-D
-            worksheet.getCell(`${char}6`).fill = {
+            worksheet.getCell(`${char}7`).fill = {
                 type: 'pattern',
                 pattern: 'solid',
                 fgColor: { argb: 'fff3fa08' },
             }
-            worksheet.getCell(`${char}6`).border = {
+            worksheet.getCell(`${char}7`).border = {
                 top: { style: 'thin', color: { argb: 'ff050505' } },
                 left: { style: 'thin', color: { argb: 'ff050505' } },
                 bottom: { style: 'thin', color: { argb: 'ff050505' } },
@@ -134,21 +140,30 @@ const ChartB = ({ data }: any) => {
             }
         }
 
-        worksheet.getCell('A6').value = "ชื่อ";
-        worksheet.getCell('B6').value = "เงินต้น";
-        worksheet.getCell('C6').value = "ดอกเบี้ย";
-        worksheet.getCell('D6').value = "ค่าปรับ";
-        worksheet.getRow(6).alignment = { horizontal: 'center' };
+        worksheet.getCell('A7').value = "ชื่อ";
+        worksheet.getCell('B7').value = "ประเภท";
+        worksheet.getCell('C7').value = "ยี่ห้อ";
+        worksheet.getCell('D7').value = "เลขทะเบียน";
+        worksheet.getCell('E7').value = "เงินต้น";
+        worksheet.getCell('F7').value = "ดอกเบี้ย";
+        worksheet.getCell('G7').value = "ค่าปรับ";
+        worksheet.getCell('H7').value = "โน๊ต";
+        worksheet.getRow(7).alignment = { horizontal: 'center' };
 
-        let row = 7
+        let row = 8
         for( let i=0; i<response.Transection.length; i++ ){
+            console.log("---> ", response.Transection[i])
             worksheet.getRow(row).alignment = { horizontal: 'center' };
             worksheet.getCell(`A${row}`).value = response.Transection[i]?.saleItem?.customerName
-            worksheet.getCell(`B${row}`).value = Math.ceil(response.Transection[i]?.amountPay).toLocaleString()
-            worksheet.getCell(`C${row}`).value = Math.ceil(response.Transection[i]?.InterestPay).toLocaleString()
-            worksheet.getCell(`D${row}`).value = Math.ceil(response.Transection[i]?.fee).toLocaleString()
+            worksheet.getCell(`B${row}`).value = response.Transection[i]?.saleItem?.carInformation.carCategory  
+            worksheet.getCell(`C${row}`).value = response.Transection[i]?.saleItem?.carInformation.carBrand       
+            worksheet.getCell(`D${row}`).value = response.Transection[i]?.saleItem?.carInformation.licensePlate        
+            worksheet.getCell(`E${row}`).value = Math.ceil(response.Transection[i]?.amountPay).toLocaleString()
+            worksheet.getCell(`F${row}`).value = Math.ceil(response.Transection[i]?.InterestPay).toLocaleString()
+            worksheet.getCell(`G${row}`).value = Math.ceil(response.Transection[i]?.fee).toLocaleString()
+            worksheet.getCell(`H${row}`).value = response.Transection[i]?.note
 
-            for (let key = 65; key <= 68; key++) {
+            for (let key = 65; key <= 72; key++) {
                 const char = String.fromCharCode(key); //A-D
                 worksheet.getCell(`${char}${row}`).border = {
                     top: { style: 'thin', color: { argb: 'ff050505' } },

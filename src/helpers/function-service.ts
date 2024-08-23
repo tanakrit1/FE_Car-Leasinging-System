@@ -28,7 +28,6 @@ const isBase64 = (string: string) => {
 }
 
 const validateInputRequired = (form: any) => {
-    console.log("form--> ", form)
     for (let key in form) {
         // console.log("validateInputRequired--> ",form[] )
         if (form[key] == "" ) {
@@ -41,7 +40,7 @@ const validateInputRequired = (form: any) => {
 }
 
 const formatNumber = (num: string) => {
-    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return num?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
 export { getBase64, validateInputRequired, base64toBlob, isBase64, formatNumber }

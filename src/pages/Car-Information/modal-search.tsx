@@ -9,7 +9,7 @@ const columns = [
   { label: "ยี่ห้อ", width: "20%", field: "carBrand" },
   { label: "รุ่น", width: "20%", field: "model" },
   { label: "สี", width: "10%", field: "carColor" },
-  { label: "ประเภทการนำเข้า", width: "10%", field: "carType" },
+  { label: "ประเภทการนำเข้า", width: "10%", field: "detailCarType" },
   { label: "ชื่อผู้ขาย/ผู้จำนำ", width: "20%", field: "sellerName" },
 ];
 
@@ -45,6 +45,13 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
         });
       }
     }
+    mapJson.push({
+        field: "carType",
+        operator: "notEqual",
+      //   operator: "equals",
+        value: "other",
+      });
+
     const json: any = {
       page: page ? page : 1,
       limit: pagination.limit,
@@ -60,7 +67,7 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
     //   }
     console.log("resultRows--> ", resultRows.data)
     const newRows = resultRows.data.map( (item: any) => {
-        return { ...item, carType: item.carType=="buy" ? "รับซื้อ" : "รับจำนำ" }
+        return { ...item, detailCarType: item.carType=="buy" ? "รับซื้อ" : item.carType=="pledge" ? "รับจำนำ" : "อื่นๆ" }
     } )
       setRows(newRows);
       setPagination({

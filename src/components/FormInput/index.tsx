@@ -33,7 +33,7 @@ const FormInput = ({ inputList, returnInputChange }: FormInputProps) => {
   }, [inputList] )
 
   const fnsetFormatNumber = (value: string) => {
-    const numericValue = value.toString().replace(/,/g, "");
+    const numericValue = value?.toString()?.replace(/,/g, "");
     return formatNumber(numericValue)
   }
 

@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from "react";
 import ModalSearch from "./modal-search";
 import {
   base64toBlob,
-  getBase64,
   isBase64,
   validateInputRequired,
 } from "../../helpers/function-service";

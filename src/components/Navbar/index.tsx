@@ -49,12 +49,14 @@ const Navbar = ({ returnLogin }: Props) => {
   return (
     <div className="h-20 px-6 pr-6 flex items-center justify-between bg-slate-700 ">
       <div className="flex  items-center">
-        <img
-          src={logo}
-          alt="logo"
-          className="w-20 h-full cursor-pointer"
-          onClick={() => onChangeMenu("/", 0)}
-        />
+        <a href="#">
+            <img
+            src={logo}
+            alt="logo"
+            className="w-20 h-full cursor-pointer"
+            onClick={() => onChangeMenu("/", 0)}
+            />
+        </a>
         <div className="flex ">
           {navItem.map((item: any, key: number) => (
             <div key={"navItem" + key}>

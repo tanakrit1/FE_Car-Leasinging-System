@@ -51,8 +51,10 @@ const CustomerInformation = () => {
     {
       guarantorName: "",
       guarantorAddress: "",
-      guarantorIdCard: "",
+    //   guarantorIdCard: "",
+      guarantorImage: "",
       guarantorPhone: "",
+      guarantorGPS: "",
     },
   ]);
   const [payloadCar, setPayloadCar] = useState<any>({
@@ -66,6 +68,8 @@ const CustomerInformation = () => {
     sellingPrice: "",
     id: "",
     carType: "",
+    priceOther: "",
+    productOther: "",
   });
   const [validationForm, setValidationForm] = useState<any>({
     customer: false,
@@ -76,7 +80,6 @@ const CustomerInformation = () => {
   const [stateForm, setStateForm] = useState<string>("add");
 
   const returnInputCustomerChange = async (result: any) => {
-    console.log("result--> ", result)
     let newObj: any = {};
     if( result.interestType === "ลดต้น/ลดดอก" ){
         for( let field in result ){
@@ -124,7 +127,16 @@ const CustomerInformation = () => {
     let newPayloadCar = {};
     for (let field in result) {
       if (field !== "id") {
-        newPayloadCar = { ...newPayloadCar, [field]: result[field] };
+        if( result.carType === "other" ){
+            if( field === "priceOther" || field === "productOther" || field === "carType" ){
+                newPayloadCar = { ...newPayloadCar, [field]: result[field] };
+            }
+        }else{
+            if( field !== "priceOther" && field !== "productOther" && field !== "carType" ){
+                newPayloadCar = { ...newPayloadCar, [field]: result[field] };
+            }
+        }
+        
       }
     }
     const validateCar = payloadCar
@@ -176,8 +188,10 @@ const CustomerInformation = () => {
       {
         guarantorName: "",
         guarantorAddress: "",
-        guarantorIdCard: "",
+        // guarantorIdCard: "",
+        guarantorImage: "",
         guarantorPhone: "",
+        guarantorGPS: "",
       },
     ]);
     setPayloadCar({
@@ -191,6 +205,8 @@ const CustomerInformation = () => {
       sellingPrice: "",
       id: "",
       carType: "",
+      priceOther: "",
+      productOther: "",
     });
 
     const result = await _SaleItemApi().getMaxID();
@@ -215,12 +231,17 @@ const CustomerInformation = () => {
         // discount: Number(payloadCustomer.discount),
         interestMonth: payloadCustomer.interestType === "ลดต้น/ลดดอก" ?  0 : Math.ceil(payloadCustomer.interestMonth),
         interestRate: Number(payloadCustomer.interestRate),
-        totalOrder: Math.ceil(payloadCustomer.totalOrder),
-        downPayment: Math.ceil(payloadCustomer.downPayment),
-        sellingPrice: Math.ceil(payloadCar.sellingPrice),
+        totalOrder: payloadCustomer.totalOrder ? Math.ceil(payloadCustomer.totalOrder?.replace(/,/g, "")) : 0,
+        downPayment: payloadCustomer.downPayment ? Math.ceil(payloadCustomer.downPayment?.replace(/,/g, "")) : 0,
+        sellingPrice: payloadCar.sellingPrice ? Math.ceil(payloadCar.sellingPrice?.replace(/,/g, "")) : 0,
         saleType: payloadCar.carType,
         guarantors: payloadGuarantor,
+
+        productOther: payloadCar.productOther,
+        priceOther: payloadCar.priceOther ? Math.ceil(payloadCar.priceOther?.replace(/,/g, "")) : 0,
       };
+      console.log("json---> ", json)
+    //   return
       if (payloadCar?.id && payloadCar?.id !== "") {
         json = { ...json, carInformation_id: payloadCar.id };
       }
@@ -234,12 +255,6 @@ const CustomerInformation = () => {
   };
 
   const onViewData = async (row: any) => {
-    // setIDUpdate({
-    //     saleItemID: row.id,
-    //     carID: row.carInformation.id,
-    //     guarantorID: row.guarantors.map((item: any)=> item.id).filter((item:any)=> item!== null&&item !== undefined),
-    // })
-    // console.log("row--> ", row)
     setRowActive(row)
     setIdSaleItem(row.id)
     // setIdCarInformation(row.carInformation.id)
@@ -265,8 +280,10 @@ const CustomerInformation = () => {
       return {
         guarantorName: item.guarantorName,
         guarantorAddress: item.guarantorAddress,
-        guarantorIdCard: item.guarantorIdCard,
+        // guarantorIdCard: item.guarantorIdCard,
+        guarantorImage: item.guarantorImage,
         guarantorPhone: item.guarantorPhone,
+        guarantorGPS: item.guarantorGPS,
         id: item.id,
       };
     });

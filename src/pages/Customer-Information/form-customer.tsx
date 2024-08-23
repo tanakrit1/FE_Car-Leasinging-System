@@ -23,67 +23,92 @@ const FormCustomer = ({
   const [disableForm, setDisableForm] = useState<boolean>(false);
   const [processPayload, setProcessPayload] = useState<any>({
     amountPerMonth: "",
-    totalAmount: ""
+    totalAmount: "",
   });
 
   useEffect(() => {
     setDisableForm(stateForm === "view" ? true : false);
   }, [stateForm]);
 
-//   fnsetFormatNumber(Math.ceil((Number(payloadCustomer.totalOrder)/Number(payloadCustomer.numInstallments) + Number(payloadCustomer.interestMonth))).toString()) || ""
+  //   fnsetFormatNumber(Math.ceil((Number(payloadCustomer.totalOrder)/Number(payloadCustomer.numInstallments) + Number(payloadCustomer.interestMonth))).toString()) || ""
 
   const onChangeInput = (event: any) => {
-    if(event.target.name==="totalOrder" || event.target.name==="numInstallments" || event.target.name==="interestRate"){  //totalOrder numInstallments interestRate
-        const input = event.target.name==="totalOrder" ? event.target.value.replace(/,/g, "") : event.target.value
-        // setPayload({ ...payload, [event.target.name]: input });
-        const totalOrder = event.target.name==="totalOrder" ? Number(input) : Number(payload.totalOrder);
-        const interestRate = event.target.name==="interestRate" ? input : payload.interestRate;
-        // const numInstallments = event.target.name==="numInstallments" ? input : payload.numInstallments;
+    if (
+      event.target.name === "totalOrder" ||
+      event.target.name === "numInstallments" ||
+      event.target.name === "interestRate"
+    ) {
+      //totalOrder numInstallments interestRate
+      const input =
+        event.target.name === "totalOrder"
+          ? event.target.value.replace(/,/g, "")
+          : event.target.value;
+      // setPayload({ ...payload, [event.target.name]: input });
+      const totalOrder =
+        event.target.name === "totalOrder"
+          ? Number(input)
+          : Number(payload.totalOrder);
+      const interestRate =
+        event.target.name === "interestRate" ? input : payload.interestRate;
+      // const numInstallments = event.target.name==="numInstallments" ? input : payload.numInstallments;
 
-        const interestPerMonth = Math.ceil(Number(totalOrder) * (Number(interestRate) / 100))  // ได้ดอกเบี้ยต่อเดือน 
+      const interestPerMonth = Math.ceil(
+        Number(totalOrder) * (Number(interestRate) / 100)
+      ); // ได้ดอกเบี้ยต่อเดือน
 
-        // const amountPerMonth = Math.ceil((Number(totalOrder) / Number(numInstallments)) + interestPerMonth)
-        // const totalAmount = Math.ceil(Number(totalOrder) + ( interestPerMonth * Number(numInstallments) ))
-        // setProcessPayload({amountPerMonth: amountPerMonth, totalAmount: totalAmount})
-        setPayload({ ...payload, [event.target.name]: input, interestMonth: interestPerMonth } );
-
-
-
-    }else{
-        setPayload({ ...payload, [event.target.name]: event.target.value });
+      // const amountPerMonth = Math.ceil((Number(totalOrder) / Number(numInstallments)) + interestPerMonth)
+      // const totalAmount = Math.ceil(Number(totalOrder) + ( interestPerMonth * Number(numInstallments) ))
+      // setProcessPayload({amountPerMonth: amountPerMonth, totalAmount: totalAmount})
+      setPayload({
+        ...payload,
+        [event.target.name]: input,
+        interestMonth: interestPerMonth,
+      });
+    } else {
+      setPayload({ ...payload, [event.target.name]: event.target.value });
     }
   };
 
-  useEffect( ()=> {
-    setPayload(payloadCustomer)
-    const totalOrder = payloadCustomer.totalOrder ? Number(payloadCustomer.totalOrder.replace(/,/g, "")) : 0
-    const numInstallments = payloadCustomer.numInstallments ? Number(payloadCustomer.numInstallments) : 0
-    const interestMonth = payloadCustomer.interestMonth ? Number(payloadCustomer.interestMonth) : 0
+  useEffect(() => {
+    setPayload(payloadCustomer);
+    const totalOrder = payloadCustomer.totalOrder
+      ? Number(payloadCustomer.totalOrder.replace(/,/g, ""))
+      : 0;
+    const numInstallments = payloadCustomer.numInstallments
+      ? Number(payloadCustomer.numInstallments)
+      : 0;
+    const interestMonth = payloadCustomer.interestMonth
+      ? Number(payloadCustomer.interestMonth)
+      : 0;
 
     // console.log("totalOrder--> ", totalOrder)
     // console.log("numInstallments--> ", numInstallments)
     // console.log("interestMonth--> ", interestMonth)
 
-    let amountPerMonth: any = Math.ceil((totalOrder / numInstallments) + interestMonth)
-    if( isNaN(amountPerMonth) || amountPerMonth == Infinity ){
-        // console.log("***")
-        amountPerMonth = ""
+    let amountPerMonth: any = Math.ceil(
+      totalOrder / numInstallments + interestMonth
+    );
+    if (isNaN(amountPerMonth) || amountPerMonth == Infinity) {
+      // console.log("***")
+      amountPerMonth = "";
     }
-    console.log("amountPerMonth--> ", amountPerMonth)  //NaN
-    const totalAmount = Math.ceil(totalOrder + ( interestMonth * numInstallments ))
-    setProcessPayload({amountPerMonth: amountPerMonth  , totalAmount: totalAmount})
+    console.log("amountPerMonth--> ", amountPerMonth); //NaN
+    const totalAmount = Math.ceil(totalOrder + interestMonth * numInstallments);
+    setProcessPayload({
+      amountPerMonth: amountPerMonth,
+      totalAmount: totalAmount,
+    });
     // setProcessPayload({ amountPerMonth: "", totalAmount: "" })
-  }, [payloadCustomer] )
+  }, [payloadCustomer]);
 
   useEffect(() => {
     returnInputChange(payload);
   }, [payload]);
 
-
   const fnsetFormatNumber = (value: string) => {
-    const numericValue = value.toString().replace(/,/g, "");
-    return formatNumber(numericValue)
-  }
+    const numericValue = value?.toString()?.replace(/,/g, "");
+    return formatNumber(numericValue);
+  };
 
   return (
     <>
@@ -159,22 +184,6 @@ const FormCustomer = ({
 
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
-                เงินดาวน์ :
-                <span className="text-red-500 font-semibold text">*</span>
-              </p>
-              <input
-                onChange={onChangeInput}
-                // disabled={disableForm}
-                autoComplete="off"
-                type="text"
-                name="downPayment"
-                value={fnsetFormatNumber(payloadCustomer.downPayment) || ""}
-                className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
-              />
-            </div>
-
-            <div className="basis-4/12 px-2">
-              <p className="text-white font-semibold mb-1">
                 การชำระดอกเบี้ย :
                 <span className="text-red-500 font-semibold text">*</span>
               </p>
@@ -197,26 +206,6 @@ const FormCustomer = ({
                 )}
               </select>
             </div>
-
-            <div className="basis-4/12 px-2">
-              <p className="text-white font-semibold mb-1">
-                ยอดจัด :
-                <span className="text-red-500 font-semibold text">*</span>
-              </p>
-              <input
-                onChange={onChangeInput}
-                disabled={disableForm}
-                autoComplete="off"
-                type="text"
-                name="totalOrder"
-                value={fnsetFormatNumber(payloadCustomer.totalOrder) || ""}
-                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
-                  disableForm ? "bg-slate-300" : "bg-slate-50"
-                }`}
-              />
-            </div>
-
-            
 
             {/* <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
@@ -241,96 +230,6 @@ const FormCustomer = ({
                 )}
               </select>
             </div> */}
-
-            {/* {payloadCustomer.interestType === "คงที่" && ( */}
-              <div className="basis-4/12 px-2">
-                <p className="text-white font-semibold mb-1">
-                ระยะสัญญา(เดือน) :
-                  <span className="text-red-500 font-semibold text">*</span>
-                </p>
-                <input
-                  onChange={onChangeInput}
-                  disabled={disableForm}
-                  autoComplete="off"
-                  type="number"
-                  name="numInstallments"
-                  value={payloadCustomer.numInstallments}
-                  className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
-                    disableForm ? "bg-slate-300" : "bg-slate-50"
-                  }`}
-                />
-              </div>
-            {/* )} */}
-
-            <div className="basis-4/12 px-2">
-              <p className="text-white font-semibold mb-1">
-                อัตราดอกเบี้ย (%) :
-                <span className="text-red-500 font-semibold text">*</span>
-              </p>
-              <input
-                onChange={onChangeInput}
-                disabled={disableForm}
-                autoComplete="off"
-                type="number"
-                name="interestRate"
-                value={payloadCustomer.interestRate}
-                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
-                  disableForm ? "bg-slate-300" : "bg-slate-50"
-                }`}
-              />
-            </div>
-
-            {payloadCustomer.interestType === "คงที่" && (
-              <div className="basis-4/12 px-2">
-                <p className="text-white font-semibold mb-1">
-                  ดอกเบี้ย/เดือน :
-                  <span className="text-red-500 font-semibold text">*</span>
-                </p>
-                <input
-                  disabled={true}
-                  autoComplete="off"
-                  type="text"
-                  name="interestMonth"
-                  value={fnsetFormatNumber(payloadCustomer.interestMonth)}
-                  className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
-                />
-              </div>
-           ) }
-
-            {payloadCustomer.interestType === "คงที่" && (
-              <div className="basis-4/12 px-2">
-                <p className="text-white font-semibold mb-1">
-                  ค่างวดต่อเดือน :
-                  <span className="text-red-500 font-semibold text">*</span>
-                </p>
-                <input
-                  disabled={true}
-                  autoComplete="off"
-                  type="text"
-                  name="interestMonth"
-                //   value={fnsetFormatNumber(Math.ceil((Number(payloadCustomer.totalOrder)/Number(payloadCustomer.numInstallments) + Number(payloadCustomer.interestMonth))).toString()) || ""}
-                  value={processPayload.amountPerMonth != "" ? fnsetFormatNumber(processPayload.amountPerMonth) : ""}
-                  className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
-                />
-              </div>
-           ) }
-
-            {payloadCustomer.interestType === "คงที่" && (
-              <div className="basis-4/12 px-2">
-                <p className="text-white font-semibold mb-1">
-                    เงินต้นรวมดอกเบี้ยทั้งหมด :
-                  <span className="text-red-500 font-semibold text">*</span>
-                </p>
-                <input
-                  disabled={true}
-                  autoComplete="off"
-                  type="text"
-                  name="interestMonth"
-                  value={processPayload.totalAmount != "" ? fnsetFormatNumber(processPayload.totalAmount) : ""}
-                  className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
-                />
-              </div>
-           ) }
 
             {/* <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
@@ -380,6 +279,139 @@ const FormCustomer = ({
               />
             </div>
 
+            <div className="w-full divider text-white">ข้อมูลการชำระเงิน</div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                เงินดาวน์ :
+                <span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                // disabled={disableForm}
+                autoComplete="off"
+                type="text"
+                name="downPayment"
+                value={fnsetFormatNumber(payloadCustomer.downPayment) || ""}
+                className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
+              />
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                ยอดจัด :
+                <span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="text"
+                name="totalOrder"
+                value={fnsetFormatNumber(payloadCustomer.totalOrder) || ""}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                ระยะสัญญา(เดือน) :
+                <span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="number"
+                name="numInstallments"
+                value={payloadCustomer.numInstallments}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                อัตราดอกเบี้ย (%) :
+                <span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="number"
+                name="interestRate"
+                value={payloadCustomer.interestRate}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              />
+            </div>
+
+            {payloadCustomer.interestType === "คงที่" && (
+              <div className="basis-4/12 px-2">
+                <p className="text-white font-semibold mb-1">
+                  ดอกเบี้ยต่อเดือน :
+                  <span className="text-red-500 font-semibold text">*</span>
+                </p>
+                <input
+                  disabled={true}
+                  autoComplete="off"
+                  type="text"
+                  name="interestMonth"
+                  value={fnsetFormatNumber(payloadCustomer.interestMonth)}
+                  className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                />
+              </div>
+            )}
+
+            {payloadCustomer.interestType === "คงที่" && (
+              <div className="basis-4/12 px-2">
+                <p className="text-white font-semibold mb-1">
+                  ค่างวดต่อเดือน :
+                  <span className="text-red-500 font-semibold text">*</span>
+                </p>
+                <input
+                  disabled={true}
+                  autoComplete="off"
+                  type="text"
+                  name="interestMonth"
+                  //   value={fnsetFormatNumber(Math.ceil((Number(payloadCustomer.totalOrder)/Number(payloadCustomer.numInstallments) + Number(payloadCustomer.interestMonth))).toString()) || ""}
+                  value={
+                    processPayload.amountPerMonth != ""
+                      ? fnsetFormatNumber(processPayload.amountPerMonth)
+                      : ""
+                  }
+                  className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                />
+              </div>
+            )}
+
+            {payloadCustomer.interestType === "คงที่" && (
+              <div className="basis-4/12 px-2">
+                <p className="text-white font-semibold mb-1">
+                  เงินต้นรวมดอกเบี้ยทั้งหมด :
+                  <span className="text-red-500 font-semibold text">*</span>
+                </p>
+                <input
+                  disabled={true}
+                  autoComplete="off"
+                  type="text"
+                  name="interestMonth"
+                  value={
+                    processPayload.totalAmount != ""
+                      ? fnsetFormatNumber(processPayload.totalAmount)
+                      : ""
+                  }
+                  className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                />
+              </div>
+            )}
+
+            
           </div>
         </div>
       </div>

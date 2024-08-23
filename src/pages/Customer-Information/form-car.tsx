@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import ModalSearchStock from "./modal-search-stock";
 import CarBand from "../../assets/car-brand.json"
 import { formatNumber } from "../../helpers/function-service";
+import CarType from '../../assets/car-type.json'
 
 interface propsFormCar {
   returnPayload: (result: any) => void;
@@ -64,12 +65,12 @@ const FormCar = ({
   }, [payloadData.carType]);
 
   const onChangeInput = (event: any) => {
-    const input = event.target.name == "sellingPrice" ? event.target.value.replace(/,/g, "") : event.target.value
+    const input = (event.target.name == "sellingPrice" || event.target.name == "priceOther") ? event.target.value.replace(/,/g, "") : event.target.value
     setPayload({ ...payloadData, [event.target.name]: input });
   };
 
   const fnsetFormatNumber = (value: string) => {
-    const numericValue = value.toString().replace(/,/g, "");
+    const numericValue = value?.toString().replace(/,/g, "");
     return formatNumber(numericValue)
   }
 
@@ -129,9 +130,85 @@ const FormCar = ({
               />
               <p className="text-white font-semibold">รับจำนำรถ</p>
             </div>
+            <div className="flex space-x-2">
+              <input
+                disabled={disableRadio}
+                type="radio"
+                name="typeCar"
+                value="other"
+                checked={payloadData.carType === "other"}
+                onChange={() => onChangeCarType("other")}
+                className="radio radio-warning"
+              />
+              <p className="text-white font-semibold">อื่นๆ</p>
+            </div>
           </div>
 
+          { payloadData.carType === "other" ? (
+            <div className="flex flex-row flex-wrap">
+                <div className="basis-4/12 px-2">
+                    <p className="text-white font-semibold mb-1">
+                        หมายเหตุ :
+                        <span className="text-red-500 font-semibold text">*</span>
+                    </p>
+                    <input
+                        onChange={onChangeInput}
+                        disabled={disableForm}
+                        autoComplete="off"
+                        type="text"
+                        name="productOther"
+                        value={payloadData.productOther}
+                        className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                        disableForm ? "bg-slate-300" : "bg-slate-50"
+                        }`}
+                    />
+                </div>
+
+                <div className="basis-4/12 px-2">
+                    <p className="text-white font-semibold mb-1">
+                        ราคาขาย : 
+                        <span className="text-red-500 font-semibold text">*</span>
+                    </p>
+                    <input
+                        onChange={onChangeInput}
+                        disabled={disableForm}
+                        autoComplete="off"
+                        type="text"
+                        name="priceOther"
+                        value={fnsetFormatNumber(payloadData.priceOther)}
+                        className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                        disableForm ? "bg-slate-300" : "bg-slate-50"
+                        }`}
+                    />
+                </div>
+
+            </div>
+          )  : (
           <div className="flex flex-row flex-wrap">
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                ประเภทรถ :<span className="text-red-500 font-semibold text">*</span>
+              </p>
+              <select
+                onChange={onChangeInput}
+                disabled={disableForm}
+                name="carCategory"
+                value={payloadData.carCategory}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                  disableForm ? "bg-slate-300" : "bg-slate-50"
+                }`}
+              >
+                <option value="">------ เลือก ------</option>
+                {CarType.map(
+                  (item: any, indexList: number) => (
+                    <option key={"list" + indexList} value={item.value}>
+                      {item.label}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
+
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
                 ยี่ห้อ :<span className="text-red-500 font-semibold text">*</span>
@@ -279,6 +356,7 @@ const FormCar = ({
               />
             </div>
           </div>
+          )}
         </div>
       </div>
       <ModalSearchStock
