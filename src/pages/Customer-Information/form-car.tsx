@@ -302,7 +302,7 @@ const FormCar = ({
               />
             </div>
 
-            <div className="basis-4/12 px-2">
+            {/* <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
                 เลขเครื่องยนต์ :
                 <span className="text-red-500 font-semibold text">*</span>
@@ -318,9 +318,9 @@ const FormCar = ({
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
               />
-            </div>
+            </div> */}
 
-            <div className="basis-4/12 px-2">
+            {/* <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">
                 เลขตัวถัง :
                 <span className="text-red-500 font-semibold text">*</span>
@@ -336,7 +336,7 @@ const FormCar = ({
                   disableForm ? "bg-slate-300" : "bg-slate-50"
                 }`}
               />
-            </div>
+            </div> */}
 
             <div className="basis-4/12 px-2">
               <p className="text-white font-semibold mb-1">

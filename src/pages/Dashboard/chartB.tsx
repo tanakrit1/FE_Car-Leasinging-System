@@ -67,7 +67,9 @@ const ChartB = ({ data }: any) => {
     // if( response?.statusCode === 200 ){
         console.log("response--> ", response)
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('รายงาน');
+        const worksheet = workbook.addWorksheet('สรุปยอดรับชำระ');
+        const worksheet2 = workbook.addWorksheet('รายละเอียดการรับชำระ');
+        const worksheet3 = workbook.addWorksheet('รายละเอียดรถที่ขาย');
 
         for (let i = 65; i <= 68; i++) {
             const char = String.fromCharCode(i); //A-D
@@ -102,10 +104,14 @@ const ChartB = ({ data }: any) => {
         worksheet.getCell('C4').value = "ยอดคงเหลือของการผ่อนทั้งหมด";
         worksheet.getCell('D4').value = Math.ceil(response.Result.totalInstallmentBal).toLocaleString()  
 
+        worksheet.getCell('A5').value = "จำนวนรถที่ขายได้";
+        worksheet.getCell('B5').value = Math.ceil(response.Result.soldCount).toLocaleString() 
+
         worksheet.getRow(1).alignment = { horizontal: 'center' };
         worksheet.getRow(2).alignment = { horizontal: 'center' };
         worksheet.getRow(3).alignment = { horizontal: 'center' };
         worksheet.getRow(4).alignment = { horizontal: 'center' };
+        worksheet.getRow(5).alignment = { horizontal: 'center' };
         worksheet.getColumn('A').width = 30;
         worksheet.getColumn('B').width = 30;
         worksheet.getColumn('C').width = 30;
@@ -123,16 +129,9 @@ const ChartB = ({ data }: any) => {
             }
         }
 
-        // ------------------------------------------------------------------------ //
-
-        for (let i = 65; i <= 72; i++) {
-            const char = String.fromCharCode(i); //A-D
-            worksheet.getCell(`${char}7`).fill = {
-                type: 'pattern',
-                pattern: 'solid',
-                fgColor: { argb: 'fff3fa08' },
-            }
-            worksheet.getCell(`${char}7`).border = {
+        for (let key = 65; key <= 66; key++) {
+            const char = String.fromCharCode(key); //A-D
+            worksheet.getCell(`${char}${5}`).border = {
                 top: { style: 'thin', color: { argb: 'ff050505' } },
                 left: { style: 'thin', color: { argb: 'ff050505' } },
                 bottom: { style: 'thin', color: { argb: 'ff050505' } },
@@ -140,32 +139,74 @@ const ChartB = ({ data }: any) => {
             }
         }
 
-        worksheet.getCell('A7').value = "ชื่อ";
-        worksheet.getCell('B7').value = "ประเภท";
-        worksheet.getCell('C7').value = "ยี่ห้อ";
-        worksheet.getCell('D7').value = "เลขทะเบียน";
-        worksheet.getCell('E7').value = "เงินต้น";
-        worksheet.getCell('F7').value = "ดอกเบี้ย";
-        worksheet.getCell('G7').value = "ค่าปรับ";
-        worksheet.getCell('H7').value = "โน๊ต";
-        worksheet.getRow(7).alignment = { horizontal: 'center' };
+        // -------------------------------- Sheet 2 ---------------------------------------- //
 
-        let row = 8
+        for (let i = 65; i <= 72; i++) {
+            const char = String.fromCharCode(i); //A-D
+            worksheet2.getCell(`${char}2`).fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'fff3fa08' },
+            }
+            worksheet2.getCell(`${char}2`).border = {
+                top: { style: 'thin', color: { argb: 'ff050505' } },
+                left: { style: 'thin', color: { argb: 'ff050505' } },
+                bottom: { style: 'thin', color: { argb: 'ff050505' } },
+                right: { style: 'thin', color: { argb: 'ff050505' } }
+            }
+        }
+
+        worksheet2.getCell(`A1`).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'fff3fa08' },
+        }
+        worksheet2.getCell(`A1`).border = {
+            top: { style: 'thin', color: { argb: 'ff050505' } },
+            left: { style: 'thin', color: { argb: 'ff050505' } },
+            bottom: { style: 'thin', color: { argb: 'ff050505' } },
+            right: { style: 'thin', color: { argb: 'ff050505' } }
+        }
+
+        worksheet2.mergeCells(1, 1, 1, 8)
+        worksheet2.getCell('A1').value = `รายงานสรุปยอดรับชำระประจำเดือน ${dayjs().format("MM/YYYY")}`;
+        worksheet2.getCell('A2').value = "ชื่อ";
+        worksheet2.getCell('B2').value = "ประเภท";
+        worksheet2.getCell('C2').value = "ยี่ห้อ";
+        worksheet2.getCell('D2').value = "เลขทะเบียน";
+        worksheet2.getCell('E2').value = "เงินต้น";
+        worksheet2.getCell('F2').value = "ดอกเบี้ย";
+        worksheet2.getCell('G2').value = "ค่าปรับ";
+        worksheet2.getCell('H2').value = "โน๊ต";
+        worksheet2.getRow(1).alignment = { horizontal: 'center' };
+        worksheet2.getRow(2).alignment = { horizontal: 'center' };
+        worksheet2.getColumn('A').width = 30;
+        worksheet2.getColumn('B').width = 15;
+        worksheet2.getColumn('C').width = 15;
+        worksheet2.getColumn('D').width = 15;
+        worksheet2.getColumn('E').width = 15;
+        worksheet2.getColumn('F').width = 15;
+        worksheet2.getColumn('G').width = 15;
+        worksheet2.getColumn('H').width = 50;
+
+        let row = 3
         for( let i=0; i<response.Transection.length; i++ ){
-            console.log("---> ", response.Transection[i])
-            worksheet.getRow(row).alignment = { horizontal: 'center' };
-            worksheet.getCell(`A${row}`).value = response.Transection[i]?.saleItem?.customerName
-            worksheet.getCell(`B${row}`).value = response.Transection[i]?.saleItem?.carInformation.carCategory  
-            worksheet.getCell(`C${row}`).value = response.Transection[i]?.saleItem?.carInformation.carBrand       
-            worksheet.getCell(`D${row}`).value = response.Transection[i]?.saleItem?.carInformation.licensePlate        
-            worksheet.getCell(`E${row}`).value = Math.ceil(response.Transection[i]?.amountPay).toLocaleString()
-            worksheet.getCell(`F${row}`).value = Math.ceil(response.Transection[i]?.InterestPay).toLocaleString()
-            worksheet.getCell(`G${row}`).value = Math.ceil(response.Transection[i]?.fee).toLocaleString()
-            worksheet.getCell(`H${row}`).value = response.Transection[i]?.note
+            const productType = response.Transection[i].saleItem.carInformation.carType == "other"
+                    ? response.Transection[i].saleItem.carInformation.productOther
+                    : response.Transection[i].saleItem.carInformation.carCategory
+            worksheet2.getRow(row).alignment = { horizontal: 'center' };
+            worksheet2.getCell(`A${row}`).value = response.Transection[i]?.saleItem?.customerName
+            worksheet2.getCell(`B${row}`).value = productType
+            worksheet2.getCell(`C${row}`).value = response.Transection[i]?.saleItem?.carInformation.carBrand       
+            worksheet2.getCell(`D${row}`).value = response.Transection[i]?.saleItem?.carInformation.licensePlate        
+            worksheet2.getCell(`E${row}`).value = Math.ceil(response.Transection[i]?.amountPay).toLocaleString()
+            worksheet2.getCell(`F${row}`).value = Math.ceil(response.Transection[i]?.InterestPay).toLocaleString()
+            worksheet2.getCell(`G${row}`).value = Math.ceil(response.Transection[i]?.fee).toLocaleString()
+            worksheet2.getCell(`H${row}`).value = response.Transection[i]?.note
 
             for (let key = 65; key <= 72; key++) {
                 const char = String.fromCharCode(key); //A-D
-                worksheet.getCell(`${char}${row}`).border = {
+                worksheet2.getCell(`${char}${row}`).border = {
                     top: { style: 'thin', color: { argb: 'ff050505' } },
                     left: { style: 'thin', color: { argb: 'ff050505' } },
                     bottom: { style: 'thin', color: { argb: 'ff050505' } },
@@ -177,6 +218,70 @@ const ChartB = ({ data }: any) => {
         }
 
 
+        // -------------------------------- Sheet 3 ---------------------------------------- //
+
+        for (let i = 65; i <= 68; i++) {
+            const char = String.fromCharCode(i); //A-D
+            worksheet3.getCell(`${char}2`).fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'fff3fa08' },
+            }
+            worksheet3.getCell(`${char}2`).border = {
+                top: { style: 'thin', color: { argb: 'ff050505' } },
+                left: { style: 'thin', color: { argb: 'ff050505' } },
+                bottom: { style: 'thin', color: { argb: 'ff050505' } },
+                right: { style: 'thin', color: { argb: 'ff050505' } }
+            }
+        }
+
+        worksheet3.getCell(`A1`).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'fff3fa08' },
+        }
+        worksheet3.getCell(`A1`).border = {
+            top: { style: 'thin', color: { argb: 'ff050505' } },
+            left: { style: 'thin', color: { argb: 'ff050505' } },
+            bottom: { style: 'thin', color: { argb: 'ff050505' } },
+            right: { style: 'thin', color: { argb: 'ff050505' } }
+        }
+
+        worksheet3.mergeCells(1, 1, 1, 4)
+        worksheet3.getCell('A1').value = `รายละเอียดรถที่ขาย ประจำเดือน ${dayjs().format("MM/YYYY")}`;
+        worksheet3.getCell('A2').value = "ยี่ห้อ";
+        worksheet3.getCell('B2').value = "รุ่น";
+        worksheet3.getCell('C2').value = "สี";
+        worksheet3.getCell('D2').value = "เลขทะเบียน";
+        worksheet3.getRow(1).alignment = { horizontal: 'center' };
+        worksheet3.getRow(2).alignment = { horizontal: 'center' };
+        worksheet3.getColumn('A').width = 15;
+        worksheet3.getColumn('B').width = 15;
+        worksheet3.getColumn('C').width = 15;
+        worksheet3.getColumn('D').width = 15;
+
+        let rowSheet3 = 3
+        for( let i=0; i<response.TransectionSold.length; i++ ){
+            worksheet3.getRow(row).alignment = { horizontal: 'center' };
+            worksheet3.getCell(`A${rowSheet3}`).value = response.TransectionSold[i]?.carInformation?.carBrand
+            worksheet3.getCell(`B${rowSheet3}`).value = response.TransectionSold[i]?.carInformation?.model
+            worksheet3.getCell(`C${rowSheet3}`).value = response.TransectionSold[i]?.carInformation?.carColor
+            worksheet3.getCell(`D${rowSheet3}`).value = response.TransectionSold[i]?.carInformation?.licensePlate
+
+            for (let key = 65; key <= 68; key++) {
+                const char = String.fromCharCode(key); 
+                worksheet3.getCell(`${char}${rowSheet3}`).border = {
+                    top: { style: 'thin', color: { argb: 'ff050505' } },
+                    left: { style: 'thin', color: { argb: 'ff050505' } },
+                    bottom: { style: 'thin', color: { argb: 'ff050505' } },
+                    right: { style: 'thin', color: { argb: 'ff050505' } }
+                }
+            }
+            rowSheet3++
+        }
+
+
+        // -------------------------------- Steam file ---------------------------------------- //
 
         workbook.xlsx.writeBuffer().then((data) => {
             const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });

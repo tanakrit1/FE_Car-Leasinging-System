@@ -474,7 +474,7 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
               className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
             />
           </div>
-          <div className="basis-4/12 px-2">
+          {/* <div className="basis-4/12 px-2">
             <p className="text-white font-semibold mb-1">เลขตัวถัง :</p>
             <input
               disabled
@@ -493,7 +493,7 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
               value={dataInput?.carInformation?.engineNumber}
               className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
             />
-          </div>
+          </div> */}
         </div>
 
       </div>

@@ -63,13 +63,14 @@ const CustomerInformation = () => {
     carColor: "",
     carDate: "",
     licensePlate: "",
-    engineNumber: "",
-    vin: "",
+    // engineNumber: "",
+    // vin: "",
     sellingPrice: "",
     id: "",
     carType: "",
     priceOther: "",
     productOther: "",
+    carCategory: "",
   });
   const [validationForm, setValidationForm] = useState<any>({
     customer: false,
@@ -106,7 +107,8 @@ const CustomerInformation = () => {
 
     let validateGuarantor = false;
     for (let i = 0; i < result?.length; i++) {
-      const valid = validateInputRequired(result[i]);
+      const { guarantorImage, ...newObject } = result[i]
+      const valid = validateInputRequired(newObject);
       if (valid === false) {
         validateGuarantor = false;
         break;
@@ -200,13 +202,14 @@ const CustomerInformation = () => {
       carColor: "",
       carDate: "",
       licensePlate: "",
-      engineNumber: "",
-      vin: "",
+    //   engineNumber: "",
+    //   vin: "",
       sellingPrice: "",
       id: "",
       carType: "",
       priceOther: "",
       productOther: "",
+      carCategory: "",
     });
 
     const result = await _SaleItemApi().getMaxID();
@@ -294,11 +297,12 @@ const CustomerInformation = () => {
       carColor: row.carInformation.carColor,
       carDate: row.carInformation.carDate,
       licensePlate: row.carInformation.licensePlate,
-      engineNumber: row.carInformation.engineNumber,
-      vin: row.carInformation.vin,
+    //   engineNumber: row.carInformation.engineNumber,
+    //   vin: row.carInformation.vin,
       sellingPrice: row.carInformation.sellingPrice,
       id: row.carInformation.id,
       carType: row.carInformation.carType,
+      carCategory: row.carInformation.carCategory,
     };
 
     setPayloadCustomer(newPayloadCustomer);

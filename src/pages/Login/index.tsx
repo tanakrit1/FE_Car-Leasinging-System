@@ -68,7 +68,7 @@ const Login = ({returnLogin}: Props) => {
             >
                 เข้าสู่ระบบ
             </button>
-            <p className='mt-3'>(dev version. 1.0.16)</p>
+            <p className='mt-3'>(dev version. 1.0.19)</p>
           </div>
         </div>
       </form>
