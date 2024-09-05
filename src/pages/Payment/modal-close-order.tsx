@@ -4,6 +4,7 @@ import _PaymentApi from "../../api/payment";
 import { getLoginStorage } from "../../helpers/set-storage";
 import { LoadContext } from "../../context/loading-context";
 import { formatNumber } from "../../helpers/function-service";
+import dayjs from "dayjs";
 
 const ModalCloseOrder = ({
   showModalCloseOrder,
@@ -25,6 +26,7 @@ const ModalCloseOrder = ({
     bank: "",
     methodPay: "เงินสด",
     accountName: "",
+    datePay: dayjs().format("YYYY-MM-DD")
   });
   const [amount, setAmount] = useState<any>("");
   const [totalFee, setTotalFee] = useState<any>(0);
@@ -90,7 +92,7 @@ const ModalCloseOrder = ({
         receiver: profile.firstName + " " + profile.lastName,
         discount: Math.ceil(payloadPayment.discount),
         saleItem_id: Math.ceil(payloadCustomer.id),
-        note: "ปิดยอด"
+        note: "ปิดยอด",
     }
     console.log("json--> ", json)
     
@@ -126,17 +128,18 @@ const ModalCloseOrder = ({
       const payamount = (Math.ceil(payloadCustomer.remainingBalance) + Math.ceil(totalPay)) - Math.ceil(discount); 
 
       const remainingBalance = Math.ceil(payloadCustomer.remainingBalance) - Number(discount);
-      setPayloadPayment({ ...payloadPayment, remainingBalance: remainingBalance });
+      setPayloadPayment({ ...payloadPayment, remainingBalance: remainingBalance, datePay: dayjs().format("YYYY-MM-DD") });
       setAmount(payamount);
     }else{
         const InterestPay = Math.ceil(payloadCustomer.remainingBalance) * (Math.ceil(payloadCustomer.interestRate) / 100);
         const payamount = (Math.ceil(payloadCustomer.remainingBalance) + Math.ceil(InterestPay)) - Math.ceil(discount);
 
         const remainingBalance = Math.ceil(payloadCustomer.remainingBalance) - Math.ceil(discount);
-        setPayloadPayment({ ...payloadPayment, remainingBalance: remainingBalance });
+        setPayloadPayment({ ...payloadPayment, remainingBalance: remainingBalance, datePay: dayjs().format("YYYY-MM-DD") });
         setAmount(payamount);
         
     }
+    
   }
 
   useEffect( () => {
@@ -209,6 +212,20 @@ const ModalCloseOrder = ({
                     value={payloadPayment.discount ? fnsetFormatNumber(payloadPayment.discount) : ""}  
                     onChange={(e: any) => setPayloadPayment({...payloadPayment, discount: e.target.value})}
                     className="bg-slate-50 text-black w-3/6 rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+                    />
+                <span className="text-white">
+                     บาท
+                </span>
+                </div>
+            </div>
+            <div className="text-white items-center flex justify-between mb-3">
+              <span>วันที่ปิดยอด</span>
+              <div className="flex justify-end space-x-2">
+                <input 
+                    type="date" 
+                    value={payloadPayment.datePay}  
+                    onChange={(e: any) => setPayloadPayment({...payloadPayment, datePay: e.target.value})}
+                    className="w-full bg-slate-50 text-black w-3/6 rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
                     />
                 <span className="text-white">
                      บาท

@@ -39,7 +39,8 @@ const ModalSearch = ({ showModal, returnShowModal, returnViewData }: any) => {
       if (formSearch[field] !== "") {
         mapJson.push({
           field: field,
-          operator: "equals",
+        //   operator: "equals",
+          operator: (field==="customerName") ? "contains" : "equals",
           value: formSearch[field],
         });
       }

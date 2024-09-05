@@ -40,7 +40,8 @@ const ModalExport = ({ showModal, returnShowModal }: any) => {
       if (formSearch[field] !== "") {
         mapJson.push({
           field: field,
-          operator: "equals",
+          operator: (field=="licensePlate" || field=="sellerName") ? "contains" : "equals",
+        //   operator: "equals",
           value: formSearch[field],
         });
       }

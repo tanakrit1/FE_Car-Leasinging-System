@@ -35,7 +35,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
     note: "",
     bank: "",
-    accountName: ""
+    accountName: "",
   });
   const [rowsHistory, setRowsHistory] = useState<any>([]);
   const [chipAmount, setChipAmount] = useState<any>({
@@ -56,7 +56,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
       note: "",
       bank: "",
-      accountName: ""
+      accountName: "",
     });
     setAmount("");
     (document.getElementById("note") as HTMLFormElement).value = "";
@@ -385,6 +385,18 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                 type="text"
                 name="fee"
                 value={fnsetFormatNumber(payload.fee)}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${formDisable ? "bg-slate-300" : "bg-slate-50" }`}
+              />
+            </div>
+
+            <div className="basis-4/12 px-2">
+              <p className="text-white font-semibold mb-1">วันที่ชำระ :</p>
+              <input
+                disabled={formDisable}
+                type="date"
+                name="datePay"
+                onChange={onChangeInput}
+                value={payloadCustomer?.statusInstallment == "Close" ? "" : payload?.datePay }
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${formDisable ? "bg-slate-300" : "bg-slate-50" }`}
               />
             </div>
