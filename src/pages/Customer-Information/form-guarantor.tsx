@@ -37,6 +37,7 @@ const FormGuarantor = ({
         guarantorImage: "",
         guarantorPhone: "",
         guarantorGPS: "",
+        guarantorNote: "",
       },
     ]);
   };
@@ -206,7 +207,7 @@ const FormGuarantor = ({
                 />
               </div> */}
 
-              <div className="basis-4/12 px-2">
+              <div className="basis-2/12 px-2">
                 <p className="text-white font-semibold mb-1">
                   เบอร์ติดต่อ : <span className="text-red-500">*</span>
                 </p>
@@ -224,7 +225,7 @@ const FormGuarantor = ({
                 />
               </div>
 
-              <div className="basis-4/12 px-2">
+              <div className="basis-2/12 px-2">
                 <p className="text-white font-semibold mb-1">
                   GPS : <span className="text-red-500">*</span>
                 </p>
@@ -241,6 +242,23 @@ const FormGuarantor = ({
                   }`}
                 />
               </div>
+
+              <div className="basis-8/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                หมายเหตุ :
+              </p>
+              <input
+                onChange={(event) => onChangeInput(event, index)}
+                disabled={disableForm}
+                autoComplete="off"
+                type="text"
+                name="guarantorNote"
+                value={item?.guarantorNote}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                  }`}
+              />
+            </div>
 
               <div className="flex basis-5/12 px-2 space-x-6">
                     <div className="items-center flex mb-3">

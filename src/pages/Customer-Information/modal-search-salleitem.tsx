@@ -60,7 +60,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
         alert("ไม่พบข้อมูล");
       }
       const newRows = resultRows.data.map( (item: any) => {
-        return {...item, licensePlate: item.carInformation?.licensePlate, saleType: item.saleType === "buy" ? "ขายรถ" : "รับจำนำรถ"}
+        return {...item, licensePlate: item.carInformation?.licensePlate, saleType: item.saleType === "buy" ? "ขายรถ" : item.saleType==="pledge" ? "รับจำนำรถ" : "อื่นๆ"}
       } )
       setRows(newRows);
       setPagination({

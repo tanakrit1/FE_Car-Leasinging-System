@@ -125,12 +125,14 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                // disabled={disableForm}
+                disabled={disableForm}
                 autoComplete="off"
                 type="text"
                 name="customerName"
                 value={payloadCustomer.customerName}
-                className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                  }`}
               />
             </div>
 
@@ -141,12 +143,14 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                // disabled={disableForm}
+                disabled={disableForm}
                 autoComplete="off"
                 type="text"
                 name="address"
                 value={payloadCustomer.address}
-                className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                  }`}
               />
             </div>
 
@@ -173,12 +177,14 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                // disabled={disableForm}
+                disabled={disableForm}
                 autoComplete="off"
                 type="number"
                 name="phoneNumber"
                 value={payloadCustomer.phoneNumber}
-                className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                  }`}
               />
             </div>
 
@@ -255,12 +261,14 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                // disabled={disableForm}
+                disabled={disableForm}
                 autoComplete="off"
                 type="text"
                 name="gps"
                 value={payloadCustomer.gps}
-                className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                  }`}
               />
             </div>
             <div className="basis-4/12 px-2">
@@ -270,12 +278,31 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                // disabled={disableForm}
+                disabled={disableForm}
                 autoComplete="off"
                 type="date"
                 name="contractDate"
                 value={payloadCustomer.contractDate}
-                className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                  }`}
+              />
+            </div>
+
+            <div className="basis-8/12 px-2">
+              <p className="text-white font-semibold mb-1">
+                หมายเหตุ :
+              </p>
+              <input
+                onChange={onChangeInput}
+                disabled={disableForm}
+                autoComplete="off"
+                type="text"
+                name="saleItemNote"
+                value={payloadCustomer.saleItemNote}
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                  }`}
               />
             </div>
 
@@ -288,12 +315,14 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                // disabled={disableForm}
+                disabled={disableForm}
                 autoComplete="off"
                 type="text"
                 name="downPayment"
                 value={fnsetFormatNumber(payloadCustomer.downPayment) || ""}
-                className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
+                className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
+                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                  }`}
               />
             </div>
 

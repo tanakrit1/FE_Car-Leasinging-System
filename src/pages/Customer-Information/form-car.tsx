@@ -22,6 +22,7 @@ const FormCar = ({
   const [disableRadio, setDisableRadio] = useState<boolean>(false);
 
     useEffect(()=> {
+        console.log("payloadData--> ", payloadData)  // priceOther  productOther
         setDisableRadio(stateForm == "view" ? true : false);
         setDisableForm(stateForm == "view" ? true : false);
     }, [stateForm])

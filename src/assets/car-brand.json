@@ -1,4 +1,5 @@
 [
+    { "label": "อื่นๆ", "value": "อื่นๆ" },
     { "label": "Toyota", "value": "Toyota" },
     { "label": "Honda", "value": "Honda" },
     { "label": "Isuzu", "value": "Isuzu" },
@@ -15,7 +16,11 @@
     { "label": "Lexus", "value": "Lexus" },
     { "label": "VOLVO", "value": "VOLVO" },
     { "label": "Audi", "value": "Audi" },
-    { "label": "Chevrolet", "value": "Chevrolet" }
+    { "label": "Chevrolet", "value": "Chevrolet" },
+    { "label": "Komatsu", "value": "Komatsu" },  
+    { "label": "KUBOTA", "value": "KUBOTA" },
+    { "label": "YAMAHA", "value": "YAMAHA" },
+    { "label": "YANMAR", "value": "YANMAR" }
 
      
 ]

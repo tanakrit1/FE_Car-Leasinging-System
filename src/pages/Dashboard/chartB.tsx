@@ -141,8 +141,8 @@ const ChartB = ({ data }: any) => {
 
         // -------------------------------- Sheet 2 ---------------------------------------- //
 
-        for (let i = 65; i <= 72; i++) {
-            const char = String.fromCharCode(i); //A-D
+        for (let i = 65; i <= 73; i++) {
+            const char = String.fromCharCode(i); //A-I
             worksheet2.getCell(`${char}2`).fill = {
                 type: 'pattern',
                 pattern: 'solid',
@@ -168,16 +168,17 @@ const ChartB = ({ data }: any) => {
             right: { style: 'thin', color: { argb: 'ff050505' } }
         }
 
-        worksheet2.mergeCells(1, 1, 1, 8)
+        worksheet2.mergeCells(1, 1, 1, 9)
         worksheet2.getCell('A1').value = `รายงานสรุปยอดรับชำระประจำเดือน ${dayjs().format("MM/YYYY")}`;
         worksheet2.getCell('A2').value = "ชื่อ";
         worksheet2.getCell('B2').value = "ประเภท";
         worksheet2.getCell('C2').value = "ยี่ห้อ";
-        worksheet2.getCell('D2').value = "เลขทะเบียน";
-        worksheet2.getCell('E2').value = "เงินต้น";
-        worksheet2.getCell('F2').value = "ดอกเบี้ย";
-        worksheet2.getCell('G2').value = "ค่าปรับ";
-        worksheet2.getCell('H2').value = "โน๊ต";
+        worksheet2.getCell('D2').value = "รุ่น";
+        worksheet2.getCell('E2').value = "เลขทะเบียน";
+        worksheet2.getCell('F2').value = "เงินต้น";
+        worksheet2.getCell('G2').value = "ดอกเบี้ย";
+        worksheet2.getCell('H2').value = "ค่าปรับ";
+        worksheet2.getCell('I2').value = "โน๊ต";
         worksheet2.getRow(1).alignment = { horizontal: 'center' };
         worksheet2.getRow(2).alignment = { horizontal: 'center' };
         worksheet2.getColumn('A').width = 30;
@@ -187,7 +188,8 @@ const ChartB = ({ data }: any) => {
         worksheet2.getColumn('E').width = 15;
         worksheet2.getColumn('F').width = 15;
         worksheet2.getColumn('G').width = 15;
-        worksheet2.getColumn('H').width = 50;
+        worksheet2.getColumn('H').width = 15;
+        worksheet2.getColumn('I').width = 50;
 
         let row = 3
         for( let i=0; i<response.Transection.length; i++ ){
@@ -198,14 +200,15 @@ const ChartB = ({ data }: any) => {
             worksheet2.getCell(`A${row}`).value = response.Transection[i]?.saleItem?.customerName
             worksheet2.getCell(`B${row}`).value = productType
             worksheet2.getCell(`C${row}`).value = response.Transection[i]?.saleItem?.carInformation.carBrand       
-            worksheet2.getCell(`D${row}`).value = response.Transection[i]?.saleItem?.carInformation.licensePlate        
-            worksheet2.getCell(`E${row}`).value = Math.ceil(response.Transection[i]?.amountPay).toLocaleString()
-            worksheet2.getCell(`F${row}`).value = Math.ceil(response.Transection[i]?.InterestPay).toLocaleString()
-            worksheet2.getCell(`G${row}`).value = Math.ceil(response.Transection[i]?.fee).toLocaleString()
-            worksheet2.getCell(`H${row}`).value = response.Transection[i]?.note
+            worksheet2.getCell(`D${row}`).value = response.Transection[i]?.saleItem?.carInformation.model        
+            worksheet2.getCell(`E${row}`).value = response.Transection[i]?.saleItem?.carInformation.licensePlate        
+            worksheet2.getCell(`F${row}`).value = Math.ceil(response.Transection[i]?.amountPay).toLocaleString()
+            worksheet2.getCell(`G${row}`).value = Math.ceil(response.Transection[i]?.InterestPay).toLocaleString()
+            worksheet2.getCell(`H${row}`).value = Math.ceil(response.Transection[i]?.fee).toLocaleString()
+            worksheet2.getCell(`I${row}`).value = response.Transection[i]?.note
 
-            for (let key = 65; key <= 72; key++) {
-                const char = String.fromCharCode(key); //A-D
+            for (let key = 65; key <= 73; key++) {
+                const char = String.fromCharCode(key); //A-I
                 worksheet2.getCell(`${char}${row}`).border = {
                     top: { style: 'thin', color: { argb: 'ff050505' } },
                     left: { style: 'thin', color: { argb: 'ff050505' } },
