@@ -1,6 +1,7 @@
 import * as echarts from "echarts";
 import { useContext, useEffect } from "react";
 import _DashboardApi from "../../api/dashboard";
+import _PaymentApi from "../../api/payment";
 import dayjs from "dayjs";
 import ExcelJS from 'exceljs';
 import { LoadContext } from "../../context/loading-context";
@@ -141,8 +142,8 @@ const ChartB = ({ data }: any) => {
 
         // -------------------------------- Sheet 2 ---------------------------------------- //
 
-        for (let i = 65; i <= 73; i++) {
-            const char = String.fromCharCode(i); //A-I
+        for (let i = 65; i <= 74; i++) {
+            const char = String.fromCharCode(i); //A-J
             worksheet2.getCell(`${char}2`).fill = {
                 type: 'pattern',
                 pattern: 'solid',
@@ -168,47 +169,63 @@ const ChartB = ({ data }: any) => {
             right: { style: 'thin', color: { argb: 'ff050505' } }
         }
 
-        worksheet2.mergeCells(1, 1, 1, 9)
+        worksheet2.mergeCells(1, 1, 1, 11)
         worksheet2.getCell('A1').value = `รายงานสรุปยอดรับชำระประจำเดือน ${dayjs().format("MM/YYYY")}`;
-        worksheet2.getCell('A2').value = "ชื่อ";
-        worksheet2.getCell('B2').value = "ประเภท";
-        worksheet2.getCell('C2').value = "ยี่ห้อ";
-        worksheet2.getCell('D2').value = "รุ่น";
-        worksheet2.getCell('E2').value = "เลขทะเบียน";
-        worksheet2.getCell('F2').value = "เงินต้น";
-        worksheet2.getCell('G2').value = "ดอกเบี้ย";
-        worksheet2.getCell('H2').value = "ค่าปรับ";
-        worksheet2.getCell('I2').value = "โน๊ต";
+        worksheet2.getCell('A2').value = "วันที่ชำระ";
+        worksheet2.getCell('B2').value = "ชื่อ";
+        worksheet2.getCell('C2').value = "ประเภท";
+        worksheet2.getCell('D2').value = "ยี่ห้อ";
+        worksheet2.getCell('E2').value = "รุ่น";
+        worksheet2.getCell('F2').value = "เลขทะเบียน";
+        worksheet2.getCell('G2').value = "เงินต้น";
+        worksheet2.getCell('H2').value = "ดอกเบี้ย";
+        worksheet2.getCell('I2').value = "ค่าปรับ";
+        worksheet2.getCell('J2').value = "โน๊ต";
         worksheet2.getRow(1).alignment = { horizontal: 'center' };
         worksheet2.getRow(2).alignment = { horizontal: 'center' };
-        worksheet2.getColumn('A').width = 30;
-        worksheet2.getColumn('B').width = 15;
+        worksheet2.getColumn('A').width = 15;
+        worksheet2.getColumn('B').width = 30;
         worksheet2.getColumn('C').width = 15;
         worksheet2.getColumn('D').width = 15;
         worksheet2.getColumn('E').width = 15;
         worksheet2.getColumn('F').width = 15;
         worksheet2.getColumn('G').width = 15;
         worksheet2.getColumn('H').width = 15;
-        worksheet2.getColumn('I').width = 50;
+        worksheet2.getColumn('I').width = 15;
+        worksheet2.getColumn('J').width = 50;
 
         let row = 3
+        let totalAmountPay = 0
+        let totalInterestPay = 0
+        let totalFee = 0
+        // let totalBalance = 0
+        
+        response.Transection.sort( (a:any, b:any) => dayjs(a.datePay).diff(dayjs(b.datePay)) )
         for( let i=0; i<response.Transection.length; i++ ){
+           
+
+            totalAmountPay = totalAmountPay + Number( response.Transection[i]?.amountPay )
+            totalInterestPay = totalInterestPay + Number( response.Transection[i]?.InterestPay )
+            totalFee = totalFee + Number( response.Transection[i]?.fee )
+            // totalBalance = totalBalance + remaining
+            
             const productType = response.Transection[i].saleItem.carInformation.carType == "other"
                     ? response.Transection[i].saleItem.carInformation.productOther
                     : response.Transection[i].saleItem.carInformation.carCategory
             worksheet2.getRow(row).alignment = { horizontal: 'center' };
-            worksheet2.getCell(`A${row}`).value = response.Transection[i]?.saleItem?.customerName
-            worksheet2.getCell(`B${row}`).value = productType
-            worksheet2.getCell(`C${row}`).value = response.Transection[i]?.saleItem?.carInformation.carBrand       
-            worksheet2.getCell(`D${row}`).value = response.Transection[i]?.saleItem?.carInformation.model        
-            worksheet2.getCell(`E${row}`).value = response.Transection[i]?.saleItem?.carInformation.licensePlate        
-            worksheet2.getCell(`F${row}`).value = Math.ceil(response.Transection[i]?.amountPay).toLocaleString()
-            worksheet2.getCell(`G${row}`).value = Math.ceil(response.Transection[i]?.InterestPay).toLocaleString()
-            worksheet2.getCell(`H${row}`).value = Math.ceil(response.Transection[i]?.fee).toLocaleString()
-            worksheet2.getCell(`I${row}`).value = response.Transection[i]?.note
+            worksheet2.getCell(`A${row}`).value = response.Transection[i]?.datePay ? dayjs(response.Transection[i]?.datePay).format("DD/MM/YYYY") : ""
+            worksheet2.getCell(`B${row}`).value = response.Transection[i]?.saleItem?.customerName
+            worksheet2.getCell(`C${row}`).value = productType
+            worksheet2.getCell(`D${row}`).value = response.Transection[i]?.saleItem?.carInformation.carBrand       
+            worksheet2.getCell(`E${row}`).value = response.Transection[i]?.saleItem?.carInformation.model        
+            worksheet2.getCell(`F${row}`).value = response.Transection[i]?.saleItem?.carInformation.licensePlate        
+            worksheet2.getCell(`G${row}`).value = Math.ceil(response.Transection[i]?.amountPay).toLocaleString()
+            worksheet2.getCell(`H${row}`).value = Math.ceil(response.Transection[i]?.InterestPay).toLocaleString()
+            worksheet2.getCell(`I${row}`).value = Math.ceil(response.Transection[i]?.fee).toLocaleString()
+            worksheet2.getCell(`J${row}`).value = response.Transection[i]?.note
 
-            for (let key = 65; key <= 73; key++) {
-                const char = String.fromCharCode(key); //A-I
+            for (let key = 65; key <= 74; key++) {
+                const char = String.fromCharCode(key); //A-J
                 worksheet2.getCell(`${char}${row}`).border = {
                     top: { style: 'thin', color: { argb: 'ff050505' } },
                     left: { style: 'thin', color: { argb: 'ff050505' } },
@@ -219,7 +236,22 @@ const ChartB = ({ data }: any) => {
             
             row++
         }
+        worksheet2.getRow(row).alignment = { horizontal: 'center' };
+        worksheet2.getCell(`F${row}`).value = "รวม"
+        worksheet2.getCell(`G${row}`).value = Math.ceil(totalAmountPay).toLocaleString() 
+        worksheet2.getCell(`H${row}`).value = Math.ceil(totalInterestPay).toLocaleString()
+        worksheet2.getCell(`I${row}`).value = Math.ceil(totalFee).toLocaleString()
+        // worksheet2.getCell(`J${row}`).value = Math.ceil(totalBalance).toLocaleString()
 
+        for (let key = 70; key <= 73; key++) {
+            const char = String.fromCharCode(key); //E-I
+            worksheet2.getCell(`${char}${row}`).border = {
+                top: { style: 'thin', color: { argb: 'ff050505' } },
+                left: { style: 'thin', color: { argb: 'ff050505' } },
+                bottom: { style: 'thin', color: { argb: 'ff050505' } },
+                right: { style: 'thin', color: { argb: 'ff050505' } }
+            }
+        }
 
         // -------------------------------- Sheet 3 ---------------------------------------- //
 

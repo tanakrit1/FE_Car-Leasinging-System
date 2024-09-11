@@ -142,7 +142,6 @@ const ModalExport = ({ showModal, returnShowModal }: any) => {
     let row = 1
     for( let index = 0; index < dataRows.length; index++) {
         row++;
-        console.log("row--> ", dataRows[row])
         objCarType[dataRows[index].carCategory] = objCarType[dataRows[index].carCategory] + 1
         worksheet.getRow(row).alignment = { horizontal: 'center' };
 
@@ -171,7 +170,6 @@ const ModalExport = ({ showModal, returnShowModal }: any) => {
             }
         }
     }
-    console.log("objCarType--> ", objCarType)
     // ------------------------------------------------------------------------------- //
     row = row + 2;
 
