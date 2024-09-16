@@ -89,13 +89,13 @@ const ModalReport = ({ showModal, returnShowModal }: any) => {
         items: mapJson,
       },
     };
-    console.log("json--> ", json);
+    // console.log("json--> ", json);
     // return
     const resultRows = await _SaleItemApi().search(json);
     if (resultRows.statusCode === 200) {
-      if (resultRows.data.length === 0) {
-        alert("ไม่พบข้อมูล");
-      }
+    //   if (resultRows.data.length === 0) {
+    //     alert("ไม่พบข้อมูล");
+    //   }
       console.log("resultRows --> ", resultRows);
       const newRows = resultRows.data.map((item: any) => {
         return {
@@ -141,7 +141,7 @@ const ModalReport = ({ showModal, returnShowModal }: any) => {
   };
 
   useEffect(() => {
-    // onSubmitSearch(pagination.page);
+    onSubmitSearch(pagination.page);
   }, [pagination.page]);
 
   useEffect(() => {
@@ -203,9 +203,46 @@ const ModalReport = ({ showModal, returnShowModal }: any) => {
     worksheet.getColumn('K').width = 20;
     worksheet.getColumn('L').width = 20;
 
+
+    // ------------------------------------------ query --------------------------------------------- //
+
+    let mapJson: any = [];
+    for (let field in formSearchExport) {
+      if (formSearchExport[field] !== "") {
+        mapJson.push({
+          field: field,
+          operator:
+            field === "carInformation_licensePlate" || field === "customerName"
+              ? "contains"
+              : field === "contractDate"
+              ? "between"
+              : "equals",
+          value:
+            field === "contractDate"
+              ? [formSearchExport[field].start, formSearchExport[field].end]
+              : formSearchExport[field],
+        });
+      }
+    }
+    const json: any = {
+      page: 1,
+      limit: 9999999,
+      sortField: "id",
+      sortType: "ASC",
+      filterModel: {
+        logicOperator: "and",
+        items: mapJson,
+      },
+    };
+    // console.log("json--> ", json);
+    // return
+    const resultRows = await _SaleItemApi().search(json);
+    console.log("resultRows--> ", resultRows);
+    const dataRows = resultRows.data
+
     let row = 2
     let totalRemaining = 0
-    for( let i=0;i<rows.length;i++){
+    for( let i=0;i<dataRows.length;i++){
 
          // -------------------------------------------- คำนวณยอดคงเหลือ --------------------------------------------- //
          const jsonPayment = {
@@ -216,7 +253,7 @@ const ModalReport = ({ showModal, returnShowModal }: any) => {
                 items: [{
                     field: "saleItem_id",
                     operator: "equals",
-                    value: rows[i].id
+                    value: dataRows[i].id
                 }]
             }
         }
@@ -230,31 +267,31 @@ const ModalReport = ({ showModal, returnShowModal }: any) => {
             amountPay = amountPay + ( Math.ceil(resultPayment.data[i].amountPay) +  Math.ceil(resultPayment.data[i].InterestPay) )
         }
 
-        const totalOrder = rows[i].totalOrder
-        const interestRate = rows[i].interestRate
-        const numInstallments = rows[i].numInstallments
+        const totalOrder = dataRows[i].totalOrder
+        const interestRate = dataRows[i].interestRate
+        const numInstallments = dataRows[i].numInstallments
 
         const interestPerMonth = Math.ceil(Number(totalOrder) * ( Number(interestRate) / 100 ))
         const totalAmountPerMonth = Math.ceil(Number(totalOrder) / Number(numInstallments) + interestPerMonth)
         const totalAmount = Math.ceil(totalAmountPerMonth * Number(numInstallments))
-        const remaining = rows[i].statusInstallment === "Close" ? 0 : (totalAmount - amountPay)
+        const remaining = dataRows[i].statusInstallment === "Close" ? 0 : (totalAmount - amountPay)
         totalRemaining = totalRemaining + remaining
 
         // -------------------------------------------- ปิดคำนวณยอดคงเหลือ --------------------------------------------- //
 
         worksheet.getRow(row).alignment = { horizontal: 'center' };
-        worksheet.getCell(`A${row}`).value = rows[i].customerName
-        worksheet.getCell(`B${row}`).value = rows[i].id
-        worksheet.getCell(`C${row}`).value = rows[i].address
-        worksheet.getCell(`D${row}`).value = rows[i].phoneNumber
-        worksheet.getCell(`E${row}`).value = rows[i].interestType
-        worksheet.getCell(`F${row}`).value = rows[i].contractDate ? dayjs(rows[i].contractDate).format("DD/MM/YYYY") : ""
-        worksheet.getCell(`G${row}`).value = Number(rows[i].downPayment).toLocaleString()
-        worksheet.getCell(`H${row}`).value = Number(rows[i].totalOrder).toLocaleString()
+        worksheet.getCell(`A${row}`).value = dataRows[i].customerName
+        worksheet.getCell(`B${row}`).value = dataRows[i].id
+        worksheet.getCell(`C${row}`).value = dataRows[i].address
+        worksheet.getCell(`D${row}`).value = dataRows[i].phoneNumber
+        worksheet.getCell(`E${row}`).value = dataRows[i].interestType
+        worksheet.getCell(`F${row}`).value = dataRows[i].contractDate ? dayjs(dataRows[i].contractDate).format("DD/MM/YYYY") : ""
+        worksheet.getCell(`G${row}`).value = Number(dataRows[i].downPayment).toLocaleString()
+        worksheet.getCell(`H${row}`).value = Number(dataRows[i].totalOrder).toLocaleString()
         worksheet.getCell(`I${row}`).value = Number(remaining).toLocaleString()
-        worksheet.getCell(`J${row}`).value = rows[i].numInstallments
-        worksheet.getCell(`K${row}`).value = rows[i].interestRate
-        worksheet.getCell(`L${row}`).value = rows[i].guarantors.map( (item: any) => item.guarantorName )?.join(' , ')
+        worksheet.getCell(`J${row}`).value = dataRows[i].numInstallments
+        worksheet.getCell(`K${row}`).value = dataRows[i].interestRate
+        worksheet.getCell(`L${row}`).value = dataRows[i].guarantors.map( (item: any) => item.guarantorName )?.join(' , ')
 
         for (let key = 65; key <= 76; key++) {
             const char = String.fromCharCode(key); //A-L
