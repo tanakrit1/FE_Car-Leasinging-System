@@ -359,24 +359,37 @@ const CustomerInformation = () => {
     setShowModalSearchSale(false);
   };
 
-  //   const onUpdate = async() => {
-  //     const json = {
-  //       ...payloadCustomer,
-  //       interestMonth: Math.ceil(payloadCustomer.interestMonth),
-  //       interestRate: Number(payloadCustomer.interestRate),
-  //       totalOrder: Math.ceil(payloadCustomer.totalOrder),
-  //       downPayment: Math.ceil(payloadCustomer.downPayment),
-  //       saleitem_id: idSaleItem,
-  //       carInformation_id: idCarInformation
-  //     }
-  //     context?.setLoadingContext(true);
-  //     const result = await _SaleItemApi().updateAdvance(json)
-  //     if( result.statusCode === 200 ){
-  //       alert("แก้ไขข้อมูลสำเร็จ")
-  //       onClearForm();
-  //     }
-  //     context?.setLoadingContext(false);
-  //   }
+    const onUpdate = async() => {
+      const json = {
+        saleitem_id: Number(idSaleItem),
+        customerName: payloadCustomer.customerName,
+        address: payloadCustomer.address,
+        phoneNumber: payloadCustomer.phoneNumber,
+        gps: payloadCustomer.gps,
+        saleItemNote: payloadCustomer.saleItemNote,
+        
+        guarantors: payloadGuarantor
+
+        // ...payloadCustomer,
+        // interestMonth: Math.ceil(payloadCustomer.interestMonth),
+        // interestRate: Number(payloadCustomer.interestRate),
+        // totalOrder: Math.ceil(payloadCustomer.totalOrder),
+        // downPayment: Math.ceil(payloadCustomer.downPayment),
+        // saleitem_id: idSaleItem,
+        // carInformation_id: idCarInformation
+      }
+
+      console.log("payloadGuarantor--> ", payloadGuarantor)
+      console.log("json---> ", json)
+    //   return 
+      context?.setLoadingContext(true);
+      const result = await _SaleItemApi().updateAdvance(json)
+      if( result.statusCode === 200 ){
+        alert("แก้ไขข้อมูลสำเร็จ")
+        onClearForm();
+      }
+      context?.setLoadingContext(false);
+    }
 
   const onDelete = async () => {
     if (
@@ -611,7 +624,7 @@ const CustomerInformation = () => {
 
         {fnCheckValidation() && stateForm == "view" && (
           <div className="mt-8 flex justify-end space-x-3">
-            {/* <button
+            <button
               onClick={onUpdate}
               className="bg-orange-600 hover:bg-orange-500 rounded-lg text-white px-16 py-3 font-bold"
             >
@@ -629,7 +642,7 @@ const CustomerInformation = () => {
                 </svg>
                 <span>แก้ไข</span>
               </div>
-            </button> */}
+            </button>
 
             <button
               onClick={onDelete}

@@ -21,6 +21,7 @@ const FormCustomer = ({
 }: propsFormCustomer) => {
   const [payload, setPayload] = useState<any>(payloadCustomer);
   const [disableForm, setDisableForm] = useState<boolean>(false);
+//   const [formEdit, setFormEdit] = useState<boolean>(false);
   const [processPayload, setProcessPayload] = useState<any>({
     amountPerMonth: "",
     totalAmount: "",
@@ -28,6 +29,7 @@ const FormCustomer = ({
 
   useEffect(() => {
     setDisableForm(stateForm === "view" ? true : false);
+    // setFormEdit(stateForm === "view" ? true : false);
   }, [stateForm]);
 
   //   fnsetFormatNumber(Math.ceil((Number(payloadCustomer.totalOrder)/Number(payloadCustomer.numInstallments) + Number(payloadCustomer.interestMonth))).toString()) || ""
@@ -125,13 +127,13 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                disabled={disableForm}
+                disabled={false}
                 autoComplete="off"
                 type="text"
                 name="customerName"
                 value={payloadCustomer.customerName}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
-                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                    false ? "bg-slate-300" : "bg-slate-50"
                   }`}
               />
             </div>
@@ -143,13 +145,13 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                disabled={disableForm}
+                disabled={false}
                 autoComplete="off"
                 type="text"
                 name="address"
                 value={payloadCustomer.address}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
-                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                    false ? "bg-slate-300" : "bg-slate-50"
                   }`}
               />
             </div>
@@ -177,13 +179,13 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                disabled={disableForm}
+                disabled={false}
                 autoComplete="off"
                 type="number"
                 name="phoneNumber"
                 value={payloadCustomer.phoneNumber}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
-                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                    false ? "bg-slate-300" : "bg-slate-50"
                   }`}
               />
             </div>
@@ -261,13 +263,13 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                disabled={disableForm}
+                disabled={false}
                 autoComplete="off"
                 type="text"
                 name="gps"
                 value={payloadCustomer.gps}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
-                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                    false ? "bg-slate-300" : "bg-slate-50"
                   }`}
               />
             </div>
@@ -295,13 +297,13 @@ const FormCustomer = ({
               </p>
               <input
                 onChange={onChangeInput}
-                disabled={disableForm}
+                disabled={false}
                 autoComplete="off"
                 type="text"
                 name="saleItemNote"
                 value={payloadCustomer.saleItemNote}
                 className={`text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 ${
-                    disableForm ? "bg-slate-300" : "bg-slate-50"
+                    false ? "bg-slate-300" : "bg-slate-50"
                   }`}
               />
             </div>

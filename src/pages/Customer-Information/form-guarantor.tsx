@@ -19,7 +19,8 @@ const FormGuarantor = ({
 
   useEffect(() => {
     // console.log("stateForm--> ", stateForm)
-    setDisableForm(stateForm == "view" ? true : false);
+    // setDisableForm(stateForm == "view" ? true : false);
+    setDisableForm(false)
   }, [stateForm]);
 
   useEffect( () => {
@@ -76,7 +77,7 @@ const FormGuarantor = ({
                 cloneImgData[index] = uri
                 setImgData(cloneImgData);
                 
-                let clonePayload = [...payload]
+                let clonePayload = [...payloadGuarantor]
                 clonePayload[index] = {...clonePayload[index], guarantorImage: uri}
                 setPayload(clonePayload);
             },
@@ -114,8 +115,11 @@ const FormGuarantor = ({
     setImgData(cloneImgData);
     (document.getElementById(`inputFile${index}`) as HTMLFormElement).value = null;
     
-    let clonePayload = [...payload]
+
+    let clonePayload = [...payloadGuarantor]
     clonePayload[index] = {...clonePayload[index], guarantorImage: ""}
+    // console.log("clonePayload--> ", clonePayload)
+    // console.log("payloadGuarantor--> ", payloadGuarantor)
     setPayload(clonePayload);
   }
 
