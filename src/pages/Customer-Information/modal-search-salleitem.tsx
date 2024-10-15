@@ -88,7 +88,7 @@ const ModalSearchSaleItem = ({ showModal, returnShowModal, returnViewData }: any
   };
 
   useEffect(() => {
-    // onSubmitSearch(pagination.page);
+    onSubmitSearch(pagination.page);
   }, [pagination.page]);
 
   useEffect(() => {
