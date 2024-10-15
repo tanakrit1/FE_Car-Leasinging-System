@@ -127,7 +127,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
         // ลดต้นลดดอก
         const InterestPay =
           Math.ceil(payloadCustomer.remainingBalance) *
-          (Math.ceil(payloadCustomer.interestRate) / 100);
+          (Number(payloadCustomer.interestRate) / 100);
         setPayload({ ...payload, InterestPay: Math.ceil(InterestPay) });
       }
     }
