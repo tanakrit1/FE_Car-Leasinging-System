@@ -16,7 +16,7 @@ const TableCustomer = ({rows}: any) => {
 
     useEffect( ()=> {
         const mapData = rows.map( (item: any) => {
-            console.log("row--> ", item)
+            // console.log("row--> ", item)
             const result = Number(item.numInstallments) - item.payments.length
             return { 
                         ...item, 

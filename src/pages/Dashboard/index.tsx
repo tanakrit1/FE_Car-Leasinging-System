@@ -28,7 +28,7 @@ const Dashboard = () => {
     // console.log("***fnLoadSaleItem***");
     const toDay = dayjs().format("YYYY-MM-DD");
     // console.log("toDay--> ", toDay);
-    const fiveDaysAgo = dayjs().subtract(5, "day").format("YYYY-MM-DD");
+    const fiveDaysNext = dayjs().add(5, "day").format("YYYY-MM-DD");
     // console.log("fiveDaysAgo--> ", fiveDaysAgo);
     const json = {
       page: 1,
@@ -39,19 +39,25 @@ const Dashboard = () => {
           {
             field: "dueDate",
             operator: "between",
-            value: [fiveDaysAgo, toDay],
+            value: [toDay, fiveDaysNext],
           },
-          {
-            field: "statusInstallment",
-            operator: "notEqual",
-            value: "Close",
-          },
+        //   {
+        //     field: "statusInstallment",
+        //     operator: "notEqual",
+        //     value: "Close",
+        //   },
+        //  {
+        //     field: "statusInstallment",
+        //     operator: "isNull",
+        //     value: "",
+        //   },
         ],
       },
     };
     const result = await _SaleItemApi().search(json);
     if (result?.statusCode === 200) {
-      setRowsSaleItem(result.data);
+        const data = result.data.filter( (item: any) => item.statusInstallment !== "Close" )
+        setRowsSaleItem(data);
     }
     console.log("resultAA--> ", result);
   };
