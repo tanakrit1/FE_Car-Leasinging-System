@@ -25,6 +25,7 @@ const ModalManage = ({
   data,
   returnSubmitModal,
 }: props) => {
+  const [isPassword, setIsPassword] = useState(true);
   const [formData, setFormData] = useState<any>({
     employeeID: "",
     firstName: "",
@@ -70,10 +71,17 @@ const ModalManage = ({
 
   const onSubmit = (event: any) => {
     event.preventDefault();
-    returnSubmitModal(formData, statusForm);
+    console.log("formData--> ", formData)
+    let body = formData
+    if( formData.password == "" ){
+        delete body.password
+    }
+    console.log("body--> ", body)
+    returnSubmitModal(body, statusForm);
   };
 
   useEffect(() => {
+    setIsPassword(true);
     if (statusForm == "add") {
       setFormData({
         employeeID: "",
@@ -112,7 +120,7 @@ const ModalManage = ({
         lastName: data.lastName,
         phone: data.phone,
         username: data.username,
-        password: data.password,
+        password: "",
         status: data.status,
         isDashboard: data.isDashboard,
         isCardata: data.isCardata,
@@ -127,7 +135,7 @@ const ModalManage = ({
         lastName: false,
         phone: false,
         username: false,
-        password: true,
+        password: false,
         status: false,
         isDashboard: false,
         isCardata: false,
@@ -304,15 +312,24 @@ const ModalManage = ({
                     )}{" "}
                   </p>
                   <input
-                    required={!formDisable.password}
-                    disabled={formDisable.password}
+                    // required={!formDisable.password}
+                    required = { statusForm=='add' ? true : false }
+                    // disabled={formDisable.password}
                     autoComplete="off"
-                    type="password"
+                    type= {isPassword ? "password" : "text"}
                     name="password"
                     value={formData.password}
                     className="text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2 bg-slate-50"
                     onChange={onChangeInput}
                   />
+                </div>
+
+                <div className="basis-4/12 px-2 items-center flex">
+                        { isPassword ?  
+                        <svg onClick={() => setIsPassword(!isPassword)} className="cursor-pointer hover:text-white" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 20 20"><path fill="currentColor" d="M10 4.4C3.439 4.4 0 9.232 0 10c0 .766 3.439 5.6 10 5.6c6.56 0 10-4.834 10-5.6c0-.768-3.44-5.6-10-5.6m0 9.907c-2.455 0-4.445-1.928-4.445-4.307c0-2.379 1.99-4.309 4.445-4.309s4.444 1.93 4.444 4.309c0 2.379-1.989 4.307-4.444 4.307M10 10c-.407-.447.663-2.154 0-2.154c-1.228 0-2.223.965-2.223 2.154s.995 2.154 2.223 2.154c1.227 0 2.223-.965 2.223-2.154c0-.547-1.877.379-2.223 0"/></svg>
+                        :
+                        <svg onClick={() => setIsPassword(!isPassword)} className="cursor-pointer hover:text-white" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 20 20"><path fill="currentColor" d="M18.521 1.478a1 1 0 0 0-1.414 0L1.48 17.107a1 1 0 1 0 1.414 1.414L18.52 2.892a1 1 0 0 0 0-1.414zM3.108 13.498l2.56-2.56A4.18 4.18 0 0 1 5.555 10c0-2.379 1.99-4.309 4.445-4.309c.286 0 .564.032.835.082l1.203-1.202A12.645 12.645 0 0 0 10 4.401C3.44 4.4 0 9.231 0 10c0 .423 1.057 2.09 3.108 3.497zm13.787-6.993l-2.562 2.56c.069.302.111.613.111.935c0 2.379-1.989 4.307-4.444 4.307c-.284 0-.56-.032-.829-.081l-1.204 1.203c.642.104 1.316.17 2.033.17c6.56 0 10-4.833 10-5.599c0-.424-1.056-2.09-3.105-3.495"/></svg>
+                        }
                 </div>
 
                 <div className="w-full divider text-white">

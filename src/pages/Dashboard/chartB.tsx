@@ -13,7 +13,7 @@ const ChartB = ({ data }: any) => {
     const context = useContext(LoadContext)
     const [masterYear, setMasterYear] = useState<string[]>([]);
     const [formExport, setFormExport] = useState({
-        mounth: dayjs().month(),
+        mounth: (Number(dayjs().month())+1).toString(),
         year: dayjs().year(),
         show: false
     })
@@ -111,7 +111,7 @@ const ChartB = ({ data }: any) => {
         }
 
         worksheet.mergeCells(1, 1, 1, 4)
-        worksheet.getCell('A1').value = `รายงานสรุปยอดรับชำระประจำเดือน ${dayjs().format("MM/YYYY")}`;
+        worksheet.getCell('A1').value = `รายงานสรุปยอดรับชำระประจำเดือน ${dayjs(date).format("MM/YYYY")}`;
 
         worksheet.getCell('A2').value = "เงินต้นที่ได้รับทั้งหมด";
         worksheet.getCell('B2').value = Math.ceil(response.Result.totalAmountPay).toLocaleString()
@@ -193,7 +193,7 @@ const ChartB = ({ data }: any) => {
         }
 
         worksheet2.mergeCells(1, 1, 1, 11)
-        worksheet2.getCell('A1').value = `รายงานสรุปยอดรับชำระประจำเดือน ${dayjs().format("MM/YYYY")}`;
+        worksheet2.getCell('A1').value = `รายงานสรุปยอดรับชำระประจำเดือน ${dayjs(date).format("MM/YYYY")}`;
         worksheet2.getCell('A2').value = "วันที่ชำระ";
         worksheet2.getCell('B2').value = "ชื่อ";
         worksheet2.getCell('C2').value = "ประเภท";
@@ -306,7 +306,7 @@ const ChartB = ({ data }: any) => {
         }
 
         worksheet3.mergeCells(1, 1, 1, 4)
-        worksheet3.getCell('A1').value = `รายละเอียดรถที่ขาย ประจำเดือน ${dayjs().format("MM/YYYY")}`;
+        worksheet3.getCell('A1').value = `รายละเอียดรถที่ขาย ประจำเดือน ${dayjs(date).format("MM/YYYY")}`;
         worksheet3.getCell('A2').value = "ยี่ห้อ";
         worksheet3.getCell('B2').value = "รุ่น";
         worksheet3.getCell('C2').value = "สี";
@@ -369,7 +369,7 @@ const ChartB = ({ data }: any) => {
           className="px-6 pt-3 flex justify-between"
           style={{ height: "13%" }}
         >
-          <p className="font-bold text-xl text-white">สรุปยอดรับชำระรายเดือน</p> 
+          <p className="font-bold text-xl text-white">สรุปยอดรับชำระรายเดือน</p>  
           {/* <Toolti></Toolti> */}
           <div className="flex flex-col space-y-3">
             <button

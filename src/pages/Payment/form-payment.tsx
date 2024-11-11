@@ -90,6 +90,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
         // setChipAmount({...chipAmount, amountPay: amountPay})
 
         if( data.interestType === "คงที่" ){
+            // const totalAmount = (Number(data.totalOrder) / Number(data.numInstallments)) + Number(data.interestMonth)
             const interestPerMonth = Math.ceil(Number(data.totalOrder) * ( Number(data.interestRate) / 100 ))
             const totalAmountPerMonth = Math.ceil(Number(data.totalOrder) / Number(data.numInstallments) + interestPerMonth)
             const totalAmount = Math.ceil(totalAmountPerMonth * Number(data.numInstallments))
