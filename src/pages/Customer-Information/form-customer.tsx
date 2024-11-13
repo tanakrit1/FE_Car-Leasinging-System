@@ -27,12 +27,15 @@ const FormCustomer = ({
     totalAmount: "",
   });
 
+//   const [payloadCustom, setPayloadCustom] = useState<any>({
+
+//   });
+
   useEffect(() => {
     setDisableForm(stateForm === "view" ? true : false);
     // setFormEdit(stateForm === "view" ? true : false);
   }, [stateForm]);
 
-  //   fnsetFormatNumber(Math.ceil((Number(payloadCustomer.totalOrder)/Number(payloadCustomer.numInstallments) + Number(payloadCustomer.interestMonth))).toString()) || ""
 
   const onChangeInput = (event: any) => {
     if (
@@ -87,20 +90,17 @@ const FormCustomer = ({
     // console.log("numInstallments--> ", numInstallments)
     // console.log("interestMonth--> ", interestMonth)
 
-    let amountPerMonth: any = Math.ceil(
-      totalOrder / numInstallments + interestMonth
-    );
+    let amountPerMonth: any = Math.ceil( totalOrder / numInstallments + interestMonth );
     if (isNaN(amountPerMonth) || amountPerMonth == Infinity) {
-      // console.log("***")
       amountPerMonth = "";
     }
-    console.log("amountPerMonth--> ", amountPerMonth); //NaN
     const totalAmount = Math.ceil(totalOrder + interestMonth * numInstallments);
     setProcessPayload({
       amountPerMonth: amountPerMonth,
       totalAmount: totalAmount,
     });
     // setProcessPayload({ amountPerMonth: "", totalAmount: "" })
+    
   }, [payloadCustomer]);
 
   useEffect(() => {

@@ -8,13 +8,24 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
 
     const [showModalChangeNum, setShowModalChangeNum] = useState<boolean>(false)
     const [newNum, setNewNum] = useState<any>(null)
+    const [formCustom, setFormCustom] = useState<any>({
+        interestPerMonth: 0,
+        totalAmountSum: 0,
+        amountPerMonth: 0,
+    })
 
     const process = () => {
         if (dataInput.interestType === "คงที่") {
-            const totalAmount = (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) + Number(dataInput.interestMonth)
-            //   const amountPay = (Number(dataInput.totalOrder) / Number(dataInput.numInstallments))
-            //   return (amountPay + InterestPay)
-            return Math.ceil(totalAmount).toLocaleString()
+            // const totalAmount = (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) + Number(dataInput.interestMonth)
+            // //   const amountPay = (Number(dataInput.totalOrder) / Number(dataInput.numInstallments))
+            // //   return (amountPay + InterestPay)
+            // return Math.ceil(totalAmount).toLocaleString()
+
+            const interestPerMonth = Math.ceil(Number(dataInput.totalOrder) * ( Number(dataInput.interestRate) / 100 ))   // 1440  ดอกเบี้ยต่อเดือน
+            const totalInterest = Math.ceil(interestPerMonth * Number(dataInput.numInstallments))  // 51840   ดอกเบี้ยทั้งหมด
+            const totalAmountSum = totalInterest + Number(dataInput.totalOrder) // 201840  ยอดทั้งหมด(ดอกเบี้ยทั้งหมด + ยอดจัด)
+            const amountPerMonth = Math.ceil(totalAmountSum / Number(dataInput.numInstallments)) // 5607  ยอดต่อเดือน
+            return Math.ceil(amountPerMonth).toLocaleString()
 
           } else { // ลดต้นลดดอก
             const InterestPay = Math.ceil(dataInput.remainingBalance) * (Math.ceil(dataInput.interestRate) / 100);
@@ -101,6 +112,18 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
         context?.setLoadingContext(false)
     }
 
+    const onProcessAmount = () => {
+        const interestPerMonth = Math.ceil(Number(dataInput.totalOrder) * ( Number(dataInput.interestRate) / 100 ))   // 1440  ดอกเบี้ยต่อเดือน
+        const totalInterest = Math.ceil(interestPerMonth * Number(dataInput.numInstallments))  // 51840   ดอกเบี้ยทั้งหมด
+        const totalAmountSum = totalInterest + Number(dataInput.totalOrder) // 201840  ยอดทั้งหมด(ดอกเบี้ยทั้งหมด + ยอดจัด)
+        const amountPerMonth = Math.ceil(totalAmountSum / Number(dataInput.numInstallments)) // 5607  ยอดต่อเดือน
+        setFormCustom({
+            interestPerMonth: interestPerMonth,
+            totalAmountSum: totalAmountSum,
+            amountPerMonth: amountPerMonth,
+        })
+    }
+
     useEffect( () => {
         if( showModalChangeNum === true ){
             ( document.getElementById("modal-change-num") as HTMLFormElement ).showModal();
@@ -135,6 +158,10 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
         }
         context?.setLoadingContext(false)
     }
+
+    useEffect(()=>{
+        onProcessAmount()
+    }, [dataInput])
 
   return (
     <>
@@ -326,7 +353,7 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
                 disabled
                 type="text"
                 name="interestMonth"
-                value={dataInput?.interestMonth ? Number(dataInput?.interestMonth).toLocaleString() : ""}
+                value={Number(formCustom.interestPerMonth).toLocaleString() || ""}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>
@@ -340,7 +367,8 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
                 type="text"
                 name="interestMonth"
                 // value={ (Number(dataInput.totalOrder) + (Number(dataInput.interestMonth) * Number(dataInput.numInstallments))).toLocaleString() }
-                value={( Math.ceil( (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) + Number(dataInput.interestMonth)) * Number(dataInput.numInstallments) ).toLocaleString()}
+                // value={( Math.ceil( (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) + Number(dataInput.interestMonth)) * Number(dataInput.numInstallments) ).toLocaleString()}
+                value={Number(formCustom.totalAmountSum).toLocaleString() || ""}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>
@@ -357,7 +385,8 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
                 disabled
                 type="text"
                 name="interestMonth"
-                value={( Math.ceil( (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) + Number(dataInput.interestMonth)) ).toLocaleString()}
+                // value={( Math.ceil( (Number(dataInput.totalOrder) / Number(dataInput.numInstallments)) + Number(dataInput.interestMonth)) ).toLocaleString()}
+                value={Number(formCustom.amountPerMonth).toLocaleString() || ""}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>

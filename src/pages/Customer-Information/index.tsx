@@ -289,6 +289,8 @@ const CustomerInformation = () => {
     // setIdCarInformation(row.carInformation.id)
 
     setDateCreate(dayjs(row.createdAt).format("DD/MM/YYYY"));
+    const interestPerMonth = Math.ceil(Number(row.totalOrder) * ( Number(row.interestRate) / 100 ))   // 1440  ดอกเบี้ยต่อเดือน
+
     const newPayloadCustomer = {
       customerName: row.customerName,
       address: row.address,
@@ -299,7 +301,7 @@ const CustomerInformation = () => {
       numInstallments: row.numInstallments,
       interestRate: row.interestRate,
       interestType: row.interestType,
-      interestMonth: row.interestMonth,
+      interestMonth: interestPerMonth,
       // discount: row.discount,
       contractDate: row.contractDate,
       saleItemNote: row.saleItemNote,

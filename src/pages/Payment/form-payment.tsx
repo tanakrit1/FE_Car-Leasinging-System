@@ -91,10 +91,17 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
 
         if( data.interestType === "คงที่" ){
             // const totalAmount = (Number(data.totalOrder) / Number(data.numInstallments)) + Number(data.interestMonth)
-            const interestPerMonth = Math.ceil(Number(data.totalOrder) * ( Number(data.interestRate) / 100 ))
-            const totalAmountPerMonth = Math.ceil(Number(data.totalOrder) / Number(data.numInstallments) + interestPerMonth)
-            const totalAmount = Math.ceil(totalAmountPerMonth * Number(data.numInstallments))
-            const remaining = totalAmount - amountPay
+            const interestPerMonth = Math.ceil(Number(data.totalOrder) * ( Number(data.interestRate) / 100 ))   // 1440  ดอกเบี้ยต่อเดือน
+            const totalInterest = Math.ceil(interestPerMonth * Number(data.numInstallments))  // 51840   ดอกเบี้ยทั้งหมด
+            const totalAmountSum = totalInterest + Number(data.totalOrder) // 201840  ยอดทั้งหมด(ดอกเบี้ยทั้งหมด + ยอดจัด)
+            const amountPerMonth = Math.ceil(totalAmountSum / Number(data.numInstallments)) // 5607  ยอดต่อเดือน
+            console.log("amountPerMonth--> ", amountPerMonth)
+            console.log("amountPay--> ", amountPay)
+            const remaining = totalAmountSum - amountPay
+            setPayload({...payload, InterestPay: interestPerMonth})
+            // const totalAmountPerMonth = Math.ceil(Number(data.totalOrder) / Number(data.numInstallments) + interestPerMonth)
+            // const totalAmount = Math.ceil(totalAmountPerMonth * Number(data.numInstallments))
+            // const remaining = totalAmount - amountPay
             setChipAmount({amountPay: amountPay, remaining: remaining,})
         }else{
             setChipAmount({amountPay: amountPay, remaining: data.remainingBalance})
@@ -206,21 +213,16 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       Math.ceil(payload.amountPay) >= 0 &&
       rowsHistory.length+1 < Math.ceil(payloadCustomer.numInstallments)
     ) {
-        console.log("111")
       if (payload.methodPay === "เงินโอน") {
-        console.log("222")
         if ((payload.bank!= "" && payload.bank!= null && payload.bank!= undefined) && (payload.accountName != "" && payload.accountName != null && payload.accountName != undefined) ) {
-            console.log("333")
           return setShowSubmit(true);
         }else{
             return setShowSubmit(false);
         }
       } else {
-        console.log("444")
         return setShowSubmit(true);
       }
     }else{
-        console.log("555")
         setShowSubmit(false);
     }
 
