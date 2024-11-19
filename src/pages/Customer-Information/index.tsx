@@ -284,6 +284,7 @@ const CustomerInformation = () => {
   };
 
   const onViewData = async (row: any) => {
+    console.log("row--> ", row)
     setRowActive(row);
     setIdSaleItem(row.id);
     // setIdCarInformation(row.carInformation.id)
@@ -336,7 +337,7 @@ const CustomerInformation = () => {
       priceOther: row.carInformation.priceOther,
       productOther: row.carInformation.productOther,
     };
-
+    console.log("newPayloadGuarantor--> " , newPayloadGuarantor);
     setPayloadCustomer(newPayloadCustomer);
     setPayloadGuarantor(newPayloadGuarantor);
     setPayloadCar(newPayloadCar);
@@ -362,6 +363,22 @@ const CustomerInformation = () => {
   };
 
     const onUpdate = async() => {
+        // console.log("payloadGuarantor--> ", payloadGuarantor)
+      const mapNewPayloadGuarantor = payloadGuarantor.map((item: any) => {
+          if( item.id ){
+            return item
+          }else{
+            return {
+                ...item,
+                saleItem: Number(idSaleItem),
+                // saleitem: {
+                //     id: idSaleItem
+                // }
+            }
+          }
+      })
+    //   console.log("mapNewPayloadGuarantor--> ", mapNewPayloadGuarantor)
+    //   return 
       const json = {
         saleitem_id: Number(idSaleItem),
         customerName: payloadCustomer.customerName,
@@ -370,7 +387,7 @@ const CustomerInformation = () => {
         gps: payloadCustomer.gps,
         saleItemNote: payloadCustomer.saleItemNote,
         
-        guarantors: payloadGuarantor
+        guarantors: mapNewPayloadGuarantor
 
         // ...payloadCustomer,
         // interestMonth: Math.ceil(payloadCustomer.interestMonth),
@@ -381,8 +398,8 @@ const CustomerInformation = () => {
         // carInformation_id: idCarInformation
       }
 
-      console.log("payloadGuarantor--> ", payloadGuarantor)
-      console.log("json---> ", json)
+    //   console.log("payloadGuarantor--> ", payloadGuarantor)
+    //   console.log("json---> ", json)
     //   return 
       context?.setLoadingContext(true);
       const result = await _SaleItemApi().updateAdvance(json)

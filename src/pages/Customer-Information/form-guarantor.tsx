@@ -24,8 +24,10 @@ const FormGuarantor = ({
   }, [stateForm]);
 
   useEffect( () => {
+    
     const newImgData = payloadGuarantor.map( (item: any) => item.guarantorImage )
     setImgData( newImgData )
+    console.log("**")
   }, [payloadGuarantor] )
 
   const onAddGuarantor = () => {
