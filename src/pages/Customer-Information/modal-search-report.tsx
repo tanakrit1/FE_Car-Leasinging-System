@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import ExcelJS from 'exceljs';
 
 const columns = [
-  { label: "รหัสลูกค้า", width: "10%", field: "id" },
+  { label: "รหัสสัญญา", width: "10%", field: "id" },
   { label: "ชื่อลูกค้า", width: "20%", field: "customerName" },
   { label: "เบอร์ติดต่อ", width: "15%", field: "phoneNumber" },
   { label: "การซื้อ", width: "10%", field: "saleType" },

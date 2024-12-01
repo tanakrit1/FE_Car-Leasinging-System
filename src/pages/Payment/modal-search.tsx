@@ -6,9 +6,10 @@ import _SaleItemApi from "../../api/saleItem";
 // import { useNavigate } from "react-router-dom";
 
 const columns = [
+  { label: "รหัสสัญญา", width: "10%", field: "id" },
   { label: "ชื่อลูกค้า", width: "30%", field: "customerName" },
   { label: "เบอร์ติดต่อ", width: "20%", field: "phoneNumber" },
-  { label: "การซื้อ", width: "25%", field: "saleType" },
+  { label: "การซื้อ", width: "15%", field: "saleType" },
   { label: "ทะเบียนรถ", width: "25%", field: "licensePlate" },
 ];
 

@@ -6,7 +6,7 @@ import _SaleItemApi from "../../api/saleItem";
 
 
 const columns = [
-  { label: "รหัสลูกค้า", width: "10%", field: "id" },
+  { label: "รหัสสัญญา", width: "10%", field: "id" },
   { label: "ชื่อลูกค้า", width: "30%", field: "customerName" },
   { label: "เบอร์ติดต่อ", width: "20%", field: "phoneNumber" },
   { label: "การซื้อ", width: "25%", field: "saleType" },

@@ -323,19 +323,19 @@ const CustomerInformation = () => {
     });
 
     const newPayloadCar = {
-      carBrand: row.carInformation.carBrand,
-      model: row.carInformation.model,
-      carColor: row.carInformation.carColor,
-      carDate: row.carInformation.carDate,
-      licensePlate: row.carInformation.licensePlate,
+      carBrand: row.carInformation?.carBrand,
+      model: row.carInformation?.model,
+      carColor: row.carInformation?.carColor,
+      carDate: row.carInformation?.carDate,
+      licensePlate: row.carInformation?.licensePlate,
       //   engineNumber: row.carInformation.engineNumber,
       //   vin: row.carInformation.vin,
-      sellingPrice: row.carInformation.sellingPrice,
-      id: row.carInformation.id,
-      carType: row.carInformation.carType,
-      carCategory: row.carInformation.carCategory,
-      priceOther: row.carInformation.priceOther,
-      productOther: row.carInformation.productOther,
+      sellingPrice: row.carInformation?.sellingPrice,
+      id: row.carInformation?.id,
+      carType: row.carInformation?.carType,
+      carCategory: row.carInformation?.carCategory,
+      priceOther: row.carInformation?.priceOther,
+      productOther: row.carInformation?.productOther,
     };
     console.log("newPayloadGuarantor--> " , newPayloadGuarantor);
     setPayloadCustomer(newPayloadCustomer);

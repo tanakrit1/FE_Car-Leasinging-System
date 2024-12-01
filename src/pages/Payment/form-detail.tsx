@@ -192,6 +192,16 @@ const FormDetail = ({ dataInput, onRefetchDetail }: any) => {
 
         <div className="mt-5 px-3 pb-6 flex flex-wrap">
           <div className="basis-4/12 px-2">
+            <p className="text-white font-semibold mb-1">รหัสสัญญา :</p>
+            <input
+              disabled
+              type="text"
+              name="customerName"
+              value={dataInput?.id}
+              className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
+            />
+          </div>
+          <div className="basis-4/12 px-2">
             <p className="text-white font-semibold mb-1">ชื่อลูกค้า :</p>
             <input
               disabled

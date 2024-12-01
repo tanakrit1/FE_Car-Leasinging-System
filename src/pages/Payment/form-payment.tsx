@@ -50,7 +50,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
     setPayload({
       methodPay: "เงินสด",
       receiver: loginStorage?.firstName + "  " + loginStorage?.lastName,
-      amountPay: "", //เงินต้น
+      amountPay:'', //เงินต้น
       InterestPay: "", //ดอกเบี้ย
       fee: "", //ค่าปรับ
       datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
@@ -59,6 +59,7 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       accountName: "",
     });
     setAmount("");
+    (document.getElementById("amountPay") as HTMLFormElement).value = "";
     (document.getElementById("note") as HTMLFormElement).value = "";
   };
 
@@ -81,7 +82,6 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
       },
     };
     const result = await _PaymentApi().search(json);
-    // console.log("load--> ", result)
     if (result.statusCode === 200) {
         let amountPay = 0
         for( let i=0; i < result.data.length; i++ ){
@@ -94,11 +94,20 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
             const interestPerMonth = Math.ceil(Number(data.totalOrder) * ( Number(data.interestRate) / 100 ))   // 1440  ดอกเบี้ยต่อเดือน
             const totalInterest = Math.ceil(interestPerMonth * Number(data.numInstallments))  // 51840   ดอกเบี้ยทั้งหมด
             const totalAmountSum = totalInterest + Number(data.totalOrder) // 201840  ยอดทั้งหมด(ดอกเบี้ยทั้งหมด + ยอดจัด)
-            const amountPerMonth = Math.ceil(totalAmountSum / Number(data.numInstallments)) // 5607  ยอดต่อเดือน
-            console.log("amountPerMonth--> ", amountPerMonth)
-            console.log("amountPay--> ", amountPay)
+            // const amountPerMonth = Math.ceil(totalAmountSum / Number(data.numInstallments)) // 5607  ยอดต่อเดือน
             const remaining = totalAmountSum - amountPay
-            setPayload({...payload, InterestPay: interestPerMonth})
+            setPayload({
+                methodPay: "เงินสด",
+                receiver: loginStorage?.firstName + "  " + loginStorage?.lastName,
+                amountPay:'', //เงินต้น
+                InterestPay: interestPerMonth, //ดอกเบี้ย
+                fee: "", //ค่าปรับ
+                datePay: dayjs().format("YYYY-MM-DD"), //วันที่จ่าย
+                note: "",
+                bank: "",
+                accountName: "",
+              })
+            // setPayload({...payload, amountPay: '', fee: '', InterestPay: interestPerMonth})
             // const totalAmountPerMonth = Math.ceil(Number(data.totalOrder) / Number(data.numInstallments) + interestPerMonth)
             // const totalAmount = Math.ceil(totalAmountPerMonth * Number(data.numInstallments))
             // const remaining = totalAmount - amountPay
@@ -205,10 +214,9 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
   };
 
   useEffect(() => {
-    console.log("payload", payload)
     if (
       payload.methodPay &&
-      payload.InterestPay &&
+    //   payload.InterestPay &&
       (payload.fee !== null && payload.fee !== undefined && payload.fee !== "")  &&
       Math.ceil(payload.amountPay) >= 0 &&
       rowsHistory.length+1 < Math.ceil(payloadCustomer.numInstallments)
@@ -357,8 +365,9 @@ const FormPayment = ({ payloadCustomer, onRefetchDetail }: any) => {
                 disabled
                 onChange={onChangeInput}
                 type="text"
+                id="amountPay"
                 name="amountPay"
-                value={payload?.amountPay ? fnsetFormatNumber(payload?.amountPay) : ""}
+                value={payload?.amountPay ? fnsetFormatNumber(payload?.amountPay) : payload?.amountPay == 0 ? '0' : ""}
                 className="bg-slate-300 text-black mb-3 w-full rounded-lg h-12 px-3 focus:outline-primary focus:outline focus:outline-2"
               />
             </div>
